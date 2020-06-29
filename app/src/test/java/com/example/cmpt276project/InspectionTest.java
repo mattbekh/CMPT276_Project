@@ -6,6 +6,7 @@ import com.example.cmpt276project.model.Violation;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -21,6 +22,8 @@ public class InspectionTest {
     private static int VIOLATION_ID = 101;
 
     private Inspection sut;
+    private Inspection earlierInspection;
+    private Inspection laterInspection;
     private Violation criticalViolation;
     private Violation nonCriticalViolation;
 
@@ -30,6 +33,14 @@ public class InspectionTest {
                              VALID_INSPECTION_TYPE,
                              VALID_HAZARD_RATING,
                              new Date());
+        earlierInspection = new Inspection(TRACKING_NUMBER,
+                                           VALID_INSPECTION_TYPE,
+                                           VALID_HAZARD_RATING,
+                                           new Date(100000));
+        laterInspection = new Inspection(TRACKING_NUMBER,
+                                         VALID_INSPECTION_TYPE,
+                                         VALID_HAZARD_RATING,
+                                         new Date(200000));
 
         criticalViolation = new Violation(VIOLATION_ID, true, false, VIOLATION_DESCRIPTION);
         nonCriticalViolation = new Violation(VIOLATION_ID, false, false, VIOLATION_DESCRIPTION);
@@ -69,6 +80,28 @@ public class InspectionTest {
     public void shouldThrowExceptionIfConstructorPassedInvalidHazardRating() {
         shouldThrowExceptionIfConstructorPassedInvalidArgument(VALID_INSPECTION_TYPE,
                                                                INVALID_HAZARD_RATING);
+    }
+
+    @Test
+    public void shouldReturnCorrectValuesForDateAscendingComparator() {
+        ArrayList<Inspection> inspectionList = new ArrayList<>();
+        inspectionList.add(laterInspection);
+        inspectionList.add(earlierInspection);
+        inspectionList.sort(new Inspection.DateAscendingComparator());
+
+        assertEquals(earlierInspection, inspectionList.get(0));
+        assertEquals(laterInspection, inspectionList.get(1));
+    }
+
+    @Test
+    public void shouldReturnCorrectValuesForDateDescendingComparator() {
+        ArrayList<Inspection> inspectionList = new ArrayList<>();
+        inspectionList.add(earlierInspection);
+        inspectionList.add(laterInspection);
+        inspectionList.sort(new Inspection.DateDescendingComparator());
+
+        assertEquals(laterInspection, inspectionList.get(0));
+        assertEquals(earlierInspection, inspectionList.get(1));
     }
 
     private void shouldThrowExceptionIfConstructorPassedInvalidArgument(String inspectionType,
