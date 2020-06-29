@@ -10,7 +10,11 @@ public class Violation {
     private boolean isRepeat;
     private String description;
 
-    public Violation(int id, boolean isCritical, boolean isRepeat, String description) {
+    public Violation(int id,
+                     boolean isCritical,
+                     boolean isRepeat,
+                     String description)
+    {
         this.id = id;
         this.isCritical = isCritical;
         this.isRepeat = isRepeat;

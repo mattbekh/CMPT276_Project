@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">CMPT276 Project</string>
+
+    <string name="Inspection_hazard_rating_low">Low</string>
+    <string name="Inspection_hazard_rating_moderate">Moderate</string>
+    <string name="Inspection_hazard_rating_high">High</string>
+    <string name="Inspection_inspection_type_routine">Routine</string>
+    <string name="Inspection_inspection_type_follow_up">Follow Up</string>
 </resources>
