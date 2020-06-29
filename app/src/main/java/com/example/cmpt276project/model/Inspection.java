@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import com.example.cmpt276project.R;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 
 /**
@@ -59,8 +60,17 @@ public class Inspection {
         return numNonCriticalIssues;
     }
 
-    public ArrayList<Violation> getViolationList() {
-        return violationList;
+    public Violation[] getViolationList() {
+        return (Violation[]) violationList.toArray();
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public String getSmartDate() {
+        // TODO
+        return "";
     }
 
     public String getInspectionTypeString() {
@@ -114,7 +124,7 @@ public class Inspection {
         }
     }
 
-    protected HazardRating getHazardRatingEnum(String hazardRating) {
+    private HazardRating getHazardRatingEnum(String hazardRating) {
         switch (hazardRating.toLowerCase()) {
             case "low":
                 return HazardRating.LOW;
@@ -125,6 +135,22 @@ public class Inspection {
             default:
                 String errorMessage = String.format("Invalid hazardRating [%s]", hazardRating);
                 throw new IllegalArgumentException(errorMessage);
+        }
+    }
+
+    public static class DateAscendingComparator implements Comparator<Inspection> {
+
+        @Override
+        public int compare(Inspection a, Inspection b) {
+            return a.getDate().compareTo(b.getDate());
+        }
+    }
+
+    public static class DateDescendingComparator implements Comparator<Inspection> {
+
+        @Override
+        public int compare(Inspection a, Inspection b) {
+            return -1 * a.getDate().compareTo(b.getDate());
         }
     }
 }
