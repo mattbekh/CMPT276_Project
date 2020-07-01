@@ -18,6 +18,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
     // Stores an array of restaurant names (Should be pre-ordered)
     private String restaurantNames[];
     private Context context;
+//    private RestaurantManager restaurants;
 
     // TODO : May need more variables to be passed in
     public RestaurantListAdapter(Context ct, String names[]){
@@ -55,6 +56,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
     // Need to pass items we have in our array
     @Override
     public int getItemCount() {
+        // Change with restaurants.getLength()
         return restaurantNames.length;
     }
 
