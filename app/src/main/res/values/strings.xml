@@ -6,4 +6,13 @@
     <string name="Inspection_hazard_rating_high">High</string>
     <string name="Inspection_inspection_type_routine">Routine</string>
     <string name="Inspection_inspection_type_follow_up">Follow Up</string>
+
+    <string-array name="restaurant_names">
+        <item>Test1</item>
+        <item>Test2</item>
+        <item>Populate</item>
+        <item>With</item>
+        <item>Data</item>
+        <item>Later</item>
+    </string-array>
 </resources>
