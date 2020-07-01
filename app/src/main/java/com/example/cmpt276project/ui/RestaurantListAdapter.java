@@ -1,12 +1,14 @@
 package com.example.cmpt276project.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cmpt276project.R;
@@ -36,7 +38,18 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
     // Sets the name to the card according to the position in the recycler view
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+
         holder.restaurantName_tv.setText(restaurantNames[position]);
+
+        final int pos = position;
+        holder.restaurantListLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context,RestaurantViewActivity.class);
+                intent.putExtra("restaurantName",restaurantNames[pos]);
+                context.startActivity(intent);
+            }
+        });
     }
 
     // Need to pass items we have in our array
@@ -48,10 +61,12 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView restaurantName_tv;
+        ConstraintLayout restaurantListLayout;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             restaurantName_tv = itemView.findViewById(R.id.restaurantName);
+            restaurantListLayout = itemView.findViewById(R.id.rowLayout);
         }
     }
 }

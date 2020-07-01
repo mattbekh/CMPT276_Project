@@ -6,4 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".ui.OpeningScreenActivity">
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/introAnimation"
+        app:lottie_loop="true"
+        app:lottie_fileName="knife_fork.json"
+        app:lottie_autoPlay="true"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
