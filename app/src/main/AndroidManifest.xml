@@ -11,7 +11,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.OpeningScreenActivity"></activity>
-        <activity android:name=".ui.RestaurantListActivity" />
+        <activity android:name=".controller.RestaurantListActivity">
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
