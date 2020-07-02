@@ -2,11 +2,16 @@ package com.example.cmpt276project.model;
 
 import android.content.res.Resources;
 
+import com.example.cmpt276project.App;
 import com.example.cmpt276project.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.GregorianCalendar;
+
+import static android.content.res.Resources.getSystem;
 
 /**
  * This class represents an inspection to a restaurant. It contains information regarding to the
@@ -20,7 +25,7 @@ public class Inspection {
 
     private ArrayList<Violation> violationList;
     private String trackingNumber;
-    private Date date;
+    private GregorianCalendar date;
     private InspectionType inspectionType;
     private HazardRating hazardRating;
     private int numCriticalIssues;
@@ -29,7 +34,7 @@ public class Inspection {
     public Inspection(String trackingNumber,
                       String inspectionType,
                       String hazardRating,
-                      Date date)
+                      GregorianCalendar date)
     {
         this.trackingNumber = trackingNumber;
         this.date = date;
@@ -64,23 +69,21 @@ public class Inspection {
         return (Violation[]) violationList.toArray();
     }
 
-    public Date getDate() {
+    public GregorianCalendar getDate() {
         return date;
     }
 
     public String getSmartDate() {
-        // TODO
-        return "";
+        return DateHelper.getSmartDate(date);
     }
 
     public String getInspectionTypeString() {
 
         switch (inspectionType) {
             case ROUTINE:
-                return Resources.getSystem().getString(R.string.Inspection_inspection_type_routine);
+                return App.resources().getString(R.string.Inspection_inspection_type_routine);
             case FOLLOW_UP:
-                return Resources.getSystem()
-                        .getString(R.string.Inspection_inspection_type_follow_up);
+                return App.resources().getString(R.string.Inspection_inspection_type_follow_up);
             default:
                 String errorMessage = String.format("Invalid inspection type [%s]",
                                                     inspectionType.toString());
@@ -91,11 +94,11 @@ public class Inspection {
     public String getHazardRatingString() {
         switch (hazardRating) {
             case LOW:
-                return Resources.getSystem().getString(R.string.Inspection_hazard_rating_low);
+                return App.resources().getString(R.string.Inspection_hazard_rating_low);
             case MODERATE:
-                return Resources.getSystem().getString(R.string.Inspection_hazard_rating_moderate);
+                return App.resources().getString(R.string.Inspection_hazard_rating_moderate);
             case HIGH:
-                return Resources.getSystem().getString(R.string.Inspection_hazard_rating_high);
+                return App.resources().getString(R.string.Inspection_hazard_rating_high);
             default:
                 String errorMessage = String.format("Invalid inspection type [%s]",
                         inspectionType.toString());

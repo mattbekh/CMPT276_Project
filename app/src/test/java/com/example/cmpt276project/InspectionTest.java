@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.GregorianCalendar;
 
 import static org.junit.Assert.*;
 
@@ -20,6 +20,7 @@ public class InspectionTest {
     private static String INVALID_HAZARD_RATING = "Loooow";
     private static String VIOLATION_DESCRIPTION = "They violated stuff";
     private static int VIOLATION_ID = 101;
+    private static long MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
 
     private Inspection sut;
     private Inspection earlierInspection;
@@ -32,15 +33,15 @@ public class InspectionTest {
         sut = new Inspection(TRACKING_NUMBER,
                              VALID_INSPECTION_TYPE,
                              VALID_HAZARD_RATING,
-                             new Date());
+                             new GregorianCalendar());
         earlierInspection = new Inspection(TRACKING_NUMBER,
                                            VALID_INSPECTION_TYPE,
                                            VALID_HAZARD_RATING,
-                                           new Date(100000));
+                                           new GregorianCalendar(2020, 1,1));
         laterInspection = new Inspection(TRACKING_NUMBER,
                                          VALID_INSPECTION_TYPE,
                                          VALID_HAZARD_RATING,
-                                         new Date(200000));
+                                         new GregorianCalendar(2020,2,1));
 
         criticalViolation = new Violation(VIOLATION_ID, true, false, VIOLATION_DESCRIPTION);
         nonCriticalViolation = new Violation(VIOLATION_ID, false, false, VIOLATION_DESCRIPTION);
@@ -108,8 +109,8 @@ public class InspectionTest {
                                                                         String hazardRating) {
         Exception exception = null;
         try {
-            sut = new Inspection(TRACKING_NUMBER, inspectionType, hazardRating, new Date());
-        } catch (Exception e){
+            sut = new Inspection(TRACKING_NUMBER, inspectionType, hazardRating, new GregorianCalendar());
+        } catch (Exception e) {
             exception = e;
         } finally {
             assertNotNull(exception);
