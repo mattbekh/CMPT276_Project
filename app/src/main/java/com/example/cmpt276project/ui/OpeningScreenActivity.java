@@ -26,7 +26,7 @@ public class OpeningScreenActivity extends AppCompatActivity {
 
             }
         };
-        handler.postDelayed(r,4000);
+        handler.postDelayed(r,2800);
     }
 
     private void launchMainMenu() {

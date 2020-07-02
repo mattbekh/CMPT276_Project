@@ -46,30 +46,31 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         final int pos = position;
-
+        // Get Restaurant
+        Restaurant restaurant = restaurants.get(pos);
         // Store Restaurant name
-        holder.restaurantName_tv.setText(restaurants.get(pos).getName());
+        holder.restaurantName_tv.setText(restaurant.getName());
 
-        // Store most recent inspections # of issues
-        Inspection topInspection = restaurants.get(pos).getTopInspection();
-        int numCriticalIssues = topInspection.getNumCriticalIssues();
-        int numNonCriticalIssues = topInspection.getNumNonCriticalIssues();
-        int numIssues = numCriticalIssues + numNonCriticalIssues;
-        holder.numberOfIssues_tv.setText("" + numIssues);
-
-        // Store most recent inspections date
-        holder.inspectionDate_tv.setText("" +topInspection.getDate());
-
-        // Modify hazard level icon
-        if(numCriticalIssues>2){
-            holder.hazardLevel.setImageResource(R.drawable.unhappy_face_icon);
-        }
-        else if(numCriticalIssues==0 && numNonCriticalIssues==0){
-            holder.hazardLevel.setImageResource(R.drawable.happy_face_icon);
-        }
-        else{
-            holder.hazardLevel.setImageResource(R.drawable.straight_face_icon);
-        }
+//        // Store most recent inspections # of issues
+//        Inspection topInspection = restaurants.get(pos).getTopInspection();
+//        int numCriticalIssues = topInspection.getNumCriticalIssues();
+//        int numNonCriticalIssues = topInspection.getNumNonCriticalIssues();
+//        int numIssues = numCriticalIssues + numNonCriticalIssues;
+//        holder.numberOfIssues_tv.setText("" + numIssues);
+//
+//        // Store most recent inspections date
+//        holder.inspectionDate_tv.setText("" +topInspection.getDate());
+//
+//        // Modify hazard level icon
+//        if(numCriticalIssues>2){
+//            holder.hazardLevel.setImageResource(R.drawable.unhappy_face_icon);
+//        }
+//        else if(numCriticalIssues==0 && numNonCriticalIssues==0){
+//            holder.hazardLevel.setImageResource(R.drawable.happy_face_icon);
+//        }
+//        else{
+//            holder.hazardLevel.setImageResource(R.drawable.straight_face_icon);
+//        }
 
         holder.restaurantListLayout.setOnClickListener(new View.OnClickListener() {
             @Override

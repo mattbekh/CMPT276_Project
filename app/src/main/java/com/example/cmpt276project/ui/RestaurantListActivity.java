@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 
 import com.example.cmpt276project.R;
+import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
 
 public class RestaurantListActivity extends AppCompatActivity {
@@ -20,6 +21,12 @@ public class RestaurantListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_restaurant_list);
 
         restaurants = RestaurantManager.getInstance();
+
+        restaurants.addRestaurant(new Restaurant("SDFO-8HKP7E","Pattullo A&W","12808 King George Blvd","Surrey",49.20610961,-122.8668064));
+        restaurants.addRestaurant(new Restaurant("SDFO-8HKP7E","Matts A&W","12808 King George Blvd","Surrey",49.20610961,-122.8668064));
+        restaurants.addRestaurant(new Restaurant("SDFO-8HKP7E","Ronnys A&W","12808 King George Blvd","Surrey",49.20610961,-122.8668064));
+        restaurants.addRestaurant(new Restaurant("SDFO-8HKP7E","Grants A&W","12808 King George Blvd","Surrey",49.20610961,-122.8668064));
+        restaurants.addRestaurant(new Restaurant("SDFO-8HKP7E","Sevenas A&W","12808 King George Blvd","Surrey",49.20610961,-122.8668064));
 
         populateRecyclerView();
 

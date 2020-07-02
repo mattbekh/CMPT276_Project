@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.example.cmpt276project.R;
+import com.example.cmpt276project.model.Restaurant;
 
 public class RestaurantActivity extends AppCompatActivity {
 
@@ -24,8 +25,9 @@ public class RestaurantActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        if(getIntent().hasExtra("restaurantName")){
-            name = getIntent().getStringExtra("restaurantName");
+        if(getIntent().hasExtra("restaurant")){
+            Restaurant restaurant = (Restaurant) getIntent().getSerializableExtra("restaurant");
+            name = restaurant.getName();
         }
     }
 
