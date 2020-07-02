@@ -7,18 +7,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 
 import com.example.cmpt276project.R;
-import com.example.cmpt276project.ui.RestaurantListAdapter;
+import com.example.cmpt276project.model.RestaurantManager;
 
 public class RestaurantListActivity extends AppCompatActivity {
 
     private RecyclerView restaurantList;
-
-    private String restaurantNames[];
+    RestaurantManager restaurants;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant_list);
+
+        restaurants = RestaurantManager.getInstance();
 
         populateRecyclerView();
 
@@ -26,11 +27,10 @@ public class RestaurantListActivity extends AppCompatActivity {
     }
 
     private void populateRecyclerView() {
-        restaurantNames = getResources().getStringArray(R.array.restaurant_names);
 
         restaurantList = findViewById(R.id.restaurantList);
 
-        RestaurantListAdapter adapter = new RestaurantListAdapter(this,restaurantNames);
+        RestaurantListAdapter adapter = new RestaurantListAdapter(this,restaurants);
         restaurantList.setAdapter(adapter);
         restaurantList.setLayoutManager(new LinearLayoutManager(this));
     }

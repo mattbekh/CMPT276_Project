@@ -1,12 +1,15 @@
 package com.example.cmpt276project.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 
 /**
  * This class represents a restaurant and all the inspections it has been subject to.
  */
-public class Restaurant {
+
+// implement Serializable to pass object through intent
+public class Restaurant implements Serializable {
 
     private String trackingNumber;
     private String name;
@@ -58,7 +61,9 @@ public class Restaurant {
     public Inspection[] getInspectionList() {
         return (Inspection[]) inspectionList.toArray();
     }
-
+    public Inspection getTopInspection(){
+        return inspectionList.get(0);
+    }
     public void addInspection(Inspection inspection) {
         inspectionList.add(inspection);
     }

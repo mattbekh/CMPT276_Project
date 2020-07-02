@@ -3,12 +3,11 @@ package com.example.cmpt276project.ui;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.cmpt276project.R;
 
-public class RestaurantViewActivity extends AppCompatActivity {
+public class RestaurantActivity extends AppCompatActivity {
 
     TextView restaurantName;
     String name;
