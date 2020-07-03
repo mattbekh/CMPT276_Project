@@ -25,12 +25,10 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
     private Context context;
     private RestaurantManager restaurants;
 
-    // TODO :  need more variables to be passed in
     public RestaurantListAdapter(Context ct, RestaurantManager manager){
 
         context = ct;
         restaurants = manager;
-
 
     }
 
