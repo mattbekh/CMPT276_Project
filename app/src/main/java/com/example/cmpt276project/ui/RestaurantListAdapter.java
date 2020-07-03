@@ -25,7 +25,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
     private Context context;
     private RestaurantManager restaurants;
 
-    // TODO : May need more variables to be passed in
+    // TODO :  need more variables to be passed in
     public RestaurantListAdapter(Context ct, RestaurantManager manager){
 
         context = ct;
@@ -51,35 +51,39 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         // Store Restaurant name
         holder.restaurantName_tv.setText(restaurant.getName());
 
-//        // Store most recent inspections # of issues
-//        Inspection topInspection = restaurants.get(pos).getTopInspection();
-//        int numCriticalIssues = topInspection.getNumCriticalIssues();
-//        int numNonCriticalIssues = topInspection.getNumNonCriticalIssues();
-//        int numIssues = numCriticalIssues + numNonCriticalIssues;
-//        holder.numberOfIssues_tv.setText("" + numIssues);
-//
-//        // Store most recent inspections date
-//        holder.inspectionDate_tv.setText("" +topInspection.getDate());
-//
-//        // Modify hazard level icon
-//        if(numCriticalIssues>2){
-//            holder.hazardLevel.setImageResource(R.drawable.unhappy_face_icon);
-//        }
-//        else if(numCriticalIssues==0 && numNonCriticalIssues==0){
-//            holder.hazardLevel.setImageResource(R.drawable.happy_face_icon);
-//        }
-//        else{
-//            holder.hazardLevel.setImageResource(R.drawable.straight_face_icon);
-//        }
+        // Store most recent inspections # of issues
+        Inspection topInspection = restaurants.get(pos).getTopInspection();
+        int numCriticalIssues = topInspection.getNumCriticalIssues();
+        int numNonCriticalIssues = topInspection.getNumNonCriticalIssues();
+        int numIssues = numCriticalIssues + numNonCriticalIssues;
+        holder.numberOfIssues_tv.setText("# of Issues : " + numIssues);
+
+        // Store most recent inspections date
+        holder.inspectionDate_tv.setText("" +topInspection.getSmartDate());
+
+
+        // Modify hazard level icon
+        switch(topInspection.getHazardRating()){
+
+            case LOW:
+                holder.hazardLevel.setImageResource(R.drawable.happy_face_icon);
+                break;
+            case MODERATE:
+                holder.hazardLevel.setImageResource(R.drawable.straight_face_icon);
+                break;
+            case HIGH:
+                holder.hazardLevel.setImageResource(R.drawable.unhappy_face_icon);
+                break;
+        }
+
 
         holder.restaurantListLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, RestaurantActivity.class);
-                Restaurant restaurant = restaurants.get(pos);
-                // put a serializable object as extra
-                intent.putExtra("restaurant",restaurant);
 
+                // put index of Restaurant as extra
+                intent.putExtra("restaurant",pos);
                 context.startActivity(intent);
             }
         });

@@ -9,7 +9,7 @@ import java.util.Comparator;
  */
 
 // implement Serializable to pass object through intent
-public class Restaurant implements Serializable {
+public class Restaurant {
 
     private String trackingNumber;
     private String name;
@@ -32,6 +32,8 @@ public class Restaurant implements Serializable {
         this.city = city;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.inspectionList = new ArrayList<>();
+
     }
 
     public String getTrackingNumber() {
@@ -61,7 +63,13 @@ public class Restaurant implements Serializable {
     public Inspection[] getInspectionList() {
         return (Inspection[]) inspectionList.toArray();
     }
+
     public Inspection getTopInspection(){
+
+//        if(inspectionList.isEmpty()){
+//            // Check for not empty
+//            // TODO : Default for never had an inspection?
+//        }
         return inspectionList.get(0);
     }
     public void addInspection(Inspection inspection) {

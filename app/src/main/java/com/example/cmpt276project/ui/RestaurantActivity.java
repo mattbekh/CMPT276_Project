@@ -26,8 +26,8 @@ public class RestaurantActivity extends AppCompatActivity {
 
     private void getData() {
         if(getIntent().hasExtra("restaurant")){
-            Restaurant restaurant = (Restaurant) getIntent().getSerializableExtra("restaurant");
-            name = restaurant.getName();
+
+
         }
     }
 
