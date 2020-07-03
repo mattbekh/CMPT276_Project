@@ -69,6 +69,14 @@ public class Restaurant implements Iterable<Inspection> {
         return inspectionList.iterator();
     }
 
+    public Inspection getTopInspection(){
+
+//        if(inspectionList.isEmpty()){
+//            // Check for not empty
+//            // TODO : Default for never had an inspection?
+//        }
+        return inspectionList.get(0);
+    }
     public void addInspection(Inspection inspection) {
         inspectionList.add(inspection);
     }
