@@ -6,12 +6,9 @@ import com.example.cmpt276project.App;
 import com.example.cmpt276project.R;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
-
-import static android.content.res.Resources.getSystem;
 
 /**
  * This class represents an inspection to a restaurant. It contains information regarding to the
