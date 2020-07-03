@@ -6,4 +6,18 @@
     <string name="Inspection_hazard_rating_high">High</string>
     <string name="Inspection_inspection_type_routine">Routine</string>
     <string name="Inspection_inspection_type_follow_up">Follow Up</string>
+    <string name="Inspection_date_january">January</string>
+    <string name="Inspection_date_february">February</string>
+    <string name="Inspection_date_march">March</string>
+    <string name="Inspection_date_april">April</string>
+    <string name="Inspection_date_may">May</string>
+    <string name="Inspection_date_june">June</string>
+    <string name="Inspection_date_july">July</string>
+    <string name="Inspection_date_august">August</string>
+    <string name="Inspection_date_september">September</string>
+    <string name="Inspection_date_october">October</string>
+    <string name="Inspection_date_november">November</string>
+    <string name="Inspection_date_december">December</string>
+    <string name="Inspection_days_ago_text">days ago</string>
+
 </resources>
