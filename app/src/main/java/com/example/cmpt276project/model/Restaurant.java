@@ -1,11 +1,14 @@
 package com.example.cmpt276project.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 
 /**
  * This class represents a restaurant and all the inspections it has been subject to.
  */
+
+// implement Serializable to pass object through intent
 public class Restaurant {
 
     private String trackingNumber;
@@ -29,6 +32,8 @@ public class Restaurant {
         this.city = city;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.inspectionList = new ArrayList<>();
+
     }
 
     public String getTrackingNumber() {
@@ -59,6 +64,14 @@ public class Restaurant {
         return (Inspection[]) inspectionList.toArray();
     }
 
+    public Inspection getTopInspection(){
+
+//        if(inspectionList.isEmpty()){
+//            // Check for not empty
+//            // TODO : Default for never had an inspection?
+//        }
+        return inspectionList.get(0);
+    }
     public void addInspection(Inspection inspection) {
         inspectionList.add(inspection);
     }

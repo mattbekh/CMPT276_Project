@@ -4,16 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.RestaurantListActivity">
+    tools:context=".ui.OpeningScreenActivity">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/toolbar" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/restaurantList"
+    <com.airbnb.lottie.LottieAnimationView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        tools:layout_editor_absoluteX="1dp" />
+        android:layout_height="match_parent"
+        android:id="@+id/introAnimation"
+        app:lottie_loop="true"
+        app:lottie_fileName="knife_fork.json"
+        app:lottie_autoPlay="true"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

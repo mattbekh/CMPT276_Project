@@ -7,6 +7,7 @@ import com.example.cmpt276project.R;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * This class represents an inspection to a restaurant. It contains information regarding to the
@@ -20,7 +21,7 @@ public class Inspection {
 
     private ArrayList<Violation> violationList;
     private String trackingNumber;
-    private Date date;
+    private GregorianCalendar date;
     private InspectionType inspectionType;
     private HazardRating hazardRating;
     private int numCriticalIssues;
@@ -29,7 +30,7 @@ public class Inspection {
     public Inspection(String trackingNumber,
                       String inspectionType,
                       String hazardRating,
-                      Date date)
+                      GregorianCalendar date)
     {
         this.trackingNumber = trackingNumber;
         this.date = date;
@@ -64,7 +65,7 @@ public class Inspection {
         return (Violation[]) violationList.toArray();
     }
 
-    public Date getDate() {
+    public GregorianCalendar getDate() {
         return date;
     }
 
