@@ -1,15 +1,15 @@
 package com.example.cmpt276project.model;
 
-import java.io.Serializable;
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 
 /**
  * This class represents a restaurant and all the inspections it has been subject to.
  */
-
-// implement Serializable to pass object through intent
-public class Restaurant {
+public class Restaurant implements Iterable<Inspection> {
 
     private String trackingNumber;
     private String name;
@@ -33,7 +33,6 @@ public class Restaurant {
         this.latitude = latitude;
         this.longitude = longitude;
         this.inspectionList = new ArrayList<>();
-
     }
 
     public String getTrackingNumber() {
@@ -60,8 +59,14 @@ public class Restaurant {
         return longitude;
     }
 
-    public Inspection[] getInspectionList() {
-        return (Inspection[]) inspectionList.toArray();
+    public Inspection getInspectionByIndex(int i) {
+        return inspectionList.get(i);
+    }
+
+    @NonNull
+    @Override
+    public Iterator<Inspection> iterator() {
+        return inspectionList.iterator();
     }
 
     public Inspection getTopInspection(){

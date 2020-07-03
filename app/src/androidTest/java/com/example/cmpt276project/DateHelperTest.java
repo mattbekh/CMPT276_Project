@@ -54,6 +54,15 @@ public class DateHelperTest {
         assertEquals(correctResult, actualResult);
     }
 
+    @Test
+    public void shouldBeAbleToCreateDateFromString() {
+        String dateString = "20181029";
+        GregorianCalendar date = DateHelper.getDateFromString(dateString);
+        assertEquals(2018, date.get(Calendar.YEAR));
+        assertEquals(10, date.get(Calendar.MONTH));
+        assertEquals(29, date.get(Calendar.DAY_OF_MONTH));
+    }
+
     private GregorianCalendar numDaysAgoCalendar(int numDays) {
         final long MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
         long timeNumDaysAgo = new Date().getTime() - numDays * MILLISECONDS_PER_DAY;
