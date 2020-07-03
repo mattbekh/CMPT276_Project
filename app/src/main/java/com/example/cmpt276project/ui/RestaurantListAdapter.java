@@ -58,9 +58,9 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         holder.numberOfIssues_tv.setText("# of Issues : " + numIssues);
 
         // TODO: fix null object reference bug
-//        // Store most recent inspections date
-//        GregorianCalendar date = topInspection.getDate();
-//        holder.inspectionDate_tv.setText("" +topInspection.getSmartDate());
+        // Store most recent inspections date
+        GregorianCalendar date = topInspection.getDate();
+        holder.inspectionDate_tv.setText("" +topInspection.getSmartDate());
 
 
 
