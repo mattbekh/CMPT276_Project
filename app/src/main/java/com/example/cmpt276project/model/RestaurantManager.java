@@ -1,36 +1,23 @@
 package com.example.cmpt276project.model;
-import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.example.cmpt276project.App;
-import com.example.cmpt276project.R;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 
 public class RestaurantManager implements Iterable<Restaurant>{
-    private List<Restaurant> restaurants = new ArrayList<>();
+    private List<Restaurant> restaurantList = new ArrayList<>();
 
     // Singleton Support
     private static RestaurantManager instance;
     public static RestaurantManager getInstance(){
         if(instance == null){
             instance = new RestaurantManager();
-            readRestaurantData();
+            CsvDataParser.readRestaurantData(instance);
         }
         return instance;
     }
@@ -39,64 +26,23 @@ public class RestaurantManager implements Iterable<Restaurant>{
         // Ensure for singleton
     }
 
-    private static void readRestaurantData() {
-        InputStream is = App.resources().openRawResource(R.raw.restaurants_itr1);
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(is, Charset.forName("UTF-8"))
-        );
-        String line;
-        while(true) {
-            try {
-                // step over headers
-                reader.readLine();
-
-                while ((line = reader.readLine()) != null) {
-                    // split by ','
-                    String[] tokens = line.split(",");
-
-                    // read the data
-                    Restaurant tmpData = new Restaurant(
-                            // String trackingNumber
-                            tokens[0],
-                            // String name
-                            tokens[1],
-                            // String address,
-                            tokens[2],
-                            // String city
-                            tokens[3],
-                            // double latitude
-                            Double.parseDouble(tokens[5]),
-                            // double longitude
-                            Double.parseDouble(tokens[6])
-                            );
-
-                    // put data into instance
-                    instance.addRestaurant(tmpData);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
-
     public int getLength() {
-        return restaurants.size();
+        return restaurantList.size();
     }
     public void addRestaurant(Restaurant restaurant) {
-        restaurants.add(restaurant);
+        restaurantList.add(restaurant);
     }
     public Restaurant get(int position) {
-        return restaurants.get(position);
+        return restaurantList.get(position);
     }
 
     public void removeRestaurant(Restaurant restaurant) {
-        restaurants.remove(restaurant);
+        restaurantList.remove(restaurant);
 
     }
 
     public void sort() {
-        Collections.sort(restaurants, new SortByName());
+        Collections.sort(restaurantList, new SortByName());
     }
 
     static class SortByName implements Comparator<Restaurant> {
@@ -106,8 +52,19 @@ public class RestaurantManager implements Iterable<Restaurant>{
         }
     }
 
+    public Restaurant getRestaurantByTrackingNumber(String trackingNumber) {
+        for (Restaurant restaurant : restaurantList) {
+            if (restaurant.getTrackingNumber().equals(trackingNumber)) {
+                return restaurant;
+            }
+        }
+        String errorMessage = String.format("Tracking number [%s] not found.", trackingNumber);
+        throw new IllegalArgumentException(errorMessage);
+    }
+
+    @NonNull
     @Override
     public Iterator<Restaurant> iterator() {
-        return restaurants.iterator();
+        return restaurantList.iterator();
     }
 }

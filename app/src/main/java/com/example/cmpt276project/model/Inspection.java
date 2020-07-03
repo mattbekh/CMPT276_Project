@@ -2,6 +2,8 @@ package com.example.cmpt276project.model;
 
 import android.content.res.Resources;
 
+import androidx.annotation.NonNull;
+
 import com.example.cmpt276project.App;
 import com.example.cmpt276project.R;
 
@@ -10,6 +12,7 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 
 import static android.content.res.Resources.getSystem;
 
@@ -18,7 +21,7 @@ import static android.content.res.Resources.getSystem;
  * date that the inspection took place, the type of inspection,  a list of violations that were
  * documented, and counts of critical and non-critical issues.
  */
-public class Inspection {
+public class Inspection implements Iterable<Violation> {
 
     public enum InspectionType { ROUTINE, FOLLOW_UP }
     public enum HazardRating { LOW, MODERATE, HIGH }
@@ -71,6 +74,10 @@ public class Inspection {
 
     public GregorianCalendar getDate() {
         return date;
+    }
+
+    public Violation getViolationByIndex(int i) {
+        return violationList.get(i);
     }
 
     public String getSmartDate() {
@@ -139,6 +146,12 @@ public class Inspection {
                 String errorMessage = String.format("Invalid hazardRating [%s]", hazardRating);
                 throw new IllegalArgumentException(errorMessage);
         }
+    }
+
+    @NonNull
+    @Override
+    public Iterator<Violation> iterator() {
+        return violationList.iterator();
     }
 
     public static class DateAscendingComparator implements Comparator<Inspection> {
