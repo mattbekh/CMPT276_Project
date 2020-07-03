@@ -18,6 +18,7 @@ import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
 
 import java.io.Serializable;
+import java.util.GregorianCalendar;
 
 public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAdapter.MyViewHolder> {
 
@@ -56,8 +57,11 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         int numIssues = numCriticalIssues + numNonCriticalIssues;
         holder.numberOfIssues_tv.setText("# of Issues : " + numIssues);
 
+        // TODO: fix null object reference bug
         // Store most recent inspections date
+        GregorianCalendar date = topInspection.getDate();
         holder.inspectionDate_tv.setText("" +topInspection.getSmartDate());
+
 
 
         // Modify hazard level icon
