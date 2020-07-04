@@ -26,6 +26,10 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
     private Context context;
     private RestaurantManager restaurants;
 
+    public static Intent makeIntent(Context context) {
+        return new Intent(context, RestaurantListAdapter.class);
+    }
+
     public RestaurantListAdapter(Context ct, RestaurantManager manager){
 
         context = ct;
@@ -44,45 +48,48 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
     // Sets the name to the card according to the position in the recycler view
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        final int pos = position;
+        final int pos = holder.getAdapterPosition();
         // Get Restaurant
         Restaurant restaurant = restaurants.get(pos);
         // Store Restaurant name
         holder.restaurantName_tv.setText(restaurant.getName());
 
         // Store most recent inspections # of issues
-        Inspection topInspection = restaurants.get(pos).getTopInspection();
-        int numCriticalIssues = topInspection.getNumCriticalIssues();
-        int numNonCriticalIssues = topInspection.getNumNonCriticalIssues();
-        int numIssues = numCriticalIssues + numNonCriticalIssues;
-        holder.numberOfIssues_tv.setText("# of Issues : " + numIssues);
+        Inspection topInspection = restaurant.getInspectionByIndex(0);
+        if(topInspection.getTrackingNumber() == "EMPTY"){
+            holder.inspectionDate_tv.setText("No Inspections Yet");
+            holder.numberOfIssues_tv.setText("");
+            holder.hazardLevel.setVisibility(View.INVISIBLE);
+        }
+        else {
+            int numCriticalIssues = topInspection.getNumCriticalIssues();
+            int numNonCriticalIssues = topInspection.getNumNonCriticalIssues();
+            int numIssues = numCriticalIssues + numNonCriticalIssues;
+            holder.numberOfIssues_tv.setText("# of Issues : " + numIssues);
 
-        // TODO: fix null object reference bug
-        // Store most recent inspections date
-        GregorianCalendar date = topInspection.getDate();
-        holder.inspectionDate_tv.setText("" +topInspection.getSmartDate());
+            // Store most recent inspections date
+            holder.inspectionDate_tv.setText("" + topInspection.getSmartDate());
 
+            // Modify hazard level icon
+            switch (topInspection.getHazardRating()) {
 
-
-        // Modify hazard level icon
-        switch(topInspection.getHazardRating()){
-
-            case LOW:
-                holder.hazardLevel.setImageResource(R.drawable.happy_face_icon);
-                break;
-            case MODERATE:
-                holder.hazardLevel.setImageResource(R.drawable.straight_face_icon);
-                break;
-            case HIGH:
-                holder.hazardLevel.setImageResource(R.drawable.unhappy_face_icon);
-                break;
+                case LOW:
+                    holder.hazardLevel.setImageResource(R.drawable.happy_face_icon);
+                    break;
+                case MODERATE:
+                    holder.hazardLevel.setImageResource(R.drawable.straight_face_icon);
+                    break;
+                case HIGH:
+                    holder.hazardLevel.setImageResource(R.drawable.unhappy_face_icon);
+                    break;
+            }
         }
 
 
         holder.restaurantListLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, RestaurantActivity.class);
+                Intent intent =RestaurantActivity.makeIntent(context);
 
                 // put index of Restaurant as extra
                 intent.putExtra("restaurant",pos);

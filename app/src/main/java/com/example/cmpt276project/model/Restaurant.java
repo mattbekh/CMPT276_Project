@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 
 /**
@@ -60,6 +61,9 @@ public class Restaurant implements Iterable<Inspection> {
     }
 
     public Inspection getInspectionByIndex(int i) {
+        if(inspectionList.size() == 0){
+            return new Inspection("EMPTY","Routine","Low",new GregorianCalendar(2019, 11, 26));
+        }
         return inspectionList.get(i);
     }
 
@@ -69,19 +73,15 @@ public class Restaurant implements Iterable<Inspection> {
         return inspectionList.iterator();
     }
 
-    public Inspection getTopInspection(){
-
-//        if(inspectionList.isEmpty()){
-//            // Check for not empty
-//            // TODO : Default for never had an inspection?
-//        }
-        return inspectionList.get(0);
-    }
     public void addInspection(Inspection inspection) {
         inspectionList.add(inspection);
     }
 
     public void sort(Comparator<Inspection> comparator) {
         inspectionList.sort(comparator);
+    }
+
+    public ArrayList<Inspection> getInspectionList() {
+        return inspectionList;
     }
 }

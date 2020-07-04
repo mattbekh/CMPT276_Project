@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/inspectionListData"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:padding="10dp"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/hazardIcon"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/straight_face_icon"
+        />
+
+    <TextView
+        android:id="@+id/numCritIssues"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Crit Issues"
+        android:layout_toRightOf="@+id/hazardIcon"/>
+
+    <TextView
+        android:id="@+id/numNonCritIssues"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Non Crit Issues"
+        android:layout_alignStart="@+id/numCritIssues"
+        android:layout_below="@id/numCritIssues"/>
+    <TextView
+        android:id="@+id/inspectionDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="italic"
+        android:layout_below="@id/numNonCritIssues"
+        android:layout_alignStart="@id/numNonCritIssues"
+        android:text="Date"/>
+
+</RelativeLayout>
