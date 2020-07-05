@@ -43,6 +43,7 @@ public class RestaurantListActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // Could support more buttons
         switch (item.getItemId()){
             case R.id.backIcon :
                 finish();
@@ -55,13 +56,19 @@ public class RestaurantListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant_list);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setupToolbar();
 
         restaurants = RestaurantManager.getInstance();
         restaurants.sort();
 
         populateRecyclerView();
+    }
+
+    private void setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setTitle(R.string.first_activity_title);
     }
 
     private void populateRecyclerView() {

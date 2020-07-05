@@ -10,15 +10,19 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
 
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 
 public class RestaurantActivity extends AppCompatActivity {
@@ -60,8 +64,8 @@ public class RestaurantActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant_view);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setupToolbar();
+
 
         intent = getIntent();
         manager = RestaurantManager.getInstance();
@@ -70,17 +74,39 @@ public class RestaurantActivity extends AppCompatActivity {
         setData(restaurant);
 
         populateListView();
+        registerClickCallback();
+    }
+
+    private void setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     private void populateListView() {
         inspectionList = findViewById(R.id.inspectionList);
 
-        // For test
-        restaurant.addInspection(new Inspection("Test","Routine","Low",new GregorianCalendar(2019,11,12)));
+        // Sort in descending order
+        Inspection.DateDescendingComparator comparator = new Inspection.DateDescendingComparator();
+        restaurant.sort(comparator);
 
         InspectionListAdapter adapter = new InspectionListAdapter(this,R.layout.inspection_row,restaurant.getInspectionList());
         inspectionList.setAdapter(adapter);
 
+    }
+
+    private void registerClickCallback() {
+        inspectionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Intent intent = InspectionActivity.makeIntent(RestaurantActivity.this);
+
+                // put index of Inspection as extra
+                intent.putExtra("inspection",position);
+                startActivity(intent);
+            }
+        });
     }
 
     private void setData(Restaurant restaurant) {
@@ -89,8 +115,8 @@ public class RestaurantActivity extends AppCompatActivity {
         restaurantGPS = findViewById(R.id.restaurantGPS);
 
         restaurantName.setText(restaurant.getName());
-        restaurantAddress.setText(restaurant.getAddress());
-        restaurantGPS.setText(""+restaurant.getLatitude()+","+restaurant.getLongitude());
+        restaurantAddress.setText(restaurant.getAddress()+", "+restaurant.getCity());
+        restaurantGPS.setText(""+restaurant.getLatitude()+" , "+restaurant.getLongitude());
     }
 
     private void getData(Intent it) {

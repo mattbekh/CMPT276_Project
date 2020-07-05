@@ -6,10 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.Inspection;
@@ -22,7 +24,7 @@ public class InspectionListAdapter extends ArrayAdapter<Inspection> {
 
     private Context ct;
     private int mResource;
-    private Restaurant restaurantSelected;
+
 
     public InspectionListAdapter(@NonNull Context context, int resource, ArrayList<Inspection> inspections) {
         super(context, resource, inspections);
@@ -34,24 +36,36 @@ public class InspectionListAdapter extends ArrayAdapter<Inspection> {
 
     @Override
     public View getView(int position, View convertView,  ViewGroup parent) {
-        int numCritIssues = getItem(position).getNumCriticalIssues();
-        int numNonCritIssues = getItem(position).getNumNonCriticalIssues();
 
-//        Inspection inspection = new Inspection()
-//        Inspection inspection = restaurantSelected.getInspectionByIndex(position);
-//        int numCritIssues = inspection.getNumCriticalIssues();
         LayoutInflater inflater = LayoutInflater.from(ct);
-//        convertView = inflater.inflate(mResource,parent,false);
 
         View view = inflater.inflate(R.layout.inspection_row,null);
 
         TextView numCritIssues_TV = view.findViewById(R.id.numCritIssues);
         TextView numNonCritIssues_TV = view.findViewById(R.id.numNonCritIssues);
         TextView date_TV = view.findViewById(R.id.inspectionDate);
+        ImageView hazardIcon = view.findViewById(R.id.hazardIcon);
 
-        numCritIssues_TV.setText("Number of Critical Issues : "+numCritIssues);
-        numNonCritIssues_TV.setText("Number of Non-Critical Issues : "+numNonCritIssues);
-        date_TV.setText(getItem(position).getSmartDate());
+        numCritIssues_TV.setText(ct.getString(R.string.num_critical_issues) + getItem(position).getNumCriticalIssues());
+        numNonCritIssues_TV.setText(ct.getString(R.string.num_non_critical_issues) + getItem(position).getNumNonCriticalIssues());
+        date_TV.setText(ct.getString(R.string.inspection_date) + getItem(position).getSmartDate());
+
+        // Modify hazard level icon
+        switch (getItem(position).getHazardRating()) {
+
+            case LOW:
+                hazardIcon.setImageResource(R.drawable.happy_face_icon);
+                hazardIcon.setColorFilter(ActivityCompat.getColor(ct, R.color.lowHazard));
+                break;
+            case MODERATE:
+                hazardIcon.setImageResource(R.drawable.straight_face_icon);
+                hazardIcon.setColorFilter(ActivityCompat.getColor(ct, R.color.mediumHazard));
+                break;
+            case HIGH:
+                hazardIcon.setImageResource(R.drawable.unhappy_face_icon);
+                hazardIcon.setColorFilter(ActivityCompat.getColor(ct, R.color.highHazard));
+                break;
+        }
 
         return view;
     }

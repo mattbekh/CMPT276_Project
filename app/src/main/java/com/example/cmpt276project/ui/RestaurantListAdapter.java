@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cmpt276project.R;
@@ -57,7 +58,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         // Store most recent inspections # of issues
         Inspection topInspection = restaurant.getInspectionByIndex(0);
         if(topInspection.getTrackingNumber() == "EMPTY"){
-            holder.inspectionDate_tv.setText("No Inspections Yet");
+            holder.inspectionDate_tv.setText(R.string.no_inspections_found);
             holder.numberOfIssues_tv.setText("");
             holder.hazardLevel.setVisibility(View.INVISIBLE);
         }
@@ -65,7 +66,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
             int numCriticalIssues = topInspection.getNumCriticalIssues();
             int numNonCriticalIssues = topInspection.getNumNonCriticalIssues();
             int numIssues = numCriticalIssues + numNonCriticalIssues;
-            holder.numberOfIssues_tv.setText("# of Issues : " + numIssues);
+            holder.numberOfIssues_tv.setText(context.getString(R.string.num_of_issues) + numIssues);
 
             // Store most recent inspections date
             holder.inspectionDate_tv.setText("" + topInspection.getSmartDate());
@@ -75,12 +76,15 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
 
                 case LOW:
                     holder.hazardLevel.setImageResource(R.drawable.happy_face_icon);
+                    holder.hazardLevel.setColorFilter(ActivityCompat.getColor(context, R.color.lowHazard));
                     break;
                 case MODERATE:
                     holder.hazardLevel.setImageResource(R.drawable.straight_face_icon);
+                    holder.hazardLevel.setColorFilter(ActivityCompat.getColor(context, R.color.mediumHazard));
                     break;
                 case HIGH:
                     holder.hazardLevel.setImageResource(R.drawable.unhappy_face_icon);
+                    holder.hazardLevel.setColorFilter(ActivityCompat.getColor(context, R.color.highHazard));
                     break;
             }
         }
