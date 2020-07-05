@@ -69,6 +69,8 @@ public class Inspection implements Iterable<Violation> {
         return (Violation[]) violationList.toArray();
     }
 
+    public ArrayList<Violation> getViolationsList() { return violationList; }
+
     public GregorianCalendar getDate() {
         return date;
     }
