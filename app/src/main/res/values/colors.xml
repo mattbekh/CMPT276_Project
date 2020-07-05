@@ -5,6 +5,6 @@
     <color name="colorAccent">#FFFFFF</color>
 
     <color name="highHazard">#E31D1D</color>
-    <color name="mediumHazard">#D8B14C</color>
-    <color name="lowHazard">#67D85B</color>
+    <color name="mediumHazard">#FFB800</color>
+    <color name="lowHazard">#2FD11E</color>
 </resources>

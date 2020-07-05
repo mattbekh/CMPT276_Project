@@ -5,10 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -26,6 +29,10 @@ public class RestaurantListActivity extends AppCompatActivity {
     private RecyclerView restaurantList;
     RestaurantManager restaurants;
 
+    public static Intent makeIntent(Context context) {
+        return new Intent(context, RestaurantListActivity.class);
+    }
+
     // Setup toolbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -36,6 +43,7 @@ public class RestaurantListActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // Could support more buttons
         switch (item.getItemId()){
             case R.id.backIcon :
                 finish();
@@ -48,27 +56,19 @@ public class RestaurantListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant_list);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setupToolbar();
 
         restaurants = RestaurantManager.getInstance();
-
-
-        // Adding test data
-        restaurants.addRestaurant(new Restaurant("SDFO-8HKP7E","Pattullo A&W","12808 King George Blvd","Surrey",49.20610961,-122.8668064));
-//        restaurants.addRestaurant(new Restaurant("SDFO-8HKP7E","Matts A&W","12808 King George Blvd","Surrey",49.20610961,-122.8668064));
-//        restaurants.addRestaurant(new Restaurant("SDFO-8HKP7E","Ronnys A&W","12808 King George Blvd","Surrey",49.20610961,-122.8668064));
-//        restaurants.addRestaurant(new Restaurant("SDFO-8HKP7E","Grants A&W","12808 King George Blvd","Surrey",49.20610961,-122.8668064));
-//        restaurants.addRestaurant(new Restaurant("SDFO-8HKP7E","Sevenas A&W","12808 King George Blvd","Surrey",49.20610961,-122.8668064));
-//        restaurants.addRestaurant(new Restaurant("SDFO-8HKP7E","Test A&W","12808 King George Blvd","Surrey",49.20610961,-122.8668064));
-        Restaurant restaurantTest = restaurants.get(0);
-        Inspection inspectionTest = new Inspection("SDF0-8HKP7E","Routine","Moderate",new GregorianCalendar(2019, 11, 26));
-        inspectionTest.addViolation(new Violation(101,false,false,"Plans/construction/alterations not in accordance with the Regulation [s. 3; s. 4]"));
-        restaurantTest.addInspection(inspectionTest);
-        restaurantTest.getTopInspection().addViolation(new Violation(101,false,false,"Plans/construction/alterations not in accordance with the Regulation [s. 3; s. 4]"));
-
+        restaurants.sort();
 
         populateRecyclerView();
+    }
+
+    private void setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setTitle(R.string.first_activity_title);
     }
 
     private void populateRecyclerView() {
