@@ -19,5 +19,11 @@
     <string name="Inspection_date_november">November</string>
     <string name="Inspection_date_december">December</string>
     <string name="Inspection_days_ago_text">days ago</string>
+    <string name="num_of_issues"># of Issues : \</string>
+    <string name="no_inspections_found">No Inspections Yet</string>
+    <string name="num_critical_issues">Number of Critical Issues : \</string>
+    <string name="num_non_critical_issues">Number of Non-Critical Issues : \</string>
+    <string name="first_activity_title">Restaurant Finder</string>
+    <string name="inspection_date">Inspection Date : \</string>
 
 </resources>
