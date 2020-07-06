@@ -98,7 +98,8 @@ public class InspectionActivity extends AppCompatActivity {
             Bundle extras = it.getExtras();
             assert extras != null;
             int pos = extras.getInt("inspection");
-            restaurant = manager.get(pos);
+            int restaurantPos = extras.getInt("restaurant");
+            restaurant = manager.get(restaurantPos);
             inspection = restaurant.getInspectionByIndex(pos);
         }
     }
