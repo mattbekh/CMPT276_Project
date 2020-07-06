@@ -5,9 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
 
 import androidx.core.app.ActivityCompat;
-
-
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,8 +16,6 @@ import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
 import com.example.cmpt276project.model.Violation;
 import androidx.appcompat.widget.Toolbar;
-
-
 
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,6 +31,7 @@ public class InspectionActivity extends AppCompatActivity {
     private Intent intent;
 
     private Restaurant restaurant;
+    private RestaurantManager manager;
 
 
     //Inspection Data
@@ -45,8 +41,7 @@ public class InspectionActivity extends AppCompatActivity {
     private TextView inspectCritical;
     private TextView inspectNonCritical;
     private ImageView hazardIcon;
-
-    private Context context;
+    private TextView inspectText;
 
 
     public static Intent makeIntent(Context context) {
@@ -77,17 +72,18 @@ public class InspectionActivity extends AppCompatActivity {
 
         intent = getIntent();
 
+        manager = RestaurantManager.getInstance();
+
         getData(intent);
         setData(inspection);
 
         populateListView();
-
     }
 
     void populateListView() {
         violationsList = findViewById(R.id.violationList);
 
-        ViolationsListAdapter adapter = new ViolationsListAdapter(this,R.layout.violation_row,inspection.getViolationsList());
+        ViolationsListAdapter adapter = new ViolationsListAdapter(this,R.layout.violation_row,inspection.getViolationsList1());
         violationsList.setAdapter(adapter);
     }
 
@@ -102,6 +98,7 @@ public class InspectionActivity extends AppCompatActivity {
             Bundle extras = it.getExtras();
             assert extras != null;
             int pos = extras.getInt("inspection");
+            restaurant = manager.get(pos);
             inspection = restaurant.getInspectionByIndex(pos);
         }
     }
@@ -113,28 +110,35 @@ public class InspectionActivity extends AppCompatActivity {
         inspectCritical = findViewById(R.id.inspectCritical);
         inspectNonCritical = findViewById(R.id.inspectNonCritical);
         hazardIcon = findViewById(R.id.hazardIcon);
+        inspectText = findViewById(R.id.inspectHazard);
 
         inspectDate.setText(inspection.getSmartDate());
         inspectType.setText(inspection.getInspectionTypeString());
-        inspectCritical.setText(inspection.getNumCriticalIssues());
-        inspectNonCritical.setText(inspection.getNumNonCriticalIssues());
 
-        //add hazard ones
+        //ERROR when trying to grab issues numbers
+        //  inspectNonCritical.setText(inspection.getNumNonCriticalIssues());
+        // inspectCritical.setText(inspection.getNumCriticalIssues());
+        inspectCritical.setText("crit issues");
+        inspectNonCritical.setText("non crit issues");
+
+        inspectText.setText(inspection.getHazardRatingString());
+
         switch (inspection.getHazardRating()) {
+
             case LOW:
-                hazardIcon.setImageResource(R.drawable.unhappy_face_icon);
-                hazardIcon.setColorFilter(ActivityCompat.getColor(context, R.color.lowHazard));
+                hazardIcon.setImageResource(R.drawable.happy_face_icon);
+               // hazardIcon.setColorFilter(ActivityCompat.getColor(ct, R.color.lowHazard));
                 break;
             case MODERATE:
                 hazardIcon.setImageResource(R.drawable.straight_face_icon);
-                hazardIcon.setColorFilter(ActivityCompat.getColor(context, R.color.mediumHazard));
+               // hazardIcon.setColorFilter(ActivityCompat.getColor(ct, R.color.mediumHazard));
                 break;
             case HIGH:
-                hazardIcon.setImageResource(R.drawable.happy_face_icon);
-                hazardIcon.setColorFilter(ActivityCompat.getColor(context, R.color.highHazard));
+                hazardIcon.setImageResource(R.drawable.unhappy_face_icon);
+             //   hazardIcon.setColorFilter(ActivityCompat.getColor(ct, R.color.highHazard));
                 break;
         }
-
     }
+
 
 }

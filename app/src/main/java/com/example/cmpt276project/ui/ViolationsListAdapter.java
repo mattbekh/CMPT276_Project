@@ -8,21 +8,25 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.Violation;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ViolationsListAdapter extends ArrayAdapter<Violation> {
 
-    private LayoutInflater layout;
+    LayoutInflater layout;
     private int res;
     private Context context;
 
-    public ViolationsListAdapter(Context ct,int resource, List<Violation> violations){
+    public ViolationsListAdapter(@NonNull Context ct, int resource, ArrayList<Violation> violations){
         super(ct,resource,violations);
         context = ct;
         res = resource;
@@ -39,15 +43,27 @@ public class ViolationsListAdapter extends ArrayAdapter<Violation> {
 
         //place icomImage setters
 
+        if(getItem(position).getId() > 0 && getItem(position).getId() <= 299){
+            tvIconImage.setImageResource(R.drawable.germ_icon);
+        }
+        else if(getItem(position).getId() > 299 && getItem(position).getId() <= 399){
+            tvIconImage.setImageResource(R.drawable.utensils_icon);
+        }
+        else if(getItem(position).getId() > 399 && getItem(position).getId() <= 499){
+            tvIconImage.setImageResource(R.drawable.rat);
+        }
+
         tvDescription.setText(getItem(position).getDescription());
 
-        if (getItem(position).isCritical() == true) {
+
+        if (Objects.requireNonNull(getItem(position)).isCritical()) {
             tvSeverityImage.setImageResource(R.drawable.unhappy_face_icon);
-            tvSeverityImage.setColorFilter(ActivityCompat.getColor(context,R.color.mediumHazard));
+            tvSeverityImage.setColorFilter(ActivityCompat.getColor(context,R.color.highHazard));
         }
+
         else{
             tvSeverityImage.setImageResource(R.drawable.straight_face_icon);
-            tvSeverityImage.setColorFilter(ActivityCompat.getColor(context,R.color.highHazard));
+            tvSeverityImage.setColorFilter(ActivityCompat.getColor(context,R.color.lowHazard));
         }
 
         return itemView;
