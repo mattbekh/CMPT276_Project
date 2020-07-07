@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.example.cmpt276project.R;
 
+import java.util.StringTokenizer;
+
 public class ViolationFragment extends AppCompatDialogFragment {
 
     @Override
@@ -46,30 +48,39 @@ public class ViolationFragment extends AppCompatDialogFragment {
 
         // Get Data
         Bundle bundle = this.getArguments();
-        String myDate = bundle.getString("date");
+      //  String myDate = bundle.getString("date");
         String myDescription = bundle.getString("description");
         int iconNum = bundle.getInt("icon");
 
         // Set the Data
-        dateTV.setText(getString(R.string.violation_date) + myDate);
+       // dateTV.setText(getString(R.string.violation_date) + myDate);
         violationScripTV.setText(myDescription);
 
         // Set appropriate icons
         switch(iconNum){
-            // Case 0 for "pests"
+            // Case 0 for "Permits"
             case 0:
-                violationIcon.setImageResource(R.drawable.rat);
+                violationIcon.setImageResource(R.drawable.permit_icon);
                 break;
 
-                // Case 1 for "Equipment"
+                // Case 1 for "Food"
             case 1:
+                violationIcon.setImageResource(R.drawable.food);
+                break;
+
+                // Case 2 for "Equipment"
+            case 2:
                 violationIcon.setImageResource(R.drawable.utensils_icon);
                 break;
 
-                // Case 2 for "Hygiene"
-            case 2:
-                violationIcon.setImageResource(R.drawable.germ_icon);
+                //Case 3 for "Pests"
+            case 3:
+                violationIcon.setImageResource(R.drawable.rat);
                 break;
+
+                //Case 4 for "Employees"
+            case 4:
+                violationIcon.setImageResource(R.drawable.employee_icon);
         }
     }
 }
