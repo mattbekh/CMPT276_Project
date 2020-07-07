@@ -2,7 +2,8 @@
 <resources>
     <color name="colorPrimary">#BBECE4</color>
     <color name="colorPrimaryDark">#515151</color>
-    <color name="colorAccent">#FFFFFF</color>
+    <color name="colorAccent">#F44336</color>
+    <color name="colorWhite">#FFFFFF</color>
 
     <color name="highHazard">#E31D1D</color>
     <color name="mediumHazard">#FFB800</color>
