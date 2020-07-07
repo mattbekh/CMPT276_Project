@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 
 
@@ -116,30 +118,31 @@ public class InspectionActivity extends AppCompatActivity {
         inspectDate.setText(inspection.getSmartDate());
         inspectType.setText(inspection.getInspectionTypeString());
 
-        //ERROR when trying to grab issues numbers
-        //  inspectNonCritical.setText(inspection.getNumNonCriticalIssues());
-        // inspectCritical.setText(inspection.getNumCriticalIssues());
-        inspectCritical.setText("crit issues");
-        inspectNonCritical.setText("non crit issues");
+        String criticalIssues = Integer.toString(inspection.getNumCriticalIssues());
+        String nonCriticalIssues = Integer.toString(inspection.getNumNonCriticalIssues());
+
+        inspectCritical.setText("Number of Critical Issues: " + criticalIssues);
+        inspectNonCritical.setText("Number of NonCritical Issues: " + nonCriticalIssues);
 
         inspectText.setText(inspection.getHazardRatingString());
+
+        int orangeColor = Color.parseColor("#FFC229");
 
         switch (inspection.getHazardRating()) {
 
             case LOW:
                 hazardIcon.setImageResource(R.drawable.happy_face_icon);
-               // hazardIcon.setColorFilter(ActivityCompat.getColor(ct, R.color.lowHazard));
+                hazardIcon.setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);
                 break;
             case MODERATE:
                 hazardIcon.setImageResource(R.drawable.straight_face_icon);
-               // hazardIcon.setColorFilter(ActivityCompat.getColor(ct, R.color.mediumHazard));
+                hazardIcon.setColorFilter(orangeColor, PorterDuff.Mode.SRC_ATOP);
                 break;
             case HIGH:
                 hazardIcon.setImageResource(R.drawable.unhappy_face_icon);
-             //   hazardIcon.setColorFilter(ActivityCompat.getColor(ct, R.color.highHazard));
+                hazardIcon.setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
                 break;
         }
     }
-
 
 }
