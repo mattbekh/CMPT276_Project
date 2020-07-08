@@ -65,9 +65,7 @@ public class Inspection implements Iterable<Violation> {
         return numNonCriticalIssues;
     }
 
-    public Violation[] getViolationList() {
-        return (Violation[]) violationList.toArray();
-    }
+    public ArrayList<Violation> getViolationsList1() { return violationList; }
 
     public GregorianCalendar getDate() {
         return date;
@@ -75,6 +73,10 @@ public class Inspection implements Iterable<Violation> {
 
     public Violation getViolationByIndex(int i) {
         return violationList.get(i);
+    }
+
+    public String getFullDate() {
+        return DateHelper.getFullDate(date);
     }
 
     public String getSmartDate() {

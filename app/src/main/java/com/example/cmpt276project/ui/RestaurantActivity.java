@@ -30,6 +30,7 @@ public class RestaurantActivity extends AppCompatActivity {
     private RestaurantManager manager;
     private Intent intent;
     private Restaurant restaurant;
+    private int restaurantPos;
 
     private TextView restaurantName;
     private TextView restaurantAddress;
@@ -101,7 +102,8 @@ public class RestaurantActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Intent intent = InspectionActivity.makeIntent(RestaurantActivity.this);
-
+                // put index of Restaurant as extra
+                intent.putExtra("restaurant",restaurantPos);
                 // put index of Inspection as extra
                 intent.putExtra("inspection",position);
                 startActivity(intent);
@@ -123,8 +125,8 @@ public class RestaurantActivity extends AppCompatActivity {
         if (getIntent().hasExtra("restaurant")) {
             Bundle extras = it.getExtras();
             assert extras != null;
-            int pos = extras.getInt("restaurant");
-            restaurant = manager.get(pos);
+            restaurantPos = extras.getInt("restaurant");
+            restaurant = manager.get(restaurantPos);
         }
     }
 }

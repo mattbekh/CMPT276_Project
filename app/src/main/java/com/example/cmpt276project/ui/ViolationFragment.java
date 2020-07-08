@@ -40,36 +40,21 @@ public class ViolationFragment extends AppCompatDialogFragment {
 
     private void updateFragment(View view) {
         // Find resource IDs
-        TextView dateTV = view.findViewById(R.id.violationDate);
+        TextView sumTV = view.findViewById(R.id.violationSummary);
         TextView violationScripTV = view.findViewById(R.id.violationScrip);
         ImageView violationIcon = view.findViewById(R.id.violationIcon);
 
         // Get Data
         Bundle bundle = this.getArguments();
-        String myDate = bundle.getString("date");
-        String myDescription = bundle.getString("description");
-        int iconNum = bundle.getInt("icon");
 
         // Set the Data
-        dateTV.setText(getString(R.string.violation_date) + myDate);
+        int iconResourceId = bundle.getInt("iconResourceId");
+        violationIcon.setImageResource(iconResourceId);
+
+         String mySum = bundle.getString("date");
+         sumTV.setText(mySum);
+
+        String myDescription = bundle.getString("description");
         violationScripTV.setText(myDescription);
-
-        // Set appropriate icons
-        switch(iconNum){
-            // Case 0 for "pests"
-            case 0:
-                violationIcon.setImageResource(R.drawable.rat);
-                break;
-
-                // Case 1 for "Equipment"
-            case 1:
-                violationIcon.setImageResource(R.drawable.utensils_icon);
-                break;
-
-                // Case 2 for "Hygiene"
-            case 2:
-                violationIcon.setImageResource(R.drawable.germ_icon);
-                break;
-        }
     }
 }

@@ -2,30 +2,34 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent" android:layout_height="match_parent">
-<RelativeLayout
-    android:id="@+id/topbar"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center">
 
-    <ImageView
-        android:id="@+id/violationIcon"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        app:srcCompat="@android:drawable/ic_delete" />
 
-    <TextView
-        android:id="@+id/violationDate"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textSize="25dp"
-        android:layout_marginLeft="40dp"
-        android:layout_toEndOf="@+id/violationIcon"
-        android:layout_centerVertical="true"/>
+        android:gravity="center">
 
-</RelativeLayout>
+        <ImageView
+            android:id="@+id/violationIcon"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            app:srcCompat="@android:drawable/ic_delete" />
 
+        <TextView
+            android:id="@+id/violationSummary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="25dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="15dp"
+            android:layout_toEndOf="@+id/violationIcon"
+            android:textSize="20dp" />
+
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/violationScrip"

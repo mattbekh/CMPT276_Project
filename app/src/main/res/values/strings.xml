@@ -19,6 +19,7 @@
     <string name="Inspection_date_november">November</string>
     <string name="Inspection_date_december">December</string>
     <string name="Inspection_days_ago_text">days ago</string>
+
     <string name="num_of_issues"># of Issues : \</string>
     <string name="no_inspections_found">No Inspections Yet</string>
     <string name="num_critical_issues">Number of Critical Issues : \</string>
@@ -26,5 +27,11 @@
     <string name="first_activity_title">Restaurant Finder</string>
     <string name="inspection_date">Inspection Date : \</string>
     <string name="violation_date">Violation Date : \</string>
+
+    <string name="Violation_permit_text">Permit/operation issue</string>
+    <string name="Violation_employee_text">Employee/operator issue</string>
+    <string name="Violation_equipment_text">Equipment/utensil/workstation issue</string>
+    <string name="Violation_pest_text">Pest issue</string>
+    <string name="Violation_food_text">Food sanitation issue</string>
 
 </resources>
