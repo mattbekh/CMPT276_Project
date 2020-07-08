@@ -59,7 +59,7 @@ public class DateHelperTest {
         String dateString = "20181029";
         GregorianCalendar date = DateHelper.getDateFromString(dateString);
         assertEquals(2018, date.get(Calendar.YEAR));
-        assertEquals(10, date.get(Calendar.MONTH));
+        assertEquals(9, date.get(Calendar.MONTH));
         assertEquals(29, date.get(Calendar.DAY_OF_MONTH));
     }
 

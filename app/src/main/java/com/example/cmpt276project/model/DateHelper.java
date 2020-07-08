@@ -46,11 +46,11 @@ public class DateHelper {
     public static GregorianCalendar getDateFromString(String dateString) {
         if (dateString.length() != 8) {
             String errorMessage = String.format("Invalid date string [%s]", dateString);
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(errorMessage);
         }
 
         int year = Integer.parseInt(dateString.substring(0,4));
-        int month = Integer.parseInt(dateString.substring(4,6));
+        int month = Integer.parseInt(dateString.substring(4,6)) - 1;
         int day = Integer.parseInt(dateString.substring(6,8));
 
         return new GregorianCalendar(year, month, day);
