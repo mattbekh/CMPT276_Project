@@ -12,14 +12,15 @@ import com.example.cmpt276project.model.Violation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * This class tests the functionality of the CsvDataParser class
+ */
 @RunWith(AndroidJUnit4.class)
 public class CsvDataParserTest {
 

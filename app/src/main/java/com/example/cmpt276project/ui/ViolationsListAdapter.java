@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * This is an ArrayAdapter class to display a violationslist in a scrollable listview
+ */
 public class ViolationsListAdapter extends ArrayAdapter<Violation> {
 
     LayoutInflater layout;
@@ -87,6 +90,7 @@ public class ViolationsListAdapter extends ArrayAdapter<Violation> {
         throw new IllegalArgumentException(errorMessage);
     }
 
+    // Class for onClickListener to call and display the ViolationFragment
     private class ViolationOnClickListener implements View.OnClickListener {
 
         private String description;

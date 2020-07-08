@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 import static org.junit.Assert.*;
-
+/**
+ * This class tests the functionality of the Inspection class
+ */
 public class InspectionTest {
 
     private static String TRACKING_NUMBER = "ABC123";

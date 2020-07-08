@@ -20,6 +20,9 @@ import com.example.cmpt276project.model.Restaurant;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class modifies the InspectionList UI of Inspections
+ */
 public class InspectionListAdapter extends ArrayAdapter<Inspection> {
 
     private Context ct;

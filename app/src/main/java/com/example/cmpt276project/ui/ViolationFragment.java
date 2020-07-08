@@ -13,6 +13,9 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.example.cmpt276project.R;
 
+/**
+ * This class creates a message fragment which displays information on a specific violation
+ */
 public class ViolationFragment extends AppCompatDialogFragment {
 
     @Override

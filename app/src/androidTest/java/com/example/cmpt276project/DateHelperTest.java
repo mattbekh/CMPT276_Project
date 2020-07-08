@@ -15,6 +15,9 @@ import java.util.GregorianCalendar;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * This class tests the functionality of the DateHelper class
+ */
 @RunWith(AndroidJUnit4.class)
 public class DateHelperTest {
 

@@ -4,26 +4,19 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
-
 import androidx.appcompat.widget.Toolbar;
-
 import com.example.cmpt276project.R;
-import com.example.cmpt276project.model.Inspection;
-import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
-import com.example.cmpt276project.model.Violation;
 
-import java.util.Date;
-import java.util.GregorianCalendar;
-
+/**
+    This class creates and populates a RecyclerView which holds all restaurants with their details
+ */
 public class RestaurantListActivity extends AppCompatActivity {
 
     private RecyclerView restaurantList;

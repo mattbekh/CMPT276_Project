@@ -30,6 +30,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+/**
+ * Class to create the third activity to display an Inspection with its a violations list
+ */
 public class InspectionActivity extends AppCompatActivity {
 
     private ListView violationsList;

@@ -21,6 +21,11 @@ import com.example.cmpt276project.model.RestaurantManager;
 import java.io.Serializable;
 import java.util.GregorianCalendar;
 
+/**
+ * This class modifies RecyclerView UI of Restaurants and it
+ * sets up onclick listener for each Restaurant which launches an activity specifically
+ * for a single restaurant.
+ */
 public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAdapter.MyViewHolder> {
 
     // Stores an array of restaurant names (Should be pre-ordered)
