@@ -55,7 +55,6 @@ public class ViolationFragment extends AppCompatDialogFragment {
         // Set the Data
        // dateTV.setText(getString(R.string.violation_date) + myDate);
         violationScripTV.setText(myDescription);
-
         // Set appropriate icons
         switch(iconNum){
             // Case 0 for "Permits"
@@ -81,6 +80,7 @@ public class ViolationFragment extends AppCompatDialogFragment {
                 //Case 4 for "Food"
             case 4:
                 violationIcon.setImageResource(R.drawable.violations_food_icon);
+                break;
         }
     }
 }

@@ -51,21 +51,26 @@ public class ViolationsListAdapter extends ArrayAdapter<Violation> {
             case PERMITS:
                 tvIconImage.setImageResource(R.drawable.violations_permit_icon);
                 violationIcon = 0;
+                break;
             case EMPLOYEES:
                 tvIconImage.setImageResource(R.drawable.violations_employee_icon);
                 violationIcon = 1;
+                break;
             case EQUIPMENT:
                 tvIconImage.setImageResource(R.drawable.violations_equipment_icon);
                 violationIcon = 2;
+                break;
             case PESTS:
                 tvIconImage.setImageResource(R.drawable.violations_pest_icon);
                 violationIcon = 3;
+                break;
             case FOOD:
                 tvIconImage.setImageResource(R.drawable.violations_food_icon);
                 violationIcon = 4;
+                break;
         }
 
-        tvDescription.setText(getItem(position).getDescription());
+        tvDescription.setText(getItem(position).getSummary());
 
         if (Objects.requireNonNull(getItem(position)).isCritical()) {
             tvSeverityImage.setImageResource(R.drawable.unhappy_face_icon);
