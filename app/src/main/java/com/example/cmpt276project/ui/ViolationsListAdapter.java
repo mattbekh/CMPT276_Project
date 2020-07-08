@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -30,7 +31,6 @@ public class ViolationsListAdapter extends ArrayAdapter<Violation> {
     LayoutInflater layout;
     private int res;
     private Context context;
-    private int violationIcon = 0;
 
     public ViolationsListAdapter(@NonNull Context ct, int resource, ArrayList<Violation> violations){
         super(ct,resource,violations);
@@ -40,6 +40,8 @@ public class ViolationsListAdapter extends ArrayAdapter<Violation> {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
+        Violation violation = getItem(position);
+
         layout = LayoutInflater.from(context);
         View itemView = layout.inflate(R.layout.violation_row, null);
 
@@ -47,32 +49,9 @@ public class ViolationsListAdapter extends ArrayAdapter<Violation> {
         TextView tvDescription = itemView.findViewById(R.id.descriptionText);
         ImageView tvSeverityImage = itemView.findViewById(R.id.severityImage);
 
-        switch(getItem(position).getCategory()){
-            case PERMITS:
-                tvIconImage.setImageResource(R.drawable.violations_permit_icon);
-                violationIcon = 0;
-                break;
-            case EMPLOYEES:
-                tvIconImage.setImageResource(R.drawable.violations_employee_icon);
-                violationIcon = 1;
-                break;
-            case EQUIPMENT:
-                tvIconImage.setImageResource(R.drawable.violations_equipment_icon);
-                violationIcon = 2;
-                break;
-            case PESTS:
-                tvIconImage.setImageResource(R.drawable.violations_pest_icon);
-                violationIcon = 3;
-                break;
-            case FOOD:
-                tvIconImage.setImageResource(R.drawable.violations_food_icon);
-                violationIcon = 4;
-                break;
-        }
+        tvDescription.setText(violation.getSummary());
 
-        tvDescription.setText(getItem(position).getSummary());
-
-        if (Objects.requireNonNull(getItem(position)).isCritical()) {
+        if (Objects.requireNonNull(violation).isCritical()) {
             tvSeverityImage.setImageResource(R.drawable.unhappy_face_icon);
             tvSeverityImage.setColorFilter(ActivityCompat.getColor(context, R.color.highHazard));
         } else {
@@ -80,26 +59,55 @@ public class ViolationsListAdapter extends ArrayAdapter<Violation> {
             tvSeverityImage.setColorFilter(ActivityCompat.getColor(context, R.color.lowHazard));
         }
 
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentManager manager = ((AppCompatActivity)context).getSupportFragmentManager();
-                Bundle bundle = new Bundle();
+        String description = violation.getDescription();
+        int iconResourceId = getResourceId(violation.getCategory());
 
-                String myDescription = getItem(position).getDescription();
-
-                bundle.putString("description", myDescription );
-                bundle.putInt("icon", violationIcon );
-
-                ViolationFragment dialog = new ViolationFragment();
-                dialog.setArguments(bundle);
-                dialog.show(manager, "ViolationDialog");
-
-            }
-        });
+        tvIconImage.setImageResource(iconResourceId);
+        itemView.setOnClickListener(new ViolationOnClickListener(description, iconResourceId));
 
         return itemView;
+    }
 
+    @DrawableRes
+    private static int getResourceId(Violation.Category category) {
+        switch(category){
+            case PERMITS:
+                return R.drawable.violations_permit_icon;
+            case EMPLOYEES:
+                return R.drawable.violations_employee_icon;
+            case EQUIPMENT:
+                return R.drawable.violations_equipment_icon;
+            case PESTS:
+                return R.drawable.violations_pest_icon;
+            case FOOD:
+                return R.drawable.violations_food_icon;
+        }
+        String errorMessage = String.format("Unhandled category [%s]", category);
+        throw new IllegalArgumentException(errorMessage);
+    }
+
+    private class ViolationOnClickListener implements View.OnClickListener {
+
+        private String description;
+        private int iconResourceId;
+
+        public ViolationOnClickListener(String description, int iconResourceId) {
+            this.description = description;
+            this.iconResourceId = iconResourceId;
+        }
+
+        @Override
+        public void onClick(View v) {
+            FragmentManager manager = ((AppCompatActivity)context).getSupportFragmentManager();
+            Bundle bundle = new Bundle();
+
+            bundle.putString("description", description );
+            bundle.putInt("iconResourceId", iconResourceId );
+
+            ViolationFragment dialog = new ViolationFragment();
+            dialog.setArguments(bundle);
+            dialog.show(manager, "ViolationDialog");
+        }
     }
 
 }
