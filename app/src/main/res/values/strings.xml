@@ -33,5 +33,6 @@
     <string name="Violation_equipment_text">Equipment/utensil/workstation issue</string>
     <string name="Violation_pest_text">Pest issue</string>
     <string name="Violation_food_text">Food sanitation issue</string>
+    <string name="restaurantList_most_recent_inspect">Recent inspection : \</string>
 
 </resources>

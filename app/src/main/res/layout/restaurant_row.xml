@@ -43,19 +43,35 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:layout_width="160dp"
+                android:layout_height="20dp"
+                android:id="@+id/restaurantAdrs"
+                android:layout_marginStart="20dp"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeMaxTextSize="20sp"
+                android:text=""
+                app:layout_constraintTop_toBottomOf="@+id/restaurantName"
+                app:layout_constraintStart_toEndOf="@+id/restaurantIcon"/>
+
+            <TextView
                 android:id="@+id/numIssues"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
+                android:layout_marginTop="5dp"
                 android:text=""
                 android:textSize="18sp"
                 app:layout_constraintStart_toEndOf="@+id/restaurantIcon"
-                app:layout_constraintTop_toBottomOf="@+id/restaurantName" />
+                app:layout_constraintTop_toBottomOf="@+id/restaurantAdrs" />
 
             <TextView
                 android:id="@+id/inspectionDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="180dp"
+                android:layout_height="30dp"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="12sp"
+                android:autoSizeMaxTextSize="20sp"
                 android:layout_marginStart="20dp"
                 android:text=""
                 android:textSize="18sp"

@@ -54,7 +54,8 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         Restaurant restaurant = restaurants.get(pos);
         // Store Restaurant name
         holder.restaurantName_tv.setText(restaurant.getName());
-
+        // Store Restaurant address
+        holder.restaurantAddress_tv.setText(restaurant.getAddress() +", "+restaurant.getCity());
         // Store most recent inspections # of issues
         Inspection topInspection = restaurant.getInspectionByIndex(0);
         if(topInspection.getTrackingNumber() == "EMPTY"){
@@ -69,7 +70,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
             holder.numberOfIssues_tv.setText(context.getString(R.string.num_of_issues) + numIssues);
 
             // Store most recent inspections date
-            holder.inspectionDate_tv.setText("" + topInspection.getSmartDate());
+            holder.inspectionDate_tv.setText(context.getString(R.string.restaurantList_most_recent_inspect) + topInspection.getSmartDate());
 
             // Modify hazard level icon
             switch (topInspection.getHazardRating()) {
@@ -112,6 +113,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView restaurantName_tv;
+        TextView restaurantAddress_tv;
         TextView numberOfIssues_tv;
         TextView inspectionDate_tv;
         ImageView hazardLevel;
@@ -121,6 +123,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             restaurantName_tv = itemView.findViewById(R.id.restaurantName);
+            restaurantAddress_tv = itemView.findViewById(R.id.restaurantAdrs);
             numberOfIssues_tv = itemView.findViewById(R.id.numIssues);
             inspectionDate_tv = itemView.findViewById(R.id.inspectionDate);
             hazardLevel = itemView.findViewById(R.id.hazardIcon);
