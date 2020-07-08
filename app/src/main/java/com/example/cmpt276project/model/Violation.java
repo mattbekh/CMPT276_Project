@@ -1,5 +1,10 @@
 package com.example.cmpt276project.model;
 
+import android.content.res.Resources;
+
+import com.example.cmpt276project.App;
+import com.example.cmpt276project.R;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -48,17 +53,18 @@ public class Violation {
     }
 
     public String getSummary() {
+        Resources res = App.resources();
         switch (category) {
             case PERMITS:
-                return "Permit/operation issue";
+                return res.getString(R.string.Violation_permit_text);
             case EMPLOYEES:
-                return "Employee/operator issue";
+                return res.getString(R.string.Violation_employee_text);
             case EQUIPMENT:
-                return "Equipment/utensil/workstation issue";
+                return res.getString(R.string.Violation_equipment_text);
             case PESTS:
-                return "Pest issue";
+                return res.getString(R.string.Violation_pest_text);
             case FOOD:
-                return "Food sanitation issue";
+                return res.getString(R.string.Violation_food_text);
             default:
                 String errorMessage = String.format("Illegal category [%s]", category.toString());
                 throw new IllegalStateException(errorMessage);

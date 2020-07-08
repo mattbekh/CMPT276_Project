@@ -63,6 +63,15 @@ public class DateHelperTest {
         assertEquals(29, date.get(Calendar.DAY_OF_MONTH));
     }
 
+    @Test
+    public void shouldBeAbleToGetFullDateString() {
+        String dateString = "20181029";
+        GregorianCalendar date = DateHelper.getDateFromString(dateString);
+        String fullDate = DateHelper.getFullDate(date);
+        String expectedFullDate = "October 29, 2018";
+        assertEquals(expectedFullDate, fullDate);
+    }
+
     private GregorianCalendar numDaysAgoCalendar(int numDays) {
         final long MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
         long timeNumDaysAgo = new Date().getTime() - numDays * MILLISECONDS_PER_DAY;
