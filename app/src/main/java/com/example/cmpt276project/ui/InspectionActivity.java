@@ -128,10 +128,10 @@ public class InspectionActivity extends AppCompatActivity {
         String criticalIssues = Integer.toString(inspection.getNumCriticalIssues());
         String nonCriticalIssues = Integer.toString(inspection.getNumNonCriticalIssues());
 
-        inspectCritical.setText("Number of Critical Issues: " + criticalIssues);
-        inspectNonCritical.setText("Number of NonCritical Issues: " + nonCriticalIssues);
+        inspectCritical.setText(getString(R.string.Inspection_num_critical_issues) + criticalIssues);
+        inspectNonCritical.setText(getString(R.string.Inspection_num_non_critical_issues) + nonCriticalIssues);
 
-        inspectText.setText("Hazard Level: " + inspection.getHazardRatingString());
+        inspectText.setText(getString(R.string.Inspection_hazard_level) + inspection.getHazardRatingString());
 
         int orangeColor = Color.parseColor("#FFC229");
 

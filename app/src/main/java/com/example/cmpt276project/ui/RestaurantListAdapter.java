@@ -64,7 +64,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         // Store most recent inspections # of issues
         Inspection topInspection = restaurant.getInspectionByIndex(0);
         if(topInspection.getTrackingNumber() == "EMPTY"){
-            holder.inspectionDate_tv.setText(R.string.no_inspections_found);
+            holder.inspectionDate_tv.setText(R.string.Inspection_no_inspections_found);
             holder.numberOfIssues_tv.setText("");
             holder.hazardLevel.setVisibility(View.INVISIBLE);
         }
@@ -72,7 +72,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
             int numCriticalIssues = topInspection.getNumCriticalIssues();
             int numNonCriticalIssues = topInspection.getNumNonCriticalIssues();
             int numIssues = numCriticalIssues + numNonCriticalIssues;
-            holder.numberOfIssues_tv.setText(context.getString(R.string.num_of_issues) + numIssues);
+            holder.numberOfIssues_tv.setText(context.getString(R.string.Inspection_num_of_issues) + numIssues);
 
             // Store most recent inspections date
             holder.inspectionDate_tv.setText(context.getString(R.string.restaurantList_most_recent_inspect) + topInspection.getSmartDate());

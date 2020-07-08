@@ -61,7 +61,7 @@ public class RestaurantListActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setTitle(R.string.first_activity_title);
+        toolbar.setTitle(R.string.Restaurant_first_activity_title);
     }
 
     private void populateRecyclerView() {
