@@ -25,6 +25,11 @@ import com.example.cmpt276project.model.RestaurantManager;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
 
+/**
+ * This class creates a ListView and populates it with data from a specific restaurant.
+ * This class creates OnClick intent for each Inspection inside the Restaurant which
+ * contains reference to restaurant & inspection
+ */
 public class RestaurantActivity extends AppCompatActivity {
 
     private RestaurantManager manager;

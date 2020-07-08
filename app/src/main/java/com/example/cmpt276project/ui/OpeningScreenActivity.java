@@ -8,6 +8,9 @@ import android.os.Handler;
 
 import com.example.cmpt276project.R;
 
+/**
+ * This class plays a small animation before launching the main app
+ */
 public class OpeningScreenActivity extends AppCompatActivity {
 
 
