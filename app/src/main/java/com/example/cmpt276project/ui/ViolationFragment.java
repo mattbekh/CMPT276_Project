@@ -60,27 +60,27 @@ public class ViolationFragment extends AppCompatDialogFragment {
         switch(iconNum){
             // Case 0 for "Permits"
             case 0:
-                violationIcon.setImageResource(R.drawable.permit_icon);
+                violationIcon.setImageResource(R.drawable.violations_permit_icon);
                 break;
 
-                // Case 1 for "Food"
+                // Case 1 for "Employees"
             case 1:
-                violationIcon.setImageResource(R.drawable.food);
+                violationIcon.setImageResource(R.drawable.violations_employee_icon);
                 break;
 
                 // Case 2 for "Equipment"
             case 2:
-                violationIcon.setImageResource(R.drawable.utensils_icon);
+                violationIcon.setImageResource(R.drawable.violations_equipment_icon);
                 break;
 
                 //Case 3 for "Pests"
             case 3:
-                violationIcon.setImageResource(R.drawable.rat);
+                violationIcon.setImageResource(R.drawable.violations_pest_icon);
                 break;
 
-                //Case 4 for "Employees"
+                //Case 4 for "Food"
             case 4:
-                violationIcon.setImageResource(R.drawable.employee_icon);
+                violationIcon.setImageResource(R.drawable.violations_food_icon);
         }
     }
 }

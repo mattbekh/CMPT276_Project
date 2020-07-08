@@ -30,7 +30,7 @@ public class ViolationsListAdapter extends ArrayAdapter<Violation> {
     LayoutInflater layout;
     private int res;
     private Context context;
-    private Inspection inspection;
+    private int violationIcon = 0;
 
     public ViolationsListAdapter(@NonNull Context ct, int resource, ArrayList<Violation> violations){
         super(ct,resource,violations);
@@ -47,18 +47,25 @@ public class ViolationsListAdapter extends ArrayAdapter<Violation> {
         TextView tvDescription = itemView.findViewById(R.id.descriptionText);
         ImageView tvSeverityImage = itemView.findViewById(R.id.severityImage);
 
-        //Change Icon image Setters
-
-        if (getItem(position).getId() > 0 && getItem(position).getId() <= 299) {
-            tvIconImage.setImageResource(R.drawable.germ_icon);
-        } else if (getItem(position).getId() > 299 && getItem(position).getId() <= 399) {
-            tvIconImage.setImageResource(R.drawable.utensils_icon);
-        } else if (getItem(position).getId() > 399 && getItem(position).getId() <= 499) {
-            tvIconImage.setImageResource(R.drawable.rat);
+        switch(getItem(position).getCategory()){
+            case PERMITS:
+                tvIconImage.setImageResource(R.drawable.violations_permit_icon);
+                violationIcon = 0;
+            case EMPLOYEES:
+                tvIconImage.setImageResource(R.drawable.violations_employee_icon);
+                violationIcon = 1;
+            case EQUIPMENT:
+                tvIconImage.setImageResource(R.drawable.violations_equipment_icon);
+                violationIcon = 2;
+            case PESTS:
+                tvIconImage.setImageResource(R.drawable.violations_pest_icon);
+                violationIcon = 3;
+            case FOOD:
+                tvIconImage.setImageResource(R.drawable.violations_food_icon);
+                violationIcon = 4;
         }
 
         tvDescription.setText(getItem(position).getDescription());
-
 
         if (Objects.requireNonNull(getItem(position)).isCritical()) {
             tvSeverityImage.setImageResource(R.drawable.unhappy_face_icon);
@@ -75,9 +82,6 @@ public class ViolationsListAdapter extends ArrayAdapter<Violation> {
                 Bundle bundle = new Bundle();
 
                 String myDescription = getItem(position).getDescription();
-
-                //getIconNum function needed
-                int violationIcon = 4;
 
                 bundle.putString("description", myDescription );
                 bundle.putInt("icon", violationIcon );

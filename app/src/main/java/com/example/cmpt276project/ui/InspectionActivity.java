@@ -128,7 +128,7 @@ public class InspectionActivity extends AppCompatActivity {
         inspectCritical.setText("Number of Critical Issues: " + criticalIssues);
         inspectNonCritical.setText("Number of NonCritical Issues: " + nonCriticalIssues);
 
-        inspectText.setText(inspection.getHazardRatingString());
+        inspectText.setText("Hazard Level: " + inspection.getHazardRatingString());
 
         int orangeColor = Color.parseColor("#FFC229");
 
