@@ -106,7 +106,7 @@ public class ViolationsListAdapter extends ArrayAdapter<Violation> {
 
             bundle.putString("description", description );
             bundle.putInt("iconResourceId", iconResourceId );
-            bundle.putString("date", summary);
+            bundle.putString("summary", summary);
 
             ViolationFragment dialog = new ViolationFragment();
             dialog.setArguments(bundle);

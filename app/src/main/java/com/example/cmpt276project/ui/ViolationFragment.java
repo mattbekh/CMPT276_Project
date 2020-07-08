@@ -51,7 +51,7 @@ public class ViolationFragment extends AppCompatDialogFragment {
         int iconResourceId = bundle.getInt("iconResourceId");
         violationIcon.setImageResource(iconResourceId);
 
-         String mySum = bundle.getString("date");
+         String mySum = bundle.getString("summary");
          sumTV.setText(mySum);
 
         String myDescription = bundle.getString("description");

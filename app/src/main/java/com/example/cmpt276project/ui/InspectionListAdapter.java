@@ -46,9 +46,9 @@ public class InspectionListAdapter extends ArrayAdapter<Inspection> {
         TextView date_TV = view.findViewById(R.id.inspectionDate);
         ImageView hazardIcon = view.findViewById(R.id.hazardIcon);
 
-        numCritIssues_TV.setText(ct.getString(R.string.num_critical_issues) + getItem(position).getNumCriticalIssues());
-        numNonCritIssues_TV.setText(ct.getString(R.string.num_non_critical_issues) + getItem(position).getNumNonCriticalIssues());
-        date_TV.setText(ct.getString(R.string.inspection_date) + getItem(position).getSmartDate());
+        numCritIssues_TV.setText(ct.getString(R.string.Inspection_num_critical_issues) + getItem(position).getNumCriticalIssues());
+        numNonCritIssues_TV.setText(ct.getString(R.string.Inspection_num_non_critical_issues) + getItem(position).getNumNonCriticalIssues());
+        date_TV.setText(ct.getString(R.string.Inspection_date) + getItem(position).getSmartDate());
 
         // Modify hazard level icon
         switch (getItem(position).getHazardRating()) {
