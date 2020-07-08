@@ -13,8 +13,6 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.example.cmpt276project.R;
 
-import java.util.StringTokenizer;
-
 public class ViolationFragment extends AppCompatDialogFragment {
 
     @Override
@@ -42,7 +40,7 @@ public class ViolationFragment extends AppCompatDialogFragment {
 
     private void updateFragment(View view) {
         // Find resource IDs
-        TextView dateTV = view.findViewById(R.id.violationDate);
+        TextView sumTV = view.findViewById(R.id.violationSummary);
         TextView violationScripTV = view.findViewById(R.id.violationScrip);
         ImageView violationIcon = view.findViewById(R.id.violationIcon);
 
@@ -53,8 +51,8 @@ public class ViolationFragment extends AppCompatDialogFragment {
         int iconResourceId = bundle.getInt("iconResourceId");
         violationIcon.setImageResource(iconResourceId);
 
-        // String myDate = bundle.getString("date");
-        // dateTV.setText(getString(R.string.violation_date) + myDate);
+         String mySum = bundle.getString("date");
+         sumTV.setText(mySum);
 
         String myDescription = bundle.getString("description");
         violationScripTV.setText(myDescription);

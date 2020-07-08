@@ -119,7 +119,7 @@ public class InspectionActivity extends AppCompatActivity {
         hazardIcon = findViewById(R.id.hazardIcon);
         inspectText = findViewById(R.id.inspectHazard);
 
-        inspectDate.setText(inspection.getSmartDate());
+        inspectDate.setText(inspection.getFullDate());
         inspectType.setText(inspection.getInspectionTypeString());
 
         String criticalIssues = Integer.toString(inspection.getNumCriticalIssues());

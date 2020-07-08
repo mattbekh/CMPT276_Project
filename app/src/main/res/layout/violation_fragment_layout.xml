@@ -14,16 +14,20 @@
             android:id="@+id/violationIcon"
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
             app:srcCompat="@android:drawable/ic_delete" />
 
         <TextView
-            android:id="@+id/violationDate"
+            android:id="@+id/violationSummary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_marginTop="25dp"
             android:layout_marginLeft="40dp"
+            android:layout_marginRight="15dp"
             android:layout_toEndOf="@+id/violationIcon"
-            android:textSize="25dp" />
+            android:textSize="20dp" />
 
     </RelativeLayout>
 

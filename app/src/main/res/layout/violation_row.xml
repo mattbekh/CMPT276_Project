@@ -35,12 +35,14 @@
         android:layout_width="290dp"
         android:layout_height="47dp"
         android:layout_alignTop="@+id/hazardIcon"
-        android:layout_marginStart="7dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginLeft="40dp"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="5dp"
         android:layout_toEndOf="@+id/iconImage"
         android:layout_toRightOf="@+id/hazardIcon"
         android:text=""
+        android:textSize="20dp"
         android:textStyle="italic" />
 
 

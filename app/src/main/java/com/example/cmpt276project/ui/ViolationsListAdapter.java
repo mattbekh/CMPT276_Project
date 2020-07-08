@@ -61,9 +61,10 @@ public class ViolationsListAdapter extends ArrayAdapter<Violation> {
 
         String description = violation.getDescription();
         int iconResourceId = getResourceId(violation.getCategory());
+        String summary = violation.getSummary();
 
         tvIconImage.setImageResource(iconResourceId);
-        itemView.setOnClickListener(new ViolationOnClickListener(description, iconResourceId));
+        itemView.setOnClickListener(new ViolationOnClickListener(description, iconResourceId,summary));
 
         return itemView;
     }
@@ -90,10 +91,12 @@ public class ViolationsListAdapter extends ArrayAdapter<Violation> {
 
         private String description;
         private int iconResourceId;
+        private String summary;
 
-        public ViolationOnClickListener(String description, int iconResourceId) {
+        public ViolationOnClickListener(String description, int iconResourceId, String summary) {
             this.description = description;
             this.iconResourceId = iconResourceId;
+            this.summary = summary;
         }
 
         @Override
@@ -103,6 +106,7 @@ public class ViolationsListAdapter extends ArrayAdapter<Violation> {
 
             bundle.putString("description", description );
             bundle.putInt("iconResourceId", iconResourceId );
+            bundle.putString("date", summary);
 
             ViolationFragment dialog = new ViolationFragment();
             dialog.setArguments(bundle);
