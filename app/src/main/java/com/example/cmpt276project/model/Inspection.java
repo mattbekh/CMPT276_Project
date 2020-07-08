@@ -15,7 +15,7 @@ import java.util.Iterator;
 
 /**
  * This class represents an inspection to a restaurant. It contains information regarding to the
- * date that the inspection took place, the type of inspection,  a list of violations that were
+ * date that the inspection took place, the type of inspection, a list of violations that were
  * documented, and counts of critical and non-critical issues.
  */
 public class Inspection implements Iterable<Violation> {

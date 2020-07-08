@@ -10,7 +10,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
- * This class converts the integer values of GregorianCalendar to Strings.
+ * This class helps with the conversion of GregorianCalendar dates to readable Strings, as well as
+ * the construction of a GregorianCalendar date from a String.
  */
 public class DateHelper {
 
