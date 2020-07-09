@@ -5,15 +5,12 @@ import android.content.res.Resources;
 import com.example.cmpt276project.App;
 import com.example.cmpt276project.R;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 /**
  * This class represents an individual violation that can be cited in an inspection of a restaurant
  */
 public class Violation {
 
-    public enum Category {PERMITS, EMPLOYEES, EQUIPMENT, PESTS, FOOD}
+    public enum Category { PERMITS, EMPLOYEES, EQUIPMENT, PESTS, FOOD }
 
     private int id;
     private boolean isCritical;
@@ -24,7 +21,8 @@ public class Violation {
     public Violation(int id,
                      boolean isCritical,
                      boolean isRepeat,
-                     String description) {
+                     String description)
+    {
         this.id = id;
         this.isCritical = isCritical;
         this.isRepeat = isRepeat;

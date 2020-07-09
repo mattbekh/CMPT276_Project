@@ -13,28 +13,25 @@ import com.example.cmpt276project.R;
  */
 public class OpeningScreenActivity extends AppCompatActivity {
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_opening_screen);
 
         // Set up handler for delay of Main Menu
-        Handler handler = new Handler();
         Runnable r = new Runnable() {
             @Override
             public void run() {
-
-                finish();
                 launchMainMenu();
-
+                finish();
             }
         };
-        handler.postDelayed(r,2800);
+
+        Handler handler = new Handler();
+        handler.postDelayed(r,3200);
     }
 
     private void launchMainMenu() {
-        // Launch Main Menu
         Intent intent = new Intent(OpeningScreenActivity.this, RestaurantListActivity.class);
         startActivity(intent);
     }

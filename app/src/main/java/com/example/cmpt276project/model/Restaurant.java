@@ -61,8 +61,13 @@ public class Restaurant implements Iterable<Inspection> {
     }
 
     public Inspection getInspectionByIndex(int i) {
-        if(inspectionList.size() == 0){
-            return new Inspection("EMPTY","Routine","Low",new GregorianCalendar(2019, 11, 26));
+        if(inspectionList.size() == 0) {
+            return new Inspection(
+                "EMPTY",
+                "Routine",
+                "Low",
+                new GregorianCalendar(2019, 11, 26)
+            );
         }
         return inspectionList.get(i);
     }

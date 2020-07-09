@@ -1,7 +1,5 @@
 package com.example.cmpt276project.model;
 
-import android.content.res.Resources;
-
 import androidx.annotation.NonNull;
 
 import com.example.cmpt276project.App;
@@ -9,7 +7,6 @@ import com.example.cmpt276project.R;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 

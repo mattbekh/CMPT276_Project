@@ -20,17 +20,14 @@ public class ViolationFragment extends AppCompatDialogFragment {
 
     @Override
     public Dialog onCreateDialog( Bundle savedInstanceState) {
-        // Load message layout
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.violation_fragment_layout,null);
-
-        // Update message fragment
-        updateFragment(view);
+        initializeFragment(view);
 
         // Create a button listener
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                // No additional functionality
             }
         };
 
@@ -41,23 +38,21 @@ public class ViolationFragment extends AppCompatDialogFragment {
                 .create();
     }
 
-    private void updateFragment(View view) {
+    private void initializeFragment(View view) {
         // Find resource IDs
         TextView sumTV = view.findViewById(R.id.violationSummary);
         TextView violationScripTV = view.findViewById(R.id.violationScrip);
         ImageView violationIcon = view.findViewById(R.id.violationIcon);
 
-        // Get Data
+        // Get data
         Bundle bundle = this.getArguments();
-
-        // Set the Data
         int iconResourceId = bundle.getInt("iconResourceId");
-        violationIcon.setImageResource(iconResourceId);
-
-         String mySum = bundle.getString("summary");
-         sumTV.setText(mySum);
-
         String myDescription = bundle.getString("description");
+        String mySum = bundle.getString("summary");
+
+        // Set data
+        violationIcon.setImageResource(iconResourceId);
         violationScripTV.setText(myDescription);
+        sumTV.setText(mySum);
     }
 }
