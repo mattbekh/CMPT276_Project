@@ -18,9 +18,6 @@ import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
 
-import java.io.Serializable;
-import java.util.GregorianCalendar;
-
 /**
  * This class modifies RecyclerView UI of Restaurants and it
  * sets up onclick listener for each Restaurant which launches an activity specifically
@@ -36,10 +33,10 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         return new Intent(context, RestaurantListAdapter.class);
     }
 
-    public RestaurantListAdapter(Context ct, RestaurantManager manager){
+    public RestaurantListAdapter(Context context, RestaurantManager manager){
 
-        context = ct;
-        restaurants = manager;
+        this.context = context;
+        this.restaurants = manager;
 
     }
 
@@ -58,28 +55,26 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         // Get Restaurant
         Restaurant restaurant = restaurants.get(pos);
         // Store Restaurant name
-        holder.restaurantName_tv.setText(restaurant.getName());
+        holder.restaurantName.setText(restaurant.getName());
         // Store Restaurant address
-        holder.restaurantAddress_tv.setText(restaurant.getAddress() +", "+restaurant.getCity());
+        holder.restaurantAddress.setText(restaurant.getAddress() + ", " + restaurant.getCity());
         // Store most recent inspections # of issues
-        Inspection topInspection = restaurant.getInspectionByIndex(0);
-        if(topInspection.getTrackingNumber() == "EMPTY"){
-            holder.inspectionDate_tv.setText(R.string.Inspection_no_inspections_found);
-            holder.numberOfIssues_tv.setText("");
+        Inspection topInspection= restaurant.getInspectionByIndex(0);
+        if(topInspection.getTrackingNumber().equals("EMPTY")) {
+            holder.inspectionDate.setText(R.string.Inspection_no_inspections_found);
+            holder.numberOfIssues.setText("");
             holder.hazardLevel.setVisibility(View.INVISIBLE);
-        }
-        else {
+        } else {
             int numCriticalIssues = topInspection.getNumCriticalIssues();
             int numNonCriticalIssues = topInspection.getNumNonCriticalIssues();
             int numIssues = numCriticalIssues + numNonCriticalIssues;
-            holder.numberOfIssues_tv.setText(context.getString(R.string.Inspection_num_of_issues) + numIssues);
+            holder.numberOfIssues.setText(context.getString(R.string.Inspection_num_of_issues) + numIssues);
 
             // Store most recent inspections date
-            holder.inspectionDate_tv.setText(context.getString(R.string.restaurantList_most_recent_inspect) + topInspection.getSmartDate());
+            holder.inspectionDate.setText(context.getString(R.string.restaurantList_most_recent_inspect) + topInspection.getSmartDate());
 
             // Modify hazard level icon
             switch (topInspection.getHazardRating()) {
-
                 case LOW:
                     holder.hazardLevel.setImageResource(R.drawable.happy_face_icon);
                     holder.hazardLevel.setColorFilter(ActivityCompat.getColor(context, R.color.lowHazard));
@@ -117,21 +112,21 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView restaurantName_tv;
-        TextView restaurantAddress_tv;
-        TextView numberOfIssues_tv;
-        TextView inspectionDate_tv;
+        TextView restaurantName;
+        TextView restaurantAddress;
+        TextView numberOfIssues;
+        TextView inspectionDate;
         ImageView hazardLevel;
 
         ConstraintLayout restaurantListLayout;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            restaurantName_tv = itemView.findViewById(R.id.restaurantName);
-            restaurantAddress_tv = itemView.findViewById(R.id.restaurantAdrs);
-            numberOfIssues_tv = itemView.findViewById(R.id.numIssues);
-            inspectionDate_tv = itemView.findViewById(R.id.inspectionDate);
-            hazardLevel = itemView.findViewById(R.id.hazardIcon);
+            this.restaurantName = itemView.findViewById(R.id.restaurantName);
+            this.restaurantAddress = itemView.findViewById(R.id.restaurantAdrs);
+            this.numberOfIssues = itemView.findViewById(R.id.numIssues);
+            this.inspectionDate = itemView.findViewById(R.id.inspectionDate);
+            this.hazardLevel = itemView.findViewById(R.id.hazardIcon);
 
             restaurantListLayout = itemView.findViewById(R.id.rowLayout);
         }

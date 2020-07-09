@@ -1,31 +1,24 @@
 package com.example.cmpt276project.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
 
 import androidx.annotation.NonNull;
 
-import androidx.core.app.ActivityCompat;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-
 
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
-import com.example.cmpt276project.model.Violation;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Adapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,21 +28,20 @@ import android.widget.TextView;
  */
 public class InspectionActivity extends AppCompatActivity {
 
-    private ListView violationsList;
     private Intent intent;
 
     private Restaurant restaurant;
     private RestaurantManager manager;
 
-
     //Inspection Data
     private Inspection inspection;
+    private ListView violationsList;
     private TextView inspectDate;
     private TextView inspectType;
     private TextView inspectCritical;
     private TextView inspectNonCritical;
-    private ImageView hazardIcon;
     private TextView inspectText;
+    private ImageView hazardIcon;
 
 
     public static Intent makeIntent(Context context) {
@@ -64,6 +56,7 @@ public class InspectionActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // Switch to allow for future functionality
         switch (item.getItemId()) {
             case R.id.backIcon:
                 finish();
@@ -79,7 +72,6 @@ public class InspectionActivity extends AppCompatActivity {
         setupToolbar();
 
         intent = getIntent();
-
         manager = RestaurantManager.getInstance();
 
         getData(intent);
@@ -90,8 +82,11 @@ public class InspectionActivity extends AppCompatActivity {
 
     void populateListView() {
         violationsList = findViewById(R.id.violationList);
-
-        ViolationsListAdapter adapter = new ViolationsListAdapter(this,R.layout.violation_row,inspection.getViolationsList1());
+        ViolationsListAdapter adapter = new ViolationsListAdapter(
+        this,
+            R.layout.violation_row,
+            inspection.getViolationsList1()
+        );
         violationsList.setAdapter(adapter);
     }
 
@@ -101,20 +96,18 @@ public class InspectionActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
-    private void getData(Intent it) {
+    private void getData(Intent intent) {
         if (getIntent().hasExtra("inspection")) {
-            Bundle extras = it.getExtras();
+            Bundle extras = intent.getExtras();
             assert extras != null;
-            int pos = extras.getInt("inspection");
             int restaurantPos = extras.getInt("restaurant");
+            int inspectionPos = extras.getInt("inspection");
             restaurant = manager.get(restaurantPos);
-            inspection = restaurant.getInspectionByIndex(pos);
-
+            inspection = restaurant.getInspectionByIndex(inspectionPos);
         }
     }
 
     private void setData(Inspection inspection) {
-
         inspectDate = findViewById(R.id.inspectDate);
         inspectType = findViewById(R.id.inspectType);
         inspectCritical = findViewById(R.id.inspectCritical);
@@ -130,13 +123,11 @@ public class InspectionActivity extends AppCompatActivity {
 
         inspectCritical.setText(getString(R.string.Inspection_num_critical_issues) + criticalIssues);
         inspectNonCritical.setText(getString(R.string.Inspection_num_non_critical_issues) + nonCriticalIssues);
-
         inspectText.setText(getString(R.string.Inspection_hazard_level) + inspection.getHazardRatingString());
 
         int orangeColor = Color.parseColor("#FFC229");
 
         switch (inspection.getHazardRating()) {
-
             case LOW:
                 hazardIcon.setImageResource(R.drawable.happy_face_icon);
                 hazardIcon.setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);

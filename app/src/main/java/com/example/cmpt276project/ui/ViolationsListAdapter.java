@@ -8,37 +8,31 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 
 import com.example.cmpt276project.R;
-import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.Violation;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
- * This is an ArrayAdapter class to display a violationslist in a scrollable listview
+ * This is an ArrayAdapter class to display a violations list in a scrollable ListView
  */
 public class ViolationsListAdapter extends ArrayAdapter<Violation> {
 
     LayoutInflater layout;
-    private int res;
     private Context context;
 
-    public ViolationsListAdapter(@NonNull Context ct, int resource, ArrayList<Violation> violations){
-        super(ct,resource,violations);
-        context = ct;
-        res = resource;
+    public ViolationsListAdapter(@NonNull Context context, int resource, ArrayList<Violation> violations){
+        super(context, resource, violations);
+        this.context = context;
     }
 
     @Override
@@ -62,19 +56,19 @@ public class ViolationsListAdapter extends ArrayAdapter<Violation> {
             tvSeverityImage.setColorFilter(ActivityCompat.getColor(context, R.color.lowHazard));
         }
 
-        String description = violation.getDescription();
         int iconResourceId = getResourceId(violation.getCategory());
+        String description = violation.getDescription();
         String summary = violation.getSummary();
 
         tvIconImage.setImageResource(iconResourceId);
-        itemView.setOnClickListener(new ViolationOnClickListener(description, iconResourceId,summary));
+        itemView.setOnClickListener(new ViolationOnClickListener(iconResourceId, description, summary));
 
         return itemView;
     }
 
     @DrawableRes
     private static int getResourceId(Violation.Category category) {
-        switch(category){
+        switch(category) {
             case PERMITS:
                 return R.drawable.violations_permit_icon;
             case EMPLOYEES:
@@ -92,14 +86,13 @@ public class ViolationsListAdapter extends ArrayAdapter<Violation> {
 
     // Class for onClickListener to call and display the ViolationFragment
     private class ViolationOnClickListener implements View.OnClickListener {
-
-        private String description;
         private int iconResourceId;
+        private String description;
         private String summary;
 
-        public ViolationOnClickListener(String description, int iconResourceId, String summary) {
-            this.description = description;
+        public ViolationOnClickListener(int iconResourceId, String description, String summary) {
             this.iconResourceId = iconResourceId;
+            this.description = description;
             this.summary = summary;
         }
 

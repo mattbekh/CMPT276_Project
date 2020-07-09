@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
+
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.RestaurantManager;
 
@@ -36,7 +37,7 @@ public class RestaurantListActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        // Could support more buttons
+        // Switch to allow for future functionality
         switch (item.getItemId()){
             case R.id.backIcon :
                 finish();
@@ -52,7 +53,7 @@ public class RestaurantListActivity extends AppCompatActivity {
         setupToolbar();
 
         restaurants = RestaurantManager.getInstance();
-        restaurants.sort();
+        restaurants.sortByRestaurantName();
 
         populateRecyclerView();
     }
