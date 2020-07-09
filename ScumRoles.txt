@@ -1,0 +1,6 @@
+Iteration 1
+
+Scrum Master: sevenas
+Product Owner: mbekhter
+Repo Manager: rad8
+Team Member: yza363
