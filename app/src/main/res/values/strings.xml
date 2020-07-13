@@ -35,5 +35,6 @@
     <string name="Violation_pest_text">Pest issue</string>
     <string name="Violation_food_text">Food sanitation issue</string>
     <string name="restaurantList_most_recent_inspect">Recent inspection : \</string>
+    <string name="title_activity_maps">Map</string>
 
 </resources>

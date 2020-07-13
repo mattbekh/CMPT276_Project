@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.example.cmpt276project.MapsActivity;
 import com.example.cmpt276project.R;
 
 /**
@@ -32,7 +33,7 @@ public class OpeningScreenActivity extends AppCompatActivity {
     }
 
     private void launchMainMenu() {
-        Intent intent = new Intent(OpeningScreenActivity.this, RestaurantListActivity.class);
+        Intent intent = new Intent(OpeningScreenActivity.this, MapsActivity.class);
         startActivity(intent);
     }
 }
