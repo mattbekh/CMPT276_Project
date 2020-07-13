@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import com.example.cmpt276project.R;
+import com.example.cmpt276project.model.DataHandler;
 
 /**
  * This class plays a small animation before launching the main app
@@ -22,7 +23,10 @@ public class OpeningScreenActivity extends AppCompatActivity {
         Runnable r = new Runnable() {
             @Override
             public void run() {
+                new DataHandler(OpeningScreenActivity.this).execute();
+
                 launchMainMenu();
+
                 finish();
             }
         };
