@@ -1,9 +1,18 @@
 package com.example.cmpt276project.model;
 
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,30 +26,80 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import static android.content.Context.DOWNLOAD_SERVICE;
 import static java.lang.Integer.parseInt;
 
-public class DataHandler extends AsyncTask<URL, Void, Boolean> {
+public class DataHandler {
+
+    private static String RESTAURANTS_URL = "http://data.surrey.ca/api/3/action/package_show?id=restaurants";
+    private static String INSPECTIONS_URL = "http://data.surrey.ca/api/3/action/package_show?id=fraser-health-restaurant-inspection-reports";
+
+    private static String RESTAURANTS_CSV_URL = "https://data.surrey.ca/dataset/3c8cb648-0e80-4659-9078-ef4917b90ffb/resource/0e5d04a2-be9b-40fe-8de2-e88362ea916b/download/restaurants.csv";
+    private static String INSPECTIONS_CSV_URL = "https://data.surrey.ca/dataset/948e994d-74f5-41a2-b3cb-33fa6a98aa96/resource/30b38b66-649f-4507-a632-d5f6f5fe87f1/download/fraserhealthrestaurantinspectionreports.csv";
+
+    private long downloadId;
 
     private Context mContext;
 
-    private int year;
-    private int month;
-    private int day;
-
     public DataHandler(Context context){
         mContext = context;
+
+        // Something like this needs to go inside UI to display status
+
+//        IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+//        mContext.registerReceiver(new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                long broadcastDownloadID = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID,-1);
+//
+//                if(broadcastDownloadID == downloadId) {
+//                    if(getDownloadStatus() == DownloadManager.STATUS_SUCCESSFUL) {
+//                        Toast.makeText(mContext,"Download Complete", Toast.LENGTH_SHORT).show();
+//                    }
+//                    else {
+//                        Toast.makeText(mContext,"Download Failed",Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//            }
+//        }, filter);
     }
 
-    @Override
-    protected Boolean doInBackground(URL... voids) {
-        if(updateNeeded()){
-            downloadCSVData("restaurant_data");
+    private int getDownloadStatus() {
+        DownloadManager.Query query = new DownloadManager.Query();
+        query.setFilterById(downloadId);
+
+        DownloadManager downloadManager = (DownloadManager) mContext.getSystemService(DOWNLOAD_SERVICE);
+        Cursor cursor = downloadManager.query(query);
+
+        if(cursor.moveToFirst()){
+            int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
+            int status = cursor.getInt(columnIndex);
+
+            return status;
         }
-        return updateNeeded();
+
+        return DownloadManager.ERROR_UNKNOWN;
     }
 
-    private void downloadCSVData(String fileName) {
 
+    public void downloadCSVData(String url, String fileName) {
+
+        Uri uri = Uri.parse(url);
+
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        request.setTitle("Downloading Data");
+
+        request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS,fileName);
+
+        DownloadManager downloadManager = (DownloadManager) mContext.getSystemService(DOWNLOAD_SERVICE);
+        downloadId = downloadManager.enqueue(request);
+
+        Toast.makeText(mContext,"Download Started",Toast.LENGTH_SHORT).show();
+    }
+
+    public void cancelDownload(){
+        DownloadManager downloadManager = (DownloadManager) mContext.getSystemService(DOWNLOAD_SERVICE);
+        downloadManager.remove(downloadId);
     }
 
     /**
@@ -48,16 +107,18 @@ public class DataHandler extends AsyncTask<URL, Void, Boolean> {
      * returns True if Update is needed
       */
 
-    private Boolean updateNeeded() {
+    private Boolean updateNeeded(String url) {
 
-        if(getModifiedDate()!=null){
-            if(getModDateSharedPrefs().equals("None")){
-                storeModDateSharedPrefs(getModifiedDate());
+        if(getModifiedDate(url)!= null){
+            if(getModDateSharedPrefs(url).equals("None")){
+
+                storeModDateSharedPrefs(getModifiedDate(url),url);
                 return true;
+
             }
             else{
-                if(convertToDate(getModDateSharedPrefs()).compareTo(convertToDate(getModifiedDate()))<0){
-                    storeModDateSharedPrefs(getModifiedDate());
+                if(convertToDate(getModDateSharedPrefs(url)).compareTo(convertToDate(getModifiedDate(url)))<0){
+                    storeModDateSharedPrefs(getModifiedDate(url),url);
                     return true;
                 }
                 else{
@@ -69,26 +130,26 @@ public class DataHandler extends AsyncTask<URL, Void, Boolean> {
         return false;
     }
 
-    private void storeModDateSharedPrefs(String date) {
+    private void storeModDateSharedPrefs(String date, String url) {
         SharedPreferences prefs = mContext.getSharedPreferences("AppData",Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
 
-        editor.putString("ModificationDate",date);
+        editor.putString(url,date);
         editor.apply();
     }
 
-    private String getModDateSharedPrefs() {
+    private String getModDateSharedPrefs(String url) {
         SharedPreferences prefs = mContext.getSharedPreferences("AppData",Context.MODE_PRIVATE);
 
-        return prefs.getString("ModificationDate","None");
+        return prefs.getString(url,"None");
     }
 
-    private String getModifiedDate() {
+    private String getModifiedDate(String url) {
 
         URL mUrl = null;
         String[] content;
         try {
-            mUrl = new URL("https://data.surrey.ca/api/3/action/package_show?id=restaurants");
+            mUrl = new URL(url);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -118,14 +179,11 @@ public class DataHandler extends AsyncTask<URL, Void, Boolean> {
     }
 
     private GregorianCalendar convertToDate(String numberOnly) {
-        year = parseInt(numberOnly.substring(0,4));
-        month = parseInt(numberOnly.substring(4,6));
-        day = parseInt(numberOnly.substring(6,8));
+        int year = parseInt(numberOnly.substring(0, 4));
+        int month = parseInt(numberOnly.substring(4, 6));
+        int day = parseInt(numberOnly.substring(6, 8));
         return new GregorianCalendar(year, month, day);
     }
 
-    @Override
-    protected void onPostExecute(Boolean update) {
-    }
 }
 
