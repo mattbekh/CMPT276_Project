@@ -31,37 +31,12 @@ import static java.lang.Integer.parseInt;
 
 public class DataHandler {
 
-    private static String RESTAURANTS_URL = "http://data.surrey.ca/api/3/action/package_show?id=restaurants";
-    private static String INSPECTIONS_URL = "http://data.surrey.ca/api/3/action/package_show?id=fraser-health-restaurant-inspection-reports";
-
-    private static String RESTAURANTS_CSV_URL = "https://data.surrey.ca/dataset/3c8cb648-0e80-4659-9078-ef4917b90ffb/resource/0e5d04a2-be9b-40fe-8de2-e88362ea916b/download/restaurants.csv";
-    private static String INSPECTIONS_CSV_URL = "https://data.surrey.ca/dataset/948e994d-74f5-41a2-b3cb-33fa6a98aa96/resource/30b38b66-649f-4507-a632-d5f6f5fe87f1/download/fraserhealthrestaurantinspectionreports.csv";
-
     private long downloadId;
 
     private Context mContext;
 
     public DataHandler(Context context){
         mContext = context;
-
-        // Something like this needs to go inside UI to display status
-
-//        IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-//        mContext.registerReceiver(new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                long broadcastDownloadID = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID,-1);
-//
-//                if(broadcastDownloadID == downloadId) {
-//                    if(getDownloadStatus() == DownloadManager.STATUS_SUCCESSFUL) {
-//                        Toast.makeText(mContext,"Download Complete", Toast.LENGTH_SHORT).show();
-//                    }
-//                    else {
-//                        Toast.makeText(mContext,"Download Failed",Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//            }
-//        }, filter);
     }
 
     private int getDownloadStatus() {
@@ -87,14 +62,23 @@ public class DataHandler {
         Uri uri = Uri.parse(url);
 
         DownloadManager.Request request = new DownloadManager.Request(uri);
-        request.setTitle("Downloading Data");
 
-        request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS,fileName);
+        //Restrict the types of networks over which this download may proceed.
+        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
+        //Set whether this download may proceed over a roaming connection.
+        request.setAllowedOverRoaming(false);
+        //Set the title of this download, to be displayed in notifications (if enabled).
+        request.setTitle("Downloading");
+        //Set a description of this download, to be displayed in notifications (if enabled)
+        request.setDescription("Downloading File");
+        request.allowScanningByMediaScanner();
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        //Set the local destination for the downloaded file to a path within the application's external files directory
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
 
         DownloadManager downloadManager = (DownloadManager) mContext.getSystemService(DOWNLOAD_SERVICE);
         downloadId = downloadManager.enqueue(request);
 
-        Toast.makeText(mContext,"Download Started",Toast.LENGTH_SHORT).show();
     }
 
     public void cancelDownload(){
@@ -107,7 +91,7 @@ public class DataHandler {
      * returns True if Update is needed
       */
 
-    private Boolean updateNeeded(String url) {
+    public Boolean updateNeeded(String url) {
 
         if(getModifiedDate(url)!= null){
             if(getModDateSharedPrefs(url).equals("None")){
@@ -131,15 +115,24 @@ public class DataHandler {
     }
 
     private void storeModDateSharedPrefs(String date, String url) {
-        SharedPreferences prefs = mContext.getSharedPreferences("AppData",Context.MODE_PRIVATE);
+        SharedPreferences prefs = mContext.getSharedPreferences("CSVData",Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
 
         editor.putString(url,date);
         editor.apply();
     }
 
-    private String getModDateSharedPrefs(String url) {
+    public void clearSharedPrefs(){
         SharedPreferences prefs = mContext.getSharedPreferences("AppData",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        editor.clear();
+        editor.apply();
+        Toast.makeText(mContext,"Shared prefs cleared",Toast.LENGTH_SHORT).show();
+    }
+
+    private String getModDateSharedPrefs(String url) {
+        SharedPreferences prefs = mContext.getSharedPreferences("CSVData",Context.MODE_PRIVATE);
 
         return prefs.getString(url,"None");
     }
@@ -185,5 +178,8 @@ public class DataHandler {
         return new GregorianCalendar(year, month, day);
     }
 
+    public long getDownloadId(){
+        return downloadId;
+    }
 }
 
