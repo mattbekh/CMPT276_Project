@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -108,22 +109,20 @@ public class DataHandler {
       */
 
     private Boolean updateNeeded(String url) {
-
-        if(getModifiedDate(url)!= null){
-            if(getModDateSharedPrefs(url).equals("None")){
-
-                storeModDateSharedPrefs(getModifiedDate(url),url);
+        String fetchedDateString = getModifiedDate(url);
+        if (fetchedDateString != null) {
+            String storedDateString = getModDateSharedPrefs(url);
+            if (storedDateString.equals("None")){
+                storeModDateSharedPrefs(fetchedDateString, url);
                 return true;
-
             }
-            else{
-                if(convertToDate(getModDateSharedPrefs(url)).compareTo(convertToDate(getModifiedDate(url)))<0){
-                    storeModDateSharedPrefs(getModifiedDate(url),url);
-                    return true;
-                }
-                else{
-                    //do nothing
-                }
+
+            GregorianCalendar storedDate = DateHelper.getDateFromString(storedDateString);
+            GregorianCalendar fetchedDate = DateHelper.getDateFromString(fetchedDateString);
+            boolean isFetchedDateMoreRecent = storedDate.compareTo(fetchedDate) < 0;
+            if (isFetchedDateMoreRecent) {
+                storeModDateSharedPrefs(fetchedDateString, url);
+                return true;
             }
         }
 
@@ -176,13 +175,6 @@ public class DataHandler {
         }
 
         return null;
-    }
-
-    private GregorianCalendar convertToDate(String numberOnly) {
-        int year = parseInt(numberOnly.substring(0, 4));
-        int month = parseInt(numberOnly.substring(4, 6));
-        int day = parseInt(numberOnly.substring(6, 8));
-        return new GregorianCalendar(year, month, day);
     }
 
 }
