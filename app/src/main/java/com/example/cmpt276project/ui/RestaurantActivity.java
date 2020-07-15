@@ -20,6 +20,8 @@ import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
 
+import java.util.Objects;
+
 /**
  * This class creates a ListView and populates it with data from a specific restaurant.
  * This class creates OnClick intent for each Inspection inside the Restaurant which
@@ -54,7 +56,7 @@ public class RestaurantActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // Switch to allow for future functionality
         switch (item.getItemId()) {
-            case R.id.backIcon :
+            case R.id.ToolbarMenu_back:
                 finish();
                 return true;
         }
@@ -78,7 +80,7 @@ public class RestaurantActivity extends AppCompatActivity {
     private void setupToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
     }
 
     private void loadData() {

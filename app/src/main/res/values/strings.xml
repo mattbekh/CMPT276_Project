@@ -35,6 +35,10 @@
     <string name="Violation_pest_text">Pest issue</string>
     <string name="Violation_food_text">Food sanitation issue</string>
     <string name="restaurantList_most_recent_inspect">Recent inspection : \</string>
-    <string name="title_activity_maps">Map</string>
+
+    <string name="MapsActivity_title">Map</string>
+    <string name="MapsActivity_toolbar_list_btn_text">List</string>
+
+    <string name="RestaurantListActivity_toolbar_map_btn_text">Map</string>
 
 </resources>
