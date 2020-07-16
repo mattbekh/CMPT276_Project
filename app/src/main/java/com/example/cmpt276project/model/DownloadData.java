@@ -3,8 +3,15 @@ package com.example.cmpt276project.model;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.JsonReader;
 import android.util.Log;
+import android.widget.Toast;
+
+import androidx.fragment.app.FragmentManager;
+
+import com.example.cmpt276project.ui.TestFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,31 +38,25 @@ public class DownloadData {
     private String modifiedDate = "None";
 
 
-    public DownloadData(Context context, String url) {
+    public DownloadData(Context context, Looper looper, FragmentManager manager, String url) {
         inputUrl = url;
         mContext = context;
-        new ModifiedDate().execute();
-//        modifiedDate = modiDate.getModificationDate();
-//        Log.v("DownloadData","The date is " + modifiedDate);
+        GetModificationDate runnable = new GetModificationDate(looper, manager);
+        new Thread(runnable).start();
+
     }
+    public class GetModificationDate implements Runnable {
 
-    public static class ModifiedDate extends AsyncTask<String, Void, Void> {
-        private String modifiedDate = "None";
+        private Looper mLooper;
+        private FragmentManager mManager;
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        GetModificationDate(Looper looper,FragmentManager manager){
+            mLooper = looper;
+            mManager = manager;
         }
 
         @Override
-        protected void onPostExecute(Void s) {
-            // If modified date more recent than stored date then launch fragment to ask user if they want to download
-
-            //convertToDate(modifiedDate);
-        }
-
-        @Override
-        protected Void doInBackground(String... urls) {
+        public void run() {
             try {
                 // Convert URL content to a JSON object to get data
 //                BufferedReader rd = new BufferedReader(responseBodyReader);
@@ -67,6 +68,18 @@ public class DownloadData {
 
                 Log.v("ModiDate","The date is " + modifiedDate);
 
+                Handler threadHandler = new Handler(mLooper);
+                threadHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        TestFragment dialog = new TestFragment();
+                        dialog.show(mManager,"TestDialog");
+                        Toast.makeText(mContext,"Handler working",Toast.LENGTH_LONG).show();
+                    }
+                });
+
+
+
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -76,10 +89,8 @@ public class DownloadData {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return null;
         }
-
-        private static String readUrl(String urlString) throws Exception {
+        private String readUrl(String urlString) throws Exception {
             BufferedReader reader = null;
             try {
                 URL url = new URL(urlString);
@@ -96,23 +107,5 @@ public class DownloadData {
                     reader.close();
             }
         }
-
-        private GregorianCalendar convertToDate(String numberOnly) {
-            int year = parseInt(numberOnly.substring(0, 4));
-            int month = parseInt(numberOnly.substring(4, 6));
-            int day = parseInt(numberOnly.substring(6, 8));
-            return new GregorianCalendar(year, month, day);
-        }
-
-        private String getModificationDate(){
-            return modifiedDate;
-        }
-
-    }
-
-    private String getModDateSharedPrefs(String url) {
-        SharedPreferences prefs = mContext.getSharedPreferences("CSVData",Context.MODE_PRIVATE);
-
-        return prefs.getString(url,"None");
     }
 }
