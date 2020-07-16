@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.util.JsonReader;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -18,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,6 +27,8 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
 import static java.lang.Integer.parseInt;
@@ -91,7 +95,7 @@ public class DataHandler {
      * returns True if Update is needed
       */
 
-    public Boolean updateNeeded(String url) {
+    public Boolean updateNeeded(String url) throws IOException {
 
         if(getModifiedDate(url)!= null){
             if(getModDateSharedPrefs(url).equals("None")){
@@ -137,36 +141,79 @@ public class DataHandler {
         return prefs.getString(url,"None");
     }
 
-    private String getModifiedDate(String url) {
+    private String getModifiedDate(String url){
+//        // Create URL
+//        URL mUrl = null;
+//        try {
+//            mUrl = new URL(url);
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        }
+//
+//        // Create connection
+//        HttpsURLConnection myConnection = (HttpsURLConnection) mUrl.openConnection();
+//
+//        if (myConnection.getResponseCode() == 200) {
+//            Log.v("Connection" ,"Response code Passsed");
+//            // Success
+//            // Further processing here
+//            InputStream responseBody = myConnection.getInputStream();
+//            InputStreamReader responseBodyReader =
+//                    new InputStreamReader(responseBody, "UTF-8");
+//
+//            JsonReader jsonReader = new JsonReader(responseBodyReader);
+//
+//            jsonReader.beginObject(); // Start processing the JSON object
+//            while (jsonReader.hasNext()) { // Loop through all keys
+//                String key = jsonReader.nextName(); // Fetch the next key
+//                if (key.equals("organization_url")) { // Check if desired key
+//                    // Fetch the value as a String
+//                    String value = jsonReader.nextString();
+//
+//                    // Do something with the value
+//                    Toast.makeText(mContext,"Date modified : " + value.replaceAll("[^0-9]", ""), Toast.LENGTH_LONG).show();
+//                    return value.replaceAll("[^0-9]", "");
+////                    break; // Break out of the loop
+//                } else {
+//                    jsonReader.skipValue(); // Skip values of other keys
+//                }
+//            }
+//        } else {
+//            // Error handling code goes here
+//        }
 
-        URL mUrl = null;
-        String[] content;
-        try {
-            mUrl = new URL(url);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        try {
-            assert mUrl != null;
-            URLConnection connection = mUrl.openConnection();
-            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-            String line = br.readLine();
-            String search = "metadata_modified";
 
-            content = line.split(",");
+        // old code
 
-            for(int i=0; i<content.length;i++){
-
-                if(content[i].toLowerCase().contains(search.toLowerCase())){
-                    // Found line
-                    // Modify text to output only integers, which will later be truncated for yyyy,MM,dd
-                    return content[i].replaceAll("[^0-9]", "");
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        URL mUrl = null;
+//        String[] content;
+//        try {
+//            mUrl = new URL(url);
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        }
+//        try {
+//            assert mUrl != null;
+//            URLConnection connection = mUrl.openConnection();
+//            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+//
+//            String line = br.readLine();
+//            String search = "metadata_modified";
+//
+//            content = line.split(",");
+//
+//            for(int i=0; i<content.length;i++){
+//
+//                if(content[i].toLowerCase().contains(search.toLowerCase())){
+//                    // Found line
+//                    // Modify text to output only integers, which will later be truncated for yyyy,MM,dd
+//                    return content[i].replaceAll("[^0-9]", "");
+//                }
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         return null;
     }

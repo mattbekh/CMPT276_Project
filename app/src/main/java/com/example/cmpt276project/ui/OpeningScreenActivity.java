@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.DataHandler;
+import com.example.cmpt276project.model.DownloadData;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
@@ -26,8 +27,8 @@ import java.util.Arrays;
  */
 public class OpeningScreenActivity extends AppCompatActivity {
 
-    private static String RESTAURANTS_URL = "http://data.surrey.ca/api/3/action/package_show?id=restaurants";
-    private static String INSPECTIONS_URL = "http://data.surrey.ca/api/3/action/package_show?id=fraser-health-restaurant-inspection-reports";
+    private static String RESTAURANTS_URL = "https://data.surrey.ca/api/3/action/package_show?id=restaurants";
+    private static String INSPECTIONS_URL = "https://data.surrey.ca/api/3/action/package_show?id=fraser-health-restaurant-inspection-reports";
 
     private static String RESTAURANTS_CSV_URL = "https://data.surrey.ca/dataset/3c8cb648-0e80-4659-9078-ef4917b90ffb/resource/0e5d04a2-be9b-40fe-8de2-e88362ea916b/download/restaurants.csv";
     private static String INSPECTIONS_CSV_URL = "https://data.surrey.ca/dataset/948e994d-74f5-41a2-b3cb-33fa6a98aa96/resource/30b38b66-649f-4507-a632-d5f6f5fe87f1/download/fraserhealthrestaurantinspectionreports.csv";
@@ -41,8 +42,8 @@ public class OpeningScreenActivity extends AppCompatActivity {
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                launchMainMenu();
-                finish();
+//                launchMainMenu();
+//                finish();
             }
         };
 
@@ -51,9 +52,11 @@ public class OpeningScreenActivity extends AppCompatActivity {
     }
 
     private void loadCSVData() {
-        DataHandler dataHandler = new DataHandler(OpeningScreenActivity.this);
-        dataHandler.downloadCSVData(RESTAURANTS_CSV_URL,"restaurant_data.csv");
 
+        DownloadData downloadData = new DownloadData(OpeningScreenActivity.this,RESTAURANTS_URL);
+
+//        DataHandler dataHandler = new DataHandler(OpeningScreenActivity.this);
+//        dataHandler.downloadCSVData(RESTAURANTS_CSV_URL,"restaurant_data.csv");
 //        dataHandler.clearSharedPrefs();
     }
 
