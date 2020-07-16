@@ -23,6 +23,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.Objects;
+
 /**
  * Class to create the third activity to display an Inspection with its a violations list
  */
@@ -58,7 +60,7 @@ public class InspectionActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // Switch to allow for future functionality
         switch (item.getItemId()) {
-            case R.id.backIcon:
+            case R.id.ToolbarMenu_back:
                 finish();
                 return true;
         }
@@ -93,7 +95,7 @@ public class InspectionActivity extends AppCompatActivity {
     private void setupToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
     }
 
     private void getData(Intent intent) {

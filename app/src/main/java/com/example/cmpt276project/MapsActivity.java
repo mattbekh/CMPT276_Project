@@ -1,28 +1,35 @@
 package com.example.cmpt276project;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
+import com.example.cmpt276project.ui.RestaurantListActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+import java.util.Objects;
+
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
 
     private GoogleMap mMap;
@@ -50,6 +57,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        setupToolbar();
+    }
+
+    private void setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
+    }
+
+    // Setup toolbar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.toolbar_menu, menu);
+
+        MenuItem viewRestaurantListItem = (MenuItem) menu.findItem(R.id.ToolbarMenu_switch_context);
+        viewRestaurantListItem.setVisible(true);
+        viewRestaurantListItem.setTitle(R.string.MapsActivity_toolbar_list_btn_text);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.ToolbarMenu_back:
+                finish();
+                return true;
+            case R.id.ToolbarMenu_switch_context:
+                startActivity(RestaurantListActivity.makeIntent(this));
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -166,6 +206,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
         updateLocationUI();
+    }
+
+    public static Intent makeIntent(Context context) {
+        return new Intent(context, MapsActivity.class);
     }
 
 }
