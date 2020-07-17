@@ -8,8 +8,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteConstraintException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,27 +19,19 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.cmpt276project.R;
-import com.example.cmpt276project.model.DataHandler;
-import com.example.cmpt276project.model.DownloadCSVData;
-import com.example.cmpt276project.model.DownloadData;
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvValidationException;
+import com.example.cmpt276project.model.ModificationDate;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
-
-import okhttp3.OkHttpClient;
 
 import static java.lang.Integer.parseInt;
 
@@ -51,16 +43,18 @@ public class OpeningScreenActivity extends AppCompatActivity {
     private static String RESTAURANTS_URL = "https://data.surrey.ca/api/3/action/package_show?id=restaurants";
     private static String INSPECTIONS_URL = "https://data.surrey.ca/api/3/action/package_show?id=fraser-health-restaurant-inspection-reports";
 
-    private static String RESTAURANTS_CSV_URL = "https://data.surrey.ca/dataset/3c8cb648-0e80-4659-9078-ef4917b90ffb/resource/0e5d04a2-be9b-40fe-8de2-e88362ea916b/download/restaurants.csv";
-    private static String INSPECTIONS_CSV_URL = "https://data.surrey.ca/dataset/948e994d-74f5-41a2-b3cb-33fa6a98aa96/resource/30b38b66-649f-4507-a632-d5f6f5fe87f1/download/fraserhealthrestaurantinspectionreports.csv";
-
     private Handler openingHandler = new Handler();
     private ProgressDialog progressBarDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_opening_screen);
-        loadCSVData();
+
+        if(updatedNeeded()){
+            loadCSVData();
+        }
+
         // Set up handler for delay of Main Menu
         Runnable r = new Runnable() {
             @Override
@@ -77,28 +71,71 @@ public class OpeningScreenActivity extends AppCompatActivity {
     private void loadCSVData() {
         Looper looper = getMainLooper();
         FragmentManager manager = getSupportFragmentManager();
-//        DownloadData downloadData = new DownloadData(OpeningScreenActivity.this,looper,manager,RESTAURANTS_URL);
+        ModificationDate modificationDate = new ModificationDate(OpeningScreenActivity.this,looper,manager,RESTAURANTS_URL);
 
+//        progressBarDialog = new ProgressDialog(this);
+//
+//        setupProgressBar();
+//        DownloadCSVData downloadCSVData = new DownloadCSVData(OpeningScreenActivity.this,RESTAURANTS_URL);
+//        new Thread(downloadCSVData).start();
+//        progressBarDialog.show();
+
+//        DataHandler dataHandler = new DataHandler(OpeningScreenActivity.this);
+//        dataHandler.downloadCSVData(RESTAURANTS_CSV_URL,"restaurant_data.csv");
+//        dataHandler.clearSharedPrefs();
+    }
+    private void downloadCSVData() {
         progressBarDialog = new ProgressDialog(this);
 
         setupProgressBar();
         DownloadCSVData downloadCSVData = new DownloadCSVData(OpeningScreenActivity.this,RESTAURANTS_URL);
         new Thread(downloadCSVData).start();
         progressBarDialog.show();
-
-//        DataHandler dataHandler = new DataHandler(OpeningScreenActivity.this);
-//        dataHandler.downloadCSVData(RESTAURANTS_CSV_URL,"restaurant_data.csv");
-//        dataHandler.clearSharedPrefs();
     }
-//    public void displayMessage() {
-//        FragmentManager manager = getSupportFragmentManager();
-//        MessageFragment
-//    }
+
+    private Boolean updatedNeeded(){
+        SharedPreferences prefs = this.getSharedPreferences("CSVData",Context.MODE_PRIVATE);
+
+        String lastUpdateOn = prefs.getString("updatedOn","None");
+        assert lastUpdateOn != null;
+
+        // Never been updated before
+        if(lastUpdateOn.equals("None")){
+            Toast.makeText(this,"Update Needed, Last Update = None",Toast.LENGTH_LONG).show();
+            return true;
+        }
+
+        // Get current program time and date formatted
+        Calendar currentTime = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String formattedDate = df.format(currentTime.getTime());
+        formattedDate = formattedDate.replaceAll("[^0-9]", "");
+
+        // Compare the Years, Months, Days and Hours of the two dates to see if its been longer than 20 hours
+        if (parseInt(formattedDate.substring(0, 4)) > parseInt(lastUpdateOn.substring(0, 4)) ||
+                parseInt(formattedDate.substring(4, 6)) > parseInt(lastUpdateOn.substring(4, 6)) ||
+                parseInt(formattedDate.substring(6, 8)) > parseInt(lastUpdateOn.substring(6, 8)) ||
+                (parseInt(formattedDate.substring(8, 12)) - parseInt(lastUpdateOn.substring(8, 12)) > 2000)) {
+            Toast.makeText(this,"Update Needed",Toast.LENGTH_LONG).show();
+            return true;
+        }
+
+        Toast.makeText(this,"Update Not Needed",Toast.LENGTH_LONG).show();
+//        return convertToDate(lastUpdateOn).compareTo(convertToDate(formattedDate)) < 0;
+        return false;
+    }
+
+    private GregorianCalendar convertToDate(String numberOnly) {
+        int year = parseInt(numberOnly.substring(0, 4));
+        int month = parseInt(numberOnly.substring(4, 6));
+        int day = parseInt(numberOnly.substring(6, 8));
+        return new GregorianCalendar(year, month, day);
+    }
+
     private void launchMainMenu() {
         Intent intent = new Intent(OpeningScreenActivity.this, RestaurantListActivity.class);
         startActivity(intent);
     }
-
 
     private void setupProgressBar() {
         progressBarDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -118,6 +155,7 @@ public class OpeningScreenActivity extends AppCompatActivity {
     }
 
     public class DownloadCSVData implements Runnable {
+
 
 
         private Context mContext;

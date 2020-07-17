@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.example.cmpt276project.R;
 
-public class TestFragment extends AppCompatDialogFragment {
+public class UpdateDialog extends AppCompatDialogFragment {
 
     @NonNull
     @Override
@@ -24,13 +24,22 @@ public class TestFragment extends AppCompatDialogFragment {
 
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Log.i("TestFrag","Clickity");
+            public void onClick(DialogInterface dialogInterface, int which) {
+                switch(which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        Log.i("TestFrag","Clickity Positive");
+
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        Log.i("TestFrag","Clickity Negative");
+                        getActivity().finish();
+                        break;
+                }
             }
         };
 
         return new AlertDialog.Builder(getActivity())
-                .setTitle("Message")
+                .setTitle("Update Available, download data?")
                 .setView(v)
                 .setPositiveButton("Yes",listener)
                 .setNegativeButton("No",listener)
