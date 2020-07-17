@@ -10,6 +10,8 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.cmpt276project.model.Restaurant;
+import com.example.cmpt276project.model.RestaurantManager;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -24,6 +26,7 @@ import com.google.android.gms.tasks.Task;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    private RestaurantManager manager;
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -41,6 +44,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        manager = RestaurantManager.getInstance();
 
         // Construct a GeoDataClient.
 //        mGeoDataClient = Places.getGeoDataClient(this, null);
@@ -65,9 +70,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Surrey and move the camera
-//        mMap.addMarker(new MarkerOptions().position(surrey).title("Marker in Surrey"));
-
         // get permission
         getLocationPermission();
 
@@ -77,11 +79,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
 
+        // set all restaurant markers
+        addRestaurantMarkers();
+
     }
 
     /**
     *   Reference Document: Google Maps Platform: https://developers.google.com/maps/documentation/javascript/adding-a-google-map
     */
+
+    private void addRestaurantMarkers() {
+        for (Restaurant tmp:manager.getRestaurantList()) {
+            double lat = tmp.getLatitude();
+            double lng = tmp.getLongitude();
+            String title = tmp.getName();
+            LatLng restPosition = new LatLng(lat, lng);
+            mMap.addMarker(new MarkerOptions().position(restPosition).title(title));
+        }
+    }
 
     private void updateLocationUI() {
         if (mMap == null) {

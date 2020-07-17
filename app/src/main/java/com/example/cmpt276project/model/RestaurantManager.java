@@ -24,14 +24,14 @@ public class RestaurantManager implements Iterable<Restaurant> {
         return instance;
     }
 
-    // return whole restaurant list
-    public ArrayList<Restaurant> getRestaurantList() {
-        return restaurantList;
-    }
-
     // Ensure private for singleton
     private RestaurantManager() {
         restaurantList = new ArrayList<>();
+    }
+
+    // return whole restaurant list
+    public ArrayList<Restaurant> getRestaurantList() {
+        return instance.restaurantList;
     }
 
     // Return the length of restaurant list
