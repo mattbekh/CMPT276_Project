@@ -31,11 +31,12 @@ public class UpdateDialog extends AppCompatDialogFragment {
                 switch(which){
                     case DialogInterface.BUTTON_POSITIVE:
                         Log.i("TestFrag","Clickity Positive");
-                        mListener.downloadCSVData();
+                        mListener.downloadCSVData(true);
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
                         Log.i("TestFrag","Clickity Negative");
-                        getActivity().finish();
+                        mListener.downloadCSVData(false);
+                        //getActivity().finish();
                         break;
                 }
             }
@@ -61,6 +62,6 @@ public class UpdateDialog extends AppCompatDialogFragment {
     }
 
     public interface MyStringListener{
-        public void downloadCSVData();
+        public void downloadCSVData(boolean b);
     }
 }

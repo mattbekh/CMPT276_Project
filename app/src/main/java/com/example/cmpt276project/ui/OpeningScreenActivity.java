@@ -1,6 +1,5 @@
 package com.example.cmpt276project.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
@@ -51,7 +50,7 @@ public class OpeningScreenActivity extends FragmentActivity implements UpdateDia
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_opening_screen);
 
-        loadCSVData();
+
         if(updatedNeeded()){
             loadCSVData();
         }
@@ -77,13 +76,15 @@ public class OpeningScreenActivity extends FragmentActivity implements UpdateDia
     }
 
     @Override
-    public void downloadCSVData() {
-        progressBarDialog = new ProgressDialog(this);
-
-        setupProgressBar();
-        DownloadCSVData downloadCSVData = new DownloadCSVData(OpeningScreenActivity.this,RESTAURANTS_URL);
-        new Thread(downloadCSVData).start();
-        progressBarDialog.show();
+    public void downloadCSVData(boolean download) {
+        if(download){
+            progressBarDialog = new ProgressDialog(this);
+            setupProgressBar();
+            DownloadCSVData downloadCSVData = new DownloadCSVData(OpeningScreenActivity.this,RESTAURANTS_URL);
+            new Thread(downloadCSVData).start();
+            progressBarDialog.show();
+        }
+        // otherwise don't download
     }
 
     private Boolean updatedNeeded(){
