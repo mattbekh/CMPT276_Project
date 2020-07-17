@@ -40,6 +40,7 @@ public class DownloadCSVData implements Runnable {
         private Context mContext;
         private String mUrl;
         private ProgressDialog progressBarDialog;
+        private boolean downloading;
 
         public DownloadCSVData(Context context, String url) {
             mContext = context;
@@ -54,8 +55,7 @@ public class DownloadCSVData implements Runnable {
         progressBarDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressBarDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "CANCEL DOWNLOAD",new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int whichButton){
-                // Toast.makeText(getBaseContext(),
-                //       "OK clicked!", Toast.LENGTH_SHORT).show();
+                downloading = false;
             }
         });
         progressBarDialog.setProgress(0);
@@ -64,7 +64,7 @@ public class DownloadCSVData implements Runnable {
 
     @Override
         public void run() {
-            boolean downloading = true;
+            downloading = true;
 
             try {
                 // Convert URL content to a JSON object to get data

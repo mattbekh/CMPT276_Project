@@ -39,7 +39,7 @@ public class ModificationDate {
         GetModificationDate runnable = new GetModificationDate(looper, manager);
 
         // For Cleanup
-//        runnable.clearSharedPrefs();
+        runnable.clearSharedPrefs();
         new Thread(runnable).start();
 
     }

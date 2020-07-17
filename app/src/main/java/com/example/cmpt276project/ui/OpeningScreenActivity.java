@@ -1,6 +1,7 @@
 package com.example.cmpt276project.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
 import android.app.DownloadManager;
@@ -38,12 +39,11 @@ import static java.lang.Integer.parseInt;
 /**
  * This class plays a small animation before launching the main app
  */
-public class OpeningScreenActivity extends AppCompatActivity {
+public class OpeningScreenActivity extends FragmentActivity implements UpdateDialog.MyStringListener {
 
     private static String RESTAURANTS_URL = "https://data.surrey.ca/api/3/action/package_show?id=restaurants";
     private static String INSPECTIONS_URL = "https://data.surrey.ca/api/3/action/package_show?id=fraser-health-restaurant-inspection-reports";
 
-    private Handler openingHandler = new Handler();
     private ProgressDialog progressBarDialog;
 
     @Override
@@ -51,6 +51,7 @@ public class OpeningScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_opening_screen);
 
+        loadCSVData();
         if(updatedNeeded()){
             loadCSVData();
         }
@@ -71,20 +72,12 @@ public class OpeningScreenActivity extends AppCompatActivity {
     private void loadCSVData() {
         Looper looper = getMainLooper();
         FragmentManager manager = getSupportFragmentManager();
-        ModificationDate modificationDate = new ModificationDate(OpeningScreenActivity.this,looper,manager,RESTAURANTS_URL);
+        new ModificationDate(OpeningScreenActivity.this,looper,manager,RESTAURANTS_URL);
 
-//        progressBarDialog = new ProgressDialog(this);
-//
-//        setupProgressBar();
-//        DownloadCSVData downloadCSVData = new DownloadCSVData(OpeningScreenActivity.this,RESTAURANTS_URL);
-//        new Thread(downloadCSVData).start();
-//        progressBarDialog.show();
-
-//        DataHandler dataHandler = new DataHandler(OpeningScreenActivity.this);
-//        dataHandler.downloadCSVData(RESTAURANTS_CSV_URL,"restaurant_data.csv");
-//        dataHandler.clearSharedPrefs();
     }
-    private void downloadCSVData() {
+
+    @Override
+    public void downloadCSVData() {
         progressBarDialog = new ProgressDialog(this);
 
         setupProgressBar();
