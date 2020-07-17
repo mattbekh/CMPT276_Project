@@ -52,6 +52,12 @@ public class RestaurantActivity extends AppCompatActivity {
         return true;
     }
 
+    //Takes user back to RestaurantList
+    @Override
+    public void onBackPressed(){
+        finish();
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // Switch to allow for future functionality
