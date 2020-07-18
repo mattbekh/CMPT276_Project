@@ -36,7 +36,7 @@ import java.util.GregorianCalendar;
 import static java.lang.Integer.parseInt;
 
 /**
- * This class plays a small animation before launching the main app
+ * This class plays a small animation while checking if update is needed
  */
 
 public class OpeningScreenActivity extends FragmentActivity implements UpdateDialog.MyStringListener {
@@ -72,6 +72,7 @@ public class OpeningScreenActivity extends FragmentActivity implements UpdateDia
         handler.postDelayed(r,3200);
     }
 
+    // Launches an external class to get the updated modification date
     private void loadCSVData() {
         Looper looper = getMainLooper();
         FragmentManager manager = getSupportFragmentManager();
@@ -80,14 +81,26 @@ public class OpeningScreenActivity extends FragmentActivity implements UpdateDia
 
     @Override
     public void downloadCSVData(boolean download) {
+
         if(download){
+
+
+
+            // TODO : Make the program overwrite the stored data after new data is downloaded. Then launch the app
+            // Start a progress bar to keep track of download progress
             progressBarDialog = new ProgressDialog(this);
             setupProgressBar();
+            // Launch the download data inner class
             DownloadCSVData downloadCSVData = new DownloadCSVData(OpeningScreenActivity.this,RESTAURANTS_URL,INSPECTIONS_URL);
             new Thread(downloadCSVData).start();
             progressBarDialog.show();
+
+
+
+
         }
         else{
+            // The program should launch with the initialized data set
             launchMainMenu();
         }
         // otherwise don't download
@@ -139,21 +152,27 @@ public class OpeningScreenActivity extends FragmentActivity implements UpdateDia
 
     private void setupProgressBar() {
         progressBarDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+
+        // Setup progress cancel button
         progressBarDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "CANCEL",new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int whichButton){
-                // Toast.makeText(getBaseContext(),
-                //       "OK clicked!", Toast.LENGTH_SHORT).show();
-            }
-        });
+                    public void onClick(DialogInterface dialog, int whichButton){
+                        // Should remove the downloadID to stop the download and not overwrite the initialized data
+                    }
+                });
+
+        // Setup ok button
         progressBarDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
+                        // Should overwrite initialized data and launch next activity (if download is complete)
                     }
                 });
         progressBarDialog.setProgress(0);
     }
 
+
+
+    // Inner class for actually downloading the data
     public class DownloadCSVData implements Runnable {
 
         private Context mContext;
@@ -202,7 +221,7 @@ public class OpeningScreenActivity extends FragmentActivity implements UpdateDia
                     //Set whether this download may proceed over a roaming connection.
                     request.setAllowedOverRoaming(false);
                     //Set the title of this download, to be displayed in notifications (if enabled).
-                    request.setTitle("Downloading");
+                    request.setTitle("Download");
                     //Set a description of this download, to be displayed in notifications (if enabled)
                     request.setDescription("Downloading File");
                     request.allowScanningByMediaScanner();
@@ -238,6 +257,7 @@ public class OpeningScreenActivity extends FragmentActivity implements UpdateDia
 
                         final int dl_progress = (int) ((bytes_downloaded * 100l) / bytes_total);
 
+                        // Runs the progress on main thread
                         runOnUiThread(new Runnable() {
 
                             @Override
@@ -294,29 +314,5 @@ public class OpeningScreenActivity extends FragmentActivity implements UpdateDia
             int day = parseInt(numberOnly.substring(6, 8));
             return new GregorianCalendar(year, month, day);
         }
-
-//        public void downloadCSVData(String url, String fileName) {
-//
-//        Uri uri = Uri.parse(url);
-//
-//        DownloadManager.Request request = new DownloadManager.Request(uri);
-//
-//        //Restrict the types of networks over which this download may proceed.
-//        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
-//        //Set whether this download may proceed over a roaming connection.
-//        request.setAllowedOverRoaming(false);
-//        //Set the title of this download, to be displayed in notifications (if enabled).
-//        request.setTitle("Downloading");
-//        //Set a description of this download, to be displayed in notifications (if enabled)
-//        request.setDescription("Downloading File");
-//        request.allowScanningByMediaScanner();
-//        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-//        //Set the local destination for the downloaded file to a path within the application's external files directory
-//        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
-//
-//        DownloadManager downloadManager = (DownloadManager) mContext.getSystemService(DOWNLOAD_SERVICE);
-//        downloadId = downloadManager.enqueue(request);
-//
-//    }
     }
 }
