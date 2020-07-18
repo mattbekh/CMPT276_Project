@@ -23,20 +23,23 @@ public class UpdateDialog extends AppCompatDialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
-        View v = LayoutInflater.from(getActivity()).inflate(R.layout.test_layout, null);
+        View v = LayoutInflater.from(getActivity()).inflate(R.layout.update_dialog, null);
 
+        // Set up the buttons of the dialog
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
                 switch(which){
+
+                    // If user clicks the OK button, launch the attached function from main thread
                     case DialogInterface.BUTTON_POSITIVE:
-                        Log.i("TestFrag","Clickity Positive");
+                        // Pass a true boolean which then tells program to download data
                         mListener.downloadCSVData(true);
 
 //                finish();
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
-                        Log.i("TestFrag","Clickity Negative");
+                        // Pass false boolean which cancels download
                         mListener.downloadCSVData(false);
                         //getActivity().finish();
                         break;

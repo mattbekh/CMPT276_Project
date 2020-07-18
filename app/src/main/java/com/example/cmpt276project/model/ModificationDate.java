@@ -36,8 +36,10 @@ public class ModificationDate {
         inputRestaurantUrl = url;
         mContext = context;
 
+        // Launches inner class to get modification date
         GetModificationDate runnable = new GetModificationDate(looper, manager);
-        // For Cleanup, to show up in UI
+
+        // For Cleanup, to show up in UI for each launch
         runnable.clearSharedPrefs();
 
         new Thread(runnable).start();
@@ -81,21 +83,22 @@ public class ModificationDate {
 
                 if(modifiedDate != null){
 
+                    // Compares stored preference date with the date fetched from URL
                     if(getModDateSharedPrefs(inputRestaurantUrl).equals("None")){
                         storeModDateSharedPrefs(inputRestaurantUrl,modifiedDate);
 
+                        // Store the current updated time to keep track of checks
+                        storeModDateSharedPrefs("updatedOn",formattedDate);
+
+                        // Communicates with Activity which launched it to create a UpdateDialog Fragment to ask if the user wants to download data
                         Handler threadHandler = new Handler(mLooper);
                         threadHandler.post(new Runnable() {
                             @Override
                             public void run() {
                                 UpdateDialog dialog = new UpdateDialog();
                                 dialog.show(mManager,"TestDialog");
-                                Toast.makeText(mContext,"Handler working",Toast.LENGTH_LONG).show();
                             }
                         });
-
-                        // Store the current updated time to keep track of checks
-                        storeModDateSharedPrefs("updatedOn",formattedDate);
 
                     }
                     else{
@@ -103,6 +106,7 @@ public class ModificationDate {
                         if(convertToDate(getModDateSharedPrefs(inputRestaurantUrl)).compareTo(convertToDate(modifiedDate))<0){
                             storeModDateSharedPrefs(inputRestaurantUrl,modifiedDate);
 
+                            // Communicates with Activity which launched it to create a UpdateDialog Fragment to ask if the user wants to download data
                             Handler threadHandler = new Handler(mLooper);
                             threadHandler.post(new Runnable() {
                                 @Override
@@ -132,6 +136,7 @@ public class ModificationDate {
             }
         }
 
+        // Stores date in shared prefs with the url as key and date as value
         private void storeModDateSharedPrefs(String key, String date) {
             SharedPreferences prefs = mContext.getSharedPreferences("CSVData",Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
@@ -149,12 +154,14 @@ public class ModificationDate {
             Toast.makeText(mContext,"Shared prefs cleared",Toast.LENGTH_SHORT).show();
         }
 
+        // Uses URL as key to fetch the stored date
         private String getModDateSharedPrefs(String url) {
             SharedPreferences prefs = mContext.getSharedPreferences("CSVData",Context.MODE_PRIVATE);
 
             return prefs.getString(url,"None");
         }
 
+        // Parses URL content into text which is then converted to a JSON
         private String readUrl(String urlString) throws Exception {
             BufferedReader reader = null;
             try {
