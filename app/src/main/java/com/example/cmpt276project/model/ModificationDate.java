@@ -27,21 +27,20 @@ import static java.lang.Integer.parseInt;
 
 public class ModificationDate {
 
-    private static String inputUrl;
+    private static String inputRestaurantUrl;
     private Context mContext;
     private String modifiedDate = "None";
 
 
     public ModificationDate(Context context, Looper looper, FragmentManager manager, String url) {
-        inputUrl = url;
+        inputRestaurantUrl = url;
         mContext = context;
 
         GetModificationDate runnable = new GetModificationDate(looper, manager);
-
-        // For Cleanup
+        // For Cleanup, to show up in UI
         runnable.clearSharedPrefs();
-        new Thread(runnable).start();
 
+        new Thread(runnable).start();
     }
     public class GetModificationDate implements Runnable {
 
@@ -58,7 +57,7 @@ public class ModificationDate {
             try {
                 // Convert URL content to a JSON object to get data
 //                BufferedReader rd = new BufferedReader(responseBodyReader);
-                String jsonText = readUrl(inputUrl);
+                String jsonText = readUrl(inputRestaurantUrl);
                 JSONObject json = new JSONObject(jsonText);
 
                 modifiedDate = (String) json.getJSONObject("result").get("metadata_modified");
@@ -77,13 +76,13 @@ public class ModificationDate {
 
                 Log.v("ModiDate","The current date is " + formattedDate);
 
-                Log.v("ModiDate","The shared prefs for " +inputUrl+" is " + getModDateSharedPrefs(inputUrl));
+                Log.v("ModiDate","The shared prefs for " + inputRestaurantUrl +" is " + getModDateSharedPrefs(inputRestaurantUrl));
                 Log.v("ModiDate","The shared prefs for updatedOn is " + getModDateSharedPrefs("updatedOn"));
 
                 if(modifiedDate != null){
 
-                    if(getModDateSharedPrefs(inputUrl).equals("None")){
-                        storeModDateSharedPrefs(inputUrl,modifiedDate);
+                    if(getModDateSharedPrefs(inputRestaurantUrl).equals("None")){
+                        storeModDateSharedPrefs(inputRestaurantUrl,modifiedDate);
 
                         Handler threadHandler = new Handler(mLooper);
                         threadHandler.post(new Runnable() {
@@ -101,8 +100,8 @@ public class ModificationDate {
                     }
                     else{
                         // If newly fetched date is more recent than stored data, do the work
-                        if(convertToDate(getModDateSharedPrefs(inputUrl)).compareTo(convertToDate(modifiedDate))<0){
-                            storeModDateSharedPrefs(inputUrl,modifiedDate);
+                        if(convertToDate(getModDateSharedPrefs(inputRestaurantUrl)).compareTo(convertToDate(modifiedDate))<0){
+                            storeModDateSharedPrefs(inputRestaurantUrl,modifiedDate);
 
                             Handler threadHandler = new Handler(mLooper);
                             threadHandler.post(new Runnable() {
@@ -110,7 +109,6 @@ public class ModificationDate {
                                 public void run() {
                                     UpdateDialog dialog = new UpdateDialog();
                                     dialog.show(mManager,"TestDialog");
-                                    Toast.makeText(mContext,"Handler working",Toast.LENGTH_LONG).show();
                                 }
                             });
 

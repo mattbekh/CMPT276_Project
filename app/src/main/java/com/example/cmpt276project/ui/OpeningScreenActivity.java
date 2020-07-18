@@ -38,6 +38,7 @@ import static java.lang.Integer.parseInt;
 /**
  * This class plays a small animation before launching the main app
  */
+
 public class OpeningScreenActivity extends FragmentActivity implements UpdateDialog.MyStringListener {
 
     private static String RESTAURANTS_URL = "https://data.surrey.ca/api/3/action/package_show?id=restaurants";
@@ -50,12 +51,15 @@ public class OpeningScreenActivity extends FragmentActivity implements UpdateDia
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_opening_screen);
 
-
+        // Checks if update is needed, if boolean = false it skips the load data call
+        loadCSVData();
         if(updatedNeeded()){
             loadCSVData();
         }
 
-        // Set up handler for delay of Main Menu
+//        launchMainMenu();
+
+        // Set up handler for delay of Main Menu (might not be necessary anymore)
         Runnable r = new Runnable() {
             @Override
             public void run() {
@@ -72,7 +76,6 @@ public class OpeningScreenActivity extends FragmentActivity implements UpdateDia
         Looper looper = getMainLooper();
         FragmentManager manager = getSupportFragmentManager();
         new ModificationDate(OpeningScreenActivity.this,looper,manager,RESTAURANTS_URL);
-
     }
 
     @Override
@@ -80,9 +83,12 @@ public class OpeningScreenActivity extends FragmentActivity implements UpdateDia
         if(download){
             progressBarDialog = new ProgressDialog(this);
             setupProgressBar();
-            DownloadCSVData downloadCSVData = new DownloadCSVData(OpeningScreenActivity.this,RESTAURANTS_URL);
+            DownloadCSVData downloadCSVData = new DownloadCSVData(OpeningScreenActivity.this,RESTAURANTS_URL,INSPECTIONS_URL);
             new Thread(downloadCSVData).start();
             progressBarDialog.show();
+        }
+        else{
+            launchMainMenu();
         }
         // otherwise don't download
     }
@@ -150,90 +156,102 @@ public class OpeningScreenActivity extends FragmentActivity implements UpdateDia
 
     public class DownloadCSVData implements Runnable {
 
-
-
         private Context mContext;
-        private String mUrl;
+        private String restaurantUrl;
+        private String inspectionUrl;
 
 
-        public DownloadCSVData(Context context, String url) {
+        // Inner class which actually launches the download of the CSVs
+        public DownloadCSVData(Context context, String url, String url2) {
             mContext = context;
-            mUrl = url;
-
-
+            restaurantUrl = url;
+            inspectionUrl = url2;
         }
-
-
 
         @Override
         public void run() {
             boolean downloading = true;
 
             try {
+                String[] urls = {restaurantUrl,inspectionUrl};
                 // Convert URL content to a JSON object to get data
+                //                BufferedReader rd = new BufferedReader(responseBodyReader);
+                for(int i = 0; i<2;i++) {
+
+                    downloading = true;
+                    // Convert URL content to a JSON object to get data
 //                BufferedReader rd = new BufferedReader(responseBodyReader);
-                String jsonText = readUrl(mUrl);
-                JSONObject json = new JSONObject(jsonText);
+                    String jsonText = readUrl(urls[i]);
+                    JSONObject json = new JSONObject(jsonText);
 
-                String linkCSV = (String) json
-                        .getJSONObject("result")
-                        .getJSONArray("resources")
-                        .getJSONObject(0)
-                        .get("url");
+                    String linkCSV = (String) json
+                            .getJSONObject("result")
+                            .getJSONArray("resources")
+                            .getJSONObject(0)
+                            .get("url");
 
-                Log.v("CSV_DATA_LINK","THE CSV DATA LINK IS : " + linkCSV);
+                    Log.v("CSV_DATA_LINK","THE CSV DATA LINK IS : " + linkCSV);
 
-                // Test
-                Uri uri = Uri.parse(linkCSV);
+                    // Test
+                    Uri uri = Uri.parse(linkCSV);
 
-                DownloadManager.Request request = new DownloadManager.Request(uri);
+                    DownloadManager.Request request = new DownloadManager.Request(uri);
 
-                //Restrict the types of networks over which this download may proceed.
-                request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
-                //Set whether this download may proceed over a roaming connection.
-                request.setAllowedOverRoaming(false);
-                //Set the title of this download, to be displayed in notifications (if enabled).
-                request.setTitle("Downloading");
-                //Set a description of this download, to be displayed in notifications (if enabled)
-                request.setDescription("Downloading File");
-                request.allowScanningByMediaScanner();
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                //Set the local destination for the downloaded file to a path within the application's external files directory
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "restaurant_data.csv");
+                    //Restrict the types of networks over which this download may proceed.
+                    request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
+                    //Set whether this download may proceed over a roaming connection.
+                    request.setAllowedOverRoaming(false);
+                    //Set the title of this download, to be displayed in notifications (if enabled).
+                    request.setTitle("Downloading");
+                    //Set a description of this download, to be displayed in notifications (if enabled)
+                    request.setDescription("Downloading File");
+                    request.allowScanningByMediaScanner();
+                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
-                DownloadManager manager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
-                long downloadID = manager.enqueue(request);
-
-                Log.i("CSV_DATA", "downloadID is : " +downloadID);
-
-                while (downloading) {
-
-                    DownloadManager.Query q = new DownloadManager.Query();
-                    q.setFilterById(downloadID); //filter by id which you have receieved when reqesting download from download manager
-                    Cursor cursor = manager.query(q);
-                    cursor.moveToFirst();
-                    int bytes_downloaded = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
-
-                    int bytes_total = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
-
-                    if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
-                        downloading = false;
+                    //Set the local destination for the downloaded file to a path within the application's external files directory
+                    if(urls[i] == RESTAURANTS_URL){
+                        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "restaurant_data.csv");
+                    }
+                    else{
+                        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "inspection_data.csv");
                     }
 
-                    final int dl_progress = (int) ((bytes_downloaded * 100l) / bytes_total);
 
-                    runOnUiThread(new Runnable() {
+                    DownloadManager manager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
+                    long downloadID = manager.enqueue(request);
 
-                        @Override
-                        public void run() {
+                    Log.i("CSV_DATA", "downloadID is : " +downloadID);
 
-                            progressBarDialog.setProgress(dl_progress);
+                    while (downloading) {
 
+                        DownloadManager.Query q = new DownloadManager.Query();
+                        q.setFilterById(downloadID); //filter by id which you have receieved when reqesting download from download manager
+                        Cursor cursor = manager.query(q);
+                        cursor.moveToFirst();
+                        int bytes_downloaded = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+
+                        int bytes_total = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+
+                        if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
+                            downloading = false;
                         }
-                    });
-                    // Log.d(Constants.MAIN_VIEW_ACTIVITY, statusMessage(cursor));
-                    cursor.close();
+
+                        final int dl_progress = (int) ((bytes_downloaded * 100l) / bytes_total);
+
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+
+                                progressBarDialog.setProgress(dl_progress);
+
+                            }
+                        });
+                        // Log.d(Constants.MAIN_VIEW_ACTIVITY, statusMessage(cursor));
+                        cursor.close();
+                    }
                 }
+
 
 
 

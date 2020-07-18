@@ -32,6 +32,8 @@ public class UpdateDialog extends AppCompatDialogFragment {
                     case DialogInterface.BUTTON_POSITIVE:
                         Log.i("TestFrag","Clickity Positive");
                         mListener.downloadCSVData(true);
+
+//                finish();
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
                         Log.i("TestFrag","Clickity Negative");
