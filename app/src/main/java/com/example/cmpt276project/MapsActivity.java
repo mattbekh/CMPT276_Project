@@ -31,6 +31,7 @@ import java.util.Objects;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    private RestaurantManager manager;
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -48,6 +49,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        manager = RestaurantManager.getInstance();
 
         // Construct a GeoDataClient.
 //        mGeoDataClient = Places.getGeoDataClient(this, null);
@@ -105,9 +108,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Surrey and move the camera
-//        mMap.addMarker(new MarkerOptions().position(surrey).title("Marker in Surrey"));
-
         // get permission
         getLocationPermission();
 
@@ -117,11 +117,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
 
+        // set all restaurant markers
+        addRestaurantMarkers();
+
     }
 
     /**
     *   Reference Document: Google Maps Platform: https://developers.google.com/maps/documentation/javascript/adding-a-google-map
     */
+
+    private void addRestaurantMarkers() {
+        for (Restaurant tmp:manager.getRestaurantList()) {
+            double lat = tmp.getLatitude();
+            double lng = tmp.getLongitude();
+            String title = tmp.getName();
+            LatLng restPosition = new LatLng(lat, lng);
+            mMap.addMarker(new MarkerOptions().position(restPosition).title(title));
+        }
+    }
 
     private void updateLocationUI() {
         if (mMap == null) {
