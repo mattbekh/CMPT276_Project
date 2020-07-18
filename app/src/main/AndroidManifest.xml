@@ -31,11 +31,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
-        <activity android:name=".ui.InspectionActivity" />
-        <activity android:name=".ui.RestaurantActivity" />
         <activity android:name=".ui.OpeningScreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,7 +38,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.RestaurantListActivity" />
+        <activity
+            android:name=".MapsActivity"
+            android:label="@string/MapsActivity_title"
+            android:launchMode="singleInstance" />
+        <activity
+            android:name=".ui.RestaurantListActivity"
+            android:launchMode="singleInstance" />
+        <activity android:name=".ui.RestaurantActivity" />
+        <activity android:name=".ui.InspectionActivity" />
     </application>
 
 </manifest>
