@@ -409,7 +409,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             try {
                 URL url = new URL(urlString);
                 reader = new BufferedReader(new InputStreamReader(url.openStream()));
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
                 int read;
                 char[] chars = new char[1024];
                 while ((read = reader.read(chars)) != -1)

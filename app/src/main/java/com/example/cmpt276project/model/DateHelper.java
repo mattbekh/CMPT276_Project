@@ -44,6 +44,16 @@ public class DateHelper {
         return String.format("%s %d, %d", month, day, year);
     }
 
+    public static String getTimeString(GregorianCalendar date) {
+        int year = date.get(Calendar.YEAR);
+        int month = date.get(Calendar.MONTH) + 1;
+        int day = date.get(Calendar.DAY_OF_MONTH);
+        int hour = date.get(Calendar.HOUR_OF_DAY);
+        int minute = date.get(Calendar.MINUTE);
+        int second = date.get(Calendar.SECOND);
+        return String.format("%04d%02d%02d%02d%02d%02d", year, month, day, hour, minute, second);
+    }
+
     public static GregorianCalendar getDateFromString(String dateString) {
         if (dateString.length() != 8) {
             String errorMessage = String.format("Invalid date string [%s]", dateString);
@@ -55,6 +65,34 @@ public class DateHelper {
         int day = Integer.parseInt(dateString.substring(6,8));
 
         return new GregorianCalendar(year, month, day);
+    }
+
+    public static boolean isTwentyHoursSince(String timeString) {
+        final long TWENTY_HOURS = 1000 * 60 * 60 * 20;
+        GregorianCalendar lastUpdateDate = DateHelper.getDateFromTimeString(timeString);
+        GregorianCalendar currentDate = new GregorianCalendar();
+        long timeSinceUpdate = currentDate.getTimeInMillis() - lastUpdateDate.getTimeInMillis();
+
+        return timeSinceUpdate > TWENTY_HOURS;
+    }
+
+    public static GregorianCalendar getDateFromTimeString(String timeString) {
+        if (timeString.length() != 14) {
+            String errorMessage = String.format("Invalid time string [%s]", timeString);
+            throw new IllegalArgumentException(errorMessage);
+        }
+
+        String dateString = timeString.substring(0,8);
+        int hours = Integer.parseInt(timeString.substring(8,10));
+        int minutes = Integer.parseInt(timeString.substring(10,12));
+        int seconds = Integer.parseInt(timeString.substring(12,14));
+
+        GregorianCalendar calendar = getDateFromString(dateString);
+        calendar.set(Calendar.HOUR_OF_DAY, hours);
+        calendar.set(Calendar.MINUTE, minutes);
+        calendar.set(Calendar.SECOND, seconds);
+
+        return calendar;
     }
 
     public static String getMonthString(int month) {
