@@ -119,7 +119,7 @@ public abstract class DataDownloader implements Callable<Boolean> {
             storeModDateSharedPrefs("localModifyTime", modifyTime);
 
             // For testing download
-            // clearSharedPrefs();
+            clearSharedPrefs();
         } catch (Exception e) {
             // Do nothing
         }

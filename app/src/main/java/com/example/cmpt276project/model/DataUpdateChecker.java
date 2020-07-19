@@ -22,24 +22,23 @@ public class DataUpdateChecker implements Callable<Boolean> {
 
     @Override
     public Boolean call() {
-//        String lastUpdateTime = csvDataPrefs.getString("updatedOn", DateHelper.DEFAULT_TIME);
-//        String localModifiedTime = csvDataPrefs.getString("localModifyTime", DateHelper.DEFAULT_TIME);
-//
-//        if (!isTwentyHoursSince(lastUpdateTime)) {
-//            return false;
-//        }
-//
-//        try {
-//            JSONObject response = HttpRequestHandler.get(RESTAURANTS_URL);
-//            String remoteModifiedTime = (String) response.getJSONObject("result").get("metadata_modified");
-//            remoteModifiedTime = remoteModifiedTime.replaceAll("[^0-9]", "");
-//            remoteModifiedTime = remoteModifiedTime.substring(0,14);
-//
-//            return isMoreRecentThan(remoteModifiedTime, localModifiedTime);
-//
-//        } catch (Exception e) {
-//            return false;
-//        }
-        return true;
+        String lastUpdateTime = csvDataPrefs.getString("updatedOn", DateHelper.DEFAULT_TIME);
+        String localModifiedTime = csvDataPrefs.getString("localModifyTime", DateHelper.DEFAULT_TIME);
+
+        if (!isTwentyHoursSince(lastUpdateTime)) {
+            return false;
+        }
+
+        try {
+            JSONObject response = HttpRequestHandler.get(RESTAURANTS_URL);
+            String remoteModifiedTime = (String) response.getJSONObject("result").get("metadata_modified");
+            remoteModifiedTime = remoteModifiedTime.replaceAll("[^0-9]", "");
+            remoteModifiedTime = remoteModifiedTime.substring(0,14);
+
+            return isMoreRecentThan(remoteModifiedTime, localModifiedTime);
+
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
