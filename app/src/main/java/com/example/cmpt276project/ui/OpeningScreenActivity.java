@@ -18,6 +18,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.cmpt276project.MapsActivity;
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.ModificationDate;
 
@@ -146,7 +147,7 @@ public class OpeningScreenActivity extends FragmentActivity implements UpdateDia
     }
 
     private void launchMainMenu() {
-        Intent intent = new Intent(OpeningScreenActivity.this, RestaurantListActivity.class);
+        Intent intent = new Intent(OpeningScreenActivity.this, MapsActivity.class);
         startActivity(intent);
     }
 

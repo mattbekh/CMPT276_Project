@@ -29,6 +29,11 @@ public class RestaurantManager implements Iterable<Restaurant> {
         restaurantList = new ArrayList<>();
     }
 
+    // return whole restaurant list
+    public ArrayList<Restaurant> getRestaurantList() {
+        return instance.restaurantList;
+    }
+
     // Return the length of restaurant list
     public int getLength() {
         return restaurantList.size();
