@@ -84,11 +84,11 @@ public class ModificationDate {
                 if(modifiedDate != null){
 
                     // Compares stored preference date with the date fetched from URL
-                    if(getModDateSharedPrefs(inputRestaurantUrl).equals("None")){
-                        storeModDateSharedPrefs(inputRestaurantUrl,modifiedDate);
+                    if(getModDateSharedPrefs(inputRestaurantUrl).equals("None")) {
+                        storeModDateSharedPrefs(inputRestaurantUrl, modifiedDate);
 
                         // Store the current updated time to keep track of checks
-                        storeModDateSharedPrefs("updatedOn",formattedDate);
+                        storeModDateSharedPrefs("updatedOn", formattedDate);
 
                         // Communicates with Activity which launched it to create a UpdateDialog Fragment to ask if the user wants to download data
                         Handler threadHandler = new Handler(mLooper);
@@ -96,14 +96,12 @@ public class ModificationDate {
                             @Override
                             public void run() {
                                 UpdateDialog dialog = new UpdateDialog();
-                                dialog.show(mManager,"TestDialog");
+                                dialog.show(mManager, "TestDialog");
                             }
                         });
 
-                    }
-                    else{
                         // If newly fetched date is more recent than stored data, do the work
-                        if(convertToDate(getModDateSharedPrefs(inputRestaurantUrl)).compareTo(convertToDate(modifiedDate))<0){
+                    }else if(convertToDate(getModDateSharedPrefs(inputRestaurantUrl)).compareTo(convertToDate(modifiedDate))<0){
                             storeModDateSharedPrefs(inputRestaurantUrl,modifiedDate);
 
                             // Communicates with Activity which launched it to create a UpdateDialog Fragment to ask if the user wants to download data
@@ -118,19 +116,9 @@ public class ModificationDate {
 
                             // Store the current updated time to keep track of checks
                             storeModDateSharedPrefs("updatedOn",formattedDate);
-                        }
-                        else{
-                            //do nothing because update is old
-                        }
                     }
                 }
 
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             }
