@@ -7,24 +7,20 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 
-import android.app.DownloadManager;
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.example.cmpt276project.model.ModificationDate;
+import com.example.cmpt276project.model.DataDownloader;
 import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
 import com.example.cmpt276project.ui.RestaurantListActivity;
@@ -40,31 +36,27 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.GregorianCalendar;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
-import static java.lang.Integer.parseInt;
-
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, UpdateDialog.MyStringListener {
-
-    private static String RESTAURANTS_URL = "https://data.surrey.ca/api/3/action/package_show?id=restaurants";
-    private static String INSPECTIONS_URL = "https://data.surrey.ca/api/3/action/package_show?id=fraser-health-restaurant-inspection-reports";
+public class MapsActivity extends AppCompatActivity
+        implements OnMapReadyCallback, UpdateDialog.UpdateDialogListener
+{
 
     private RestaurantManager manager;
+
+    private ProgressDialog progressBarDialog;
+    private Future<Boolean> downloadDataResult;
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private boolean mLocationPermissionGranted;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
     private Location mLastKnownLocation;
-    private final LatLng surrey = new LatLng(49.187500, -122.849000);
-    private final int DEFAULT_ZOOM = 10;
-    private ProgressDialog progressBarDialog;
+    private static LatLng surrey = new LatLng(49.187500, -122.849000);
+    private static int DEFAULT_ZOOM = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,11 +78,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         setupToolbar();
+        checkUpdateDialog();
+    }
 
+    private void checkUpdateDialog() {
         Bundle extras = this.getIntent().getExtras();
         boolean isUpdateNeeded = extras.getBoolean("isUpdateNeeded");
         if (isUpdateNeeded) {
-            loadCSVData();
+            launchUpdateDialog();
         }
     }
 
@@ -106,31 +101,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.toolbar_menu, menu);
 
-        MenuItem viewRestaurantListItem = (MenuItem) menu.findItem(R.id.ToolbarMenu_switch_context);
+        MenuItem viewRestaurantListItem = menu.findItem(R.id.ToolbarMenu_switch_context);
         viewRestaurantListItem.setVisible(true);
         viewRestaurantListItem.setTitle(R.string.MapsActivity_toolbar_list_btn_text);
 
         return true;
-    }
-
-    private void setupProgressBar() {
-        progressBarDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-
-        // Setup progress cancel button
-        progressBarDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "CANCEL",new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int whichButton){
-                // Should remove the downloadID to stop the download and not overwrite the initialized data
-            }
-        });
-
-        // Setup ok button
-        progressBarDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                // Should overwrite initialized data and launch next activity (if download is complete)
-            }
-        });
-        progressBarDialog.setProgress(0);
     }
 
     @Override
@@ -144,28 +119,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    // Launches an external class to get the updated modification date
-    private void loadCSVData() {
-        Looper looper = getMainLooper();
-        FragmentManager manager = getSupportFragmentManager();
-        new ModificationDate(MapsActivity.this,looper,manager,RESTAURANTS_URL);
-    }
-
-    @Override
-    public void downloadCSVData(boolean download) {
-
-        if(download){
-            // TODO : Make the program overwrite the stored data after new data is downloaded. Then launch the app
-            // Start a progress bar to keep track of download progress
-            progressBarDialog = new ProgressDialog(this);
-            setupProgressBar();
-            // Launch the download data inner class
-            DownloadCSVData downloadCSVData = new DownloadCSVData(this, RESTAURANTS_URL,INSPECTIONS_URL);
-            new Thread(downloadCSVData).start();
-            progressBarDialog.show();
-        }
     }
 
     /**
@@ -300,134 +253,71 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return intent;
     }
 
-    // Inner class for actually downloading the data
-    public class DownloadCSVData implements Runnable {
-
-        private Context mContext;
-        private String restaurantUrl;
-        private String inspectionUrl;
-
-
-        // Inner class which actually launches the download of the CSVs
-        public DownloadCSVData(Context context, String url, String url2) {
-            mContext = context;
-            restaurantUrl = url;
-            inspectionUrl = url2;
-        }
-
-        @Override
-        public void run() {
-            boolean downloading = true;
-
-            try {
-                String[] urls = {restaurantUrl,inspectionUrl};
-                // Convert URL content to a JSON object to get data
-                //                BufferedReader rd = new BufferedReader(responseBodyReader);
-                for(int i = 0; i<2;i++) {
-
-                    downloading = true;
-                    // Convert URL content to a JSON object to get data
-//                BufferedReader rd = new BufferedReader(responseBodyReader);
-                    String jsonText = readUrl(urls[i]);
-                    JSONObject json = new JSONObject(jsonText);
-
-                    String linkCSV = (String) json
-                            .getJSONObject("result")
-                            .getJSONArray("resources")
-                            .getJSONObject(0)
-                            .get("url");
-
-                    Log.v("CSV_DATA_LINK","THE CSV DATA LINK IS : " + linkCSV);
-
-                    // Test
-                    Uri uri = Uri.parse(linkCSV);
-
-                    DownloadManager.Request request = new DownloadManager.Request(uri);
-
-                    //Restrict the types of networks over which this download may proceed.
-                    request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
-                    //Set whether this download may proceed over a roaming connection.
-                    request.setAllowedOverRoaming(false);
-                    //Set the title of this download, to be displayed in notifications (if enabled).
-                    request.setTitle("Download");
-                    //Set a description of this download, to be displayed in notifications (if enabled)
-                    request.setDescription("Downloading File");
-                    request.allowScanningByMediaScanner();
-                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-
-                    //Set the local destination for the downloaded file to a path within the application's external files directory
-                    if(urls[i] == RESTAURANTS_URL){
-                        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "restaurant_data.csv");
-                    }
-                    else{
-                        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "inspection_data.csv");
-                    }
-
-
-                    DownloadManager manager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
-                    long downloadID = manager.enqueue(request);
-
-                    Log.i("CSV_DATA", "downloadID is : " +downloadID);
-
-                    while (downloading) {
-
-                        DownloadManager.Query q = new DownloadManager.Query();
-                        q.setFilterById(downloadID); //filter by id which you have receieved when reqesting download from download manager
-                        Cursor cursor = manager.query(q);
-                        cursor.moveToFirst();
-                        int bytes_downloaded = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
-
-                        int bytes_total = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
-
-                        if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
-                            downloading = false;
-                        }
-
-                        final int dl_progress = (int) ((bytes_downloaded * 100l) / bytes_total);
-
-                        // Runs the progress on main thread
-                        runOnUiThread(new Runnable() {
-
-                            @Override
-                            public void run() {
-
-                                progressBarDialog.setProgress(dl_progress);
-
-                            }
-                        });
-                        // Log.d(Constants.MAIN_VIEW_ACTIVITY, statusMessage(cursor));
-                        cursor.close();
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        private String readUrl(String urlString) throws Exception {
-            BufferedReader reader = null;
-            try {
-                URL url = new URL(urlString);
-                reader = new BufferedReader(new InputStreamReader(url.openStream()));
-                StringBuilder buffer = new StringBuilder();
-                int read;
-                char[] chars = new char[1024];
-                while ((read = reader.read(chars)) != -1)
-                    buffer.append(chars, 0, read);
-
-                return buffer.toString();
-            } finally {
-                if (reader != null)
-                    reader.close();
-            }
-        }
-
-        private GregorianCalendar convertToDate(String numberOnly) {
-            int year = parseInt(numberOnly.substring(0, 4));
-            int month = parseInt(numberOnly.substring(4, 6));
-            int day = parseInt(numberOnly.substring(6, 8));
-            return new GregorianCalendar(year, month, day);
-        }
+    private void launchUpdateDialog() {
+        FragmentManager manager = getSupportFragmentManager();
+        UpdateDialog dialog = new UpdateDialog();
+        dialog.show(manager, "TestDialog");
     }
 
+    @Override
+    public void downloadData() {
+        checkFilePermissions();
+        DataDownloader downloader = new CsvDataDownloader(this);
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        launchProgressDialog();
+
+        downloadDataResult = executor.submit(downloader);
+    }
+
+    private void checkFilePermissions() {
+        int permission = checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permission == PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        int requestCode = 1;
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        }, requestCode);
+    }
+
+    private void launchProgressDialog() {
+        progressBarDialog = new ProgressDialog(this);
+        progressBarDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+
+        // Setup progress cancel button
+        progressBarDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "CANCEL",new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int whichButton){
+                // Should remove the downloadID to stop the download and not overwrite the initialized data
+                progressBarDialog.dismiss();
+            }
+        });
+
+        // Setup ok button
+        progressBarDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // Should overwrite initialized data and launch next activity (if download is complete)
+                progressBarDialog.dismiss();
+            }
+        });
+        progressBarDialog.setProgress(0);
+        progressBarDialog.show();
+    }
+
+    private class CsvDataDownloader extends DataDownloader {
+
+        public CsvDataDownloader(Context context) {
+            super(context);
+        }
+
+        public void updateProgress(int progress) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressBarDialog.setProgress(progress);
+                }
+            });
+        }
+    }
 }

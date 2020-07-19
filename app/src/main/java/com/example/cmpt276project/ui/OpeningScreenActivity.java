@@ -22,9 +22,6 @@ import java.util.concurrent.Future;
 
 public class OpeningScreenActivity extends FragmentActivity {
 
-    private static String RESTAURANTS_URL = "https://data.surrey.ca/api/3/action/package_show?id=restaurants";
-    private static String INSPECTIONS_URL = "https://data.surrey.ca/api/3/action/package_show?id=fraser-health-restaurant-inspection-reports";
-
     Future<Boolean> updateCheckResult;
 
     @Override
@@ -51,6 +48,7 @@ public class OpeningScreenActivity extends FragmentActivity {
     private void launchMainActivity(boolean isUpdateNeeded) {
         Intent intent = MapsActivity.makeIntent(this, isUpdateNeeded);
         startActivity(intent);
+        finish();
     }
 
     private class ActivityLauncherRunnable implements Runnable {
@@ -65,7 +63,6 @@ public class OpeningScreenActivity extends FragmentActivity {
                 e.printStackTrace();
             } finally {
                 launchMainActivity(isUpdateNeeded);
-                finish();
             }
         }
     }
