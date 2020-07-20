@@ -14,7 +14,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.cmpt276project.MapsActivity;
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.Restaurant;
@@ -55,6 +57,7 @@ public class RestaurantActivity extends AppCompatActivity {
     //Takes user back to RestaurantList
     @Override
     public void onBackPressed(){
+
         finish();
     }
 
@@ -109,6 +112,14 @@ public class RestaurantActivity extends AppCompatActivity {
         restaurantName.setText(restaurant.getName());
         restaurantAddress.setText(fullAddress);
         restaurantGPS.setText(coordinates);
+
+        restaurantGPS.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RestaurantActivity.this, MapsActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void populateListView() {
