@@ -16,6 +16,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.example.cmpt276project.model.MyItem;
+import com.example.cmpt276project.model.Restaurant;
+import com.example.cmpt276project.model.RestaurantManager;
 import com.example.cmpt276project.ui.RestaurantListActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -23,9 +26,13 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.maps.android.clustering.ClusterManager;
+
 
 import java.util.Objects;
 
@@ -40,6 +47,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Location mLastKnownLocation;
     private final LatLng surrey = new LatLng(49.187500, -122.849000);
     private final int DEFAULT_ZOOM = 10;
+
+    // Declare a variable for the cluster manager.
+    private ClusterManager<MyItem> mClusterManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,24 +127,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
 
-        // set all restaurant markers
-        addRestaurantMarkers();
+
+        // set clusters / add restaurant markers
+        setUpCluster();
 
     }
 
     /**
     *   Reference Document: Google Maps Platform: https://developers.google.com/maps/documentation/javascript/adding-a-google-map
     */
-
-    private void addRestaurantMarkers() {
-        for (Restaurant tmp:manager.getRestaurantList()) {
-            double lat = tmp.getLatitude();
-            double lng = tmp.getLongitude();
-            String title = tmp.getName();
-            LatLng restPosition = new LatLng(lat, lng);
-            mMap.addMarker(new MarkerOptions().position(restPosition).title(title));
-        }
-    }
 
     private void updateLocationUI() {
         if (mMap == null) {
@@ -219,6 +220,39 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
         updateLocationUI();
+    }
+
+    // Marker clustering
+
+
+    private void setUpCluster() {
+        // Position the map.
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.503186, -0.126446), 10));
+
+        // Initialize the manager with the context and the map.
+        // (Activity extends context, so we can pass 'this' in the constructor.)
+        mClusterManager = new ClusterManager<MyItem>(this, mMap);
+
+        // Point the map's listeners at the listeners implemented by the cluster
+        // manager.
+
+        mMap.setOnCameraIdleListener(mClusterManager);
+
+        mMap.setOnMarkerClickListener(mClusterManager);
+
+        // Add cluster items (markers) to the cluster manager.
+        addItems();
+    }
+
+    private void addItems() {
+        for (Restaurant tmp:manager.getRestaurantList()) {
+            double lat = tmp.getLatitude();
+            double lng = tmp.getLongitude();
+            String title = tmp.getName();
+            MyItem offsetItem = new MyItem(lat, lng, title);
+            mClusterManager.addItem(offsetItem);
+        }
+
     }
 
     public static Intent makeIntent(Context context) {
