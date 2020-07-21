@@ -1,4 +1,4 @@
-package com.example.cmpt276project;
+package com.example.cmpt276project.ui;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,11 +18,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.AllRestaurant;
 import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
-import com.example.cmpt276project.ui.RestaurantListActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -34,9 +34,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
-import com.google.maps.android.clustering.view.ClusterRenderer;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 

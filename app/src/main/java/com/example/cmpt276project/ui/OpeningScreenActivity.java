@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
-import com.example.cmpt276project.MapsActivity;
 import com.example.cmpt276project.R;
 
 /**
