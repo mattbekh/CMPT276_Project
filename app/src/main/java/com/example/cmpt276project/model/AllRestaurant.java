@@ -20,11 +20,11 @@ public class AllRestaurant implements ClusterItem {
         mHazard = "";
     }
 
-    public AllRestaurant(double lat, double lng, String title) {
+    public AllRestaurant(double lat, double lng, String title, String hazard) {
         mPosition = new LatLng(lat, lng);
         mTitle = title;
         mSnippet = "";
-        mHazard = "";
+        mHazard = hazard;
     }
 
     public AllRestaurant(double lat, double lng, String title, String snippet, String hazard) {
@@ -47,5 +47,9 @@ public class AllRestaurant implements ClusterItem {
     @Override
     public String getSnippet() {
         return mSnippet;
+    }
+
+    public String getHazard() {
+        return mHazard;
     }
 }

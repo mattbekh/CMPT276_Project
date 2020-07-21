@@ -19,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.example.cmpt276project.model.AllRestaurant;
+import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
 import com.example.cmpt276project.ui.RestaurantListActivity;
@@ -193,12 +194,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    public Bitmap resizeMapIcons (String iconName, int width, int height) {
-        Bitmap imageBitmap  = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier(iconName, "drawable", getPackageName()));
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
-        return resizedBitmap;
-    }
-
     private void getLocationPermission() {
         /*
          * Request location permission, so that we can get the location of the
@@ -255,13 +250,42 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mClusterManager.setRenderer(new MyClusterRenderer(getApplicationContext()));
     }
 
+    public Bitmap resizeMapIcons (String iconName, int width, int height) {
+        Bitmap imageBitmap  = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier(iconName, "drawable", getPackageName()));
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
+        return resizedBitmap;
+    }
+
     // add restaurant markers
     private void addRestaurant() {
         for (Restaurant tmp:manager.getRestaurantList()) {
             double lat = tmp.getLatitude();
             double lng = tmp.getLongitude();
             String title = tmp.getName();
-            AllRestaurant offsetItem = new AllRestaurant(lat, lng, title);
+            String snippet;
+            String hazard;
+            Inspection inspection = tmp.getInspectionByIndex(0);
+
+            switch (inspection.getHazardRating()) {
+                case LOW:
+                    snippet = "Hazard Level: LOW";
+                    hazard = "hazard_low";
+                    break;
+                case MODERATE:
+                    snippet = "Hazard Level: MODERATE";
+                    hazard = "hazard_mid";
+                    break;
+                case HIGH:
+                    snippet = "Hazard Level: HIGH";
+                    hazard = "hazard_high";
+                    break;
+                default:
+                    snippet = "Hazard Level: No Inspection Yet";
+                    hazard = "";
+                    break;
+            }
+
+            AllRestaurant offsetItem = new AllRestaurant(lat, lng, title, snippet, hazard);
             mClusterManager.addItem(offsetItem);
         }
     }
@@ -270,11 +294,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         public MyClusterRenderer(Context context) {
             super(context, mMap, mClusterManager);
         }
-
         @Override
         protected void onBeforeClusterItemRendered(@NonNull AllRestaurant item, @NonNull MarkerOptions markerOptions) {
 //            super.onBeforeClusterItemRendered(item, markerOptions);
-            Bitmap resized = resizeMapIcons("happy_face_icon", 120, 120);
+            Bitmap resized = resizeMapIcons(item.getHazard(), 100, 100);
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resized));
         }
     }
