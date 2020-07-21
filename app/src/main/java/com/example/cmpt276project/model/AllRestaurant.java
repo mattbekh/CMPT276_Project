@@ -3,24 +3,28 @@ package com.example.cmpt276project.model;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
-public class MyItem implements ClusterItem {
+/**
+ *  This class
+ * */
+
+public class AllRestaurant implements ClusterItem {
     private final LatLng mPosition;
     private final String mTitle;
     private final String mSnippet;
 
-    public MyItem(double lat, double lng) {
+    public AllRestaurant(double lat, double lng) {
         mPosition = new LatLng(lat, lng);
         mTitle = "";
         mSnippet = "";
     }
 
-    public MyItem(double lat, double lng, String title) {
+    public AllRestaurant(double lat, double lng, String title) {
         mPosition = new LatLng(lat, lng);
         mTitle = title;
         mSnippet = "";
     }
 
-    public MyItem(double lat, double lng, String title, String snippet) {
+    public AllRestaurant(double lat, double lng, String title, String snippet) {
         mPosition = new LatLng(lat, lng);
         mTitle = title;
         mSnippet = snippet;

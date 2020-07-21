@@ -9,6 +9,8 @@ import androidx.core.content.ContextCompat;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,7 +18,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.example.cmpt276project.model.MyItem;
+import com.example.cmpt276project.model.AllRestaurant;
 import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
 import com.example.cmpt276project.ui.RestaurantListActivity;
@@ -26,12 +28,15 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.ClusterRenderer;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 
 import java.util.Objects;
@@ -49,7 +54,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private final int DEFAULT_ZOOM = 10;
 
     // Declare a variable for the cluster manager.
-    private ClusterManager<MyItem> mClusterManager;
+    private ClusterManager<AllRestaurant> mClusterManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,6 +193,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    public Bitmap resizeMapIcons (String iconName, int width, int height) {
+        Bitmap imageBitmap  = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier(iconName, "drawable", getPackageName()));
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
+        return resizedBitmap;
+    }
+
     private void getLocationPermission() {
         /*
          * Request location permission, so that we can get the location of the
@@ -223,15 +234,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     // Marker clustering
-
-
     private void setUpCluster() {
         // Position the map.
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.503186, -0.126446), 10));
 
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
-        mClusterManager = new ClusterManager<MyItem>(this, mMap);
+        mClusterManager = new ClusterManager<AllRestaurant>(this, mMap);
 
         // Point the map's listeners at the listeners implemented by the cluster
         // manager.
@@ -241,18 +250,33 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setOnMarkerClickListener(mClusterManager);
 
         // Add cluster items (markers) to the cluster manager.
-        addItems();
+        addRestaurant();
+
+        mClusterManager.setRenderer(new MyClusterRenderer(getApplicationContext()));
     }
 
-    private void addItems() {
+    // add restaurant markers
+    private void addRestaurant() {
         for (Restaurant tmp:manager.getRestaurantList()) {
             double lat = tmp.getLatitude();
             double lng = tmp.getLongitude();
             String title = tmp.getName();
-            MyItem offsetItem = new MyItem(lat, lng, title);
+            AllRestaurant offsetItem = new AllRestaurant(lat, lng, title);
             mClusterManager.addItem(offsetItem);
         }
+    }
 
+    private class MyClusterRenderer extends DefaultClusterRenderer<AllRestaurant> {
+        public MyClusterRenderer(Context context) {
+            super(context, mMap, mClusterManager);
+        }
+
+        @Override
+        protected void onBeforeClusterItemRendered(@NonNull AllRestaurant item, @NonNull MarkerOptions markerOptions) {
+//            super.onBeforeClusterItemRendered(item, markerOptions);
+            Bitmap resized = resizeMapIcons("happy_face_icon", 120, 120);
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resized));
+        }
     }
 
     public static Intent makeIntent(Context context) {
