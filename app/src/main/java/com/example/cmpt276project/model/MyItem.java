@@ -14,6 +14,12 @@ public class MyItem implements ClusterItem {
         mSnippet = "";
     }
 
+    public MyItem(double lat, double lng, String title) {
+        mPosition = new LatLng(lat, lng);
+        mTitle = title;
+        mSnippet = "";
+    }
+
     public MyItem(double lat, double lng, String title, String snippet) {
         mPosition = new LatLng(lat, lng);
         mTitle = title;
