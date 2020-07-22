@@ -12,7 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
 
-import com.example.cmpt276project.MapsActivity;
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.RestaurantManager;
 
