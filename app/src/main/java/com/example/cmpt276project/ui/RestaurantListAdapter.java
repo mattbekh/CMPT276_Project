@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
@@ -58,6 +59,9 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         holder.restaurantName.setText(restaurant.getName());
         // Store Restaurant address
         holder.restaurantAddress.setText(restaurant.getAddress() + ", " + restaurant.getCity());
+
+        int iconResource = getResourceID(restaurant.getRestaurantName());
+        holder.restaurantIcon.setImageResource(iconResource);
         // Store most recent inspections # of issues
         Inspection topInspection= restaurant.getInspectionByIndex(0);
         if(topInspection.getTrackingNumber().equals("EMPTY")) {
@@ -103,6 +107,36 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         });
     }
 
+    @DrawableRes
+    private static int getResourceID(Restaurant.RestaurantName restaurantName){
+        switch(restaurantName) {
+            case MCDONALDS:
+                return R.drawable.restaurant_mcdonalds_logo;
+            case WENDYS:
+                return R.drawable.restaurant_wendys_logo;
+            case BLENZ:
+                return R.drawable.restaurant_blenz_logo;
+            case PIZZAHUT:
+                return R.drawable.restaurant_pizzahut_logo;
+            case AW:
+                return R.drawable.restaurant_aw_logo;
+            case TIMS:
+                return R.drawable.restaurant_tims_logo;
+            case STARBUCKS:
+                return R.drawable.restaurant_starbucks_logo;
+            case ELEVEN:
+                return R.drawable.restaurant_eleven_logo;
+            case BOSTON:
+                return R.drawable.restaurant_boston_logo;
+            case SUBWAY:
+                return R.drawable.restaurant_subway_logo;
+            case UNKNOWN:
+                return R.drawable.fork_spoon_icon;
+        }
+        String errorMessage = String.format("Unhandled category [%s]", restaurantName);
+        throw new IllegalArgumentException(errorMessage);
+    }
+
     // Need to pass items we have in our array
     @Override
     public int getItemCount() {
@@ -117,6 +151,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         TextView numberOfIssues;
         TextView inspectionDate;
         ImageView hazardLevel;
+        ImageView restaurantIcon;
 
         ConstraintLayout restaurantListLayout;
 
@@ -127,6 +162,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
             this.numberOfIssues = itemView.findViewById(R.id.numIssues);
             this.inspectionDate = itemView.findViewById(R.id.inspectionDate);
             this.hazardLevel = itemView.findViewById(R.id.hazardIcon);
+            this.restaurantIcon = itemView.findViewById(R.id.restaurantIcon);
 
             restaurantListLayout = itemView.findViewById(R.id.rowLayout);
         }
