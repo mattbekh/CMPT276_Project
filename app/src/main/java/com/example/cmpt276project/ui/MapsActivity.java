@@ -17,12 +17,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.AllRestaurant;
@@ -31,11 +32,6 @@ import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
 import com.example.cmpt276project.model.DataDownloader;
 import com.example.cmpt276project.model.DataUpdater;
-import com.example.cmpt276project.model.Restaurant;
-import com.example.cmpt276project.model.RestaurantManager;
-import com.example.cmpt276project.ui.LoadDataDialog;
-import com.example.cmpt276project.ui.RestaurantListActivity;
-import com.example.cmpt276project.ui.UpdateDialog;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -44,17 +40,17 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 
-import java.io.FileDescriptor;
 import java.util.Objects;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -292,6 +288,9 @@ public class MapsActivity extends AppCompatActivity
         addRestaurant();
 
         mClusterManager.setRenderer(new MyClusterRenderer(getApplicationContext()));
+
+        // custom info window
+        clusterInfoWindow();
     }
 
     public Bitmap resizeMapIcons (String iconName, int width, int height) {
@@ -329,7 +328,7 @@ public class MapsActivity extends AppCompatActivity
                         break;
                     default:
                         snippet = "Hazard Level: No Inspection Yet";
-                        hazard = "";
+                        hazard = "hazard_unknown";
                         break;
                 }
             }
@@ -349,6 +348,45 @@ public class MapsActivity extends AppCompatActivity
             Bitmap resized = resizeMapIcons(item.getHazard(), 100, 100);
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resized));
         }
+    }
+
+    private void clusterInfoWindow() {
+        mClusterManager.getMarkerCollection().setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+
+
+//                Restaurant tmp = manager.getRestaurantByTrackingNumber(marker.getId());
+//                Inspection inspection = tmp.getInspectionByIndex(0);
+//
+                final View view = getLayoutInflater().inflate(R.layout.info_window, null);
+                TextView nameView = view.findViewById(R.id.text_name);
+                TextView addressView = view.findViewById(R.id.text_address);
+                TextView hazardView = view.findViewById(R.id.text_hazard);
+
+                nameView.setText(marker.getTitle());
+                addressView.setText("jsut test ttttttttttttttttttttttttttttttt");
+//                if(inspection.getTrackingNumber().equals("EMPTY")) {
+//                    hazardView.setText("Hazard Level: No Inspection Yet");
+//                } else {
+//                    hazardView.setText(inspection.getHazardRatingString());
+//                }
+                return view;
+            }
+        });
+
+        mClusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<AllRestaurant>() {
+            @Override
+            public void onClusterItemInfoWindowClick(AllRestaurant item) {
+//                Intent intent = new Intent(RestaurantActivity.getContext(), MapsActivity.class);
+                startActivity(new Intent(MapsActivity.this, RestaurantActivity.class));
+            }
+        });
     }
 
     public static Intent makeIntent(Context context, boolean isUpdateNeeded) {
@@ -508,7 +546,7 @@ public class MapsActivity extends AppCompatActivity
             super(context);
         }
 
-        public void updateProgress(int progress) {
+        public void updateProgress(final int progress) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
