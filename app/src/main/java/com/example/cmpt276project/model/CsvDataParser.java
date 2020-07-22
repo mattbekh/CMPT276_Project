@@ -23,33 +23,41 @@ import static com.example.cmpt276project.model.DataUpdater.INSPECTION_FILE;
  */
 public class CsvDataParser {
 
-    public static void readUpdatedRestaurantData(RestaurantManager manager) {
+    public static ArrayList<Restaurant> readUpdatedRestaurantData() {
+        ArrayList<Restaurant> restaurants = new ArrayList<>();
+        String restaurantFilePath = FILE_PATH + RESTAURANTS_FILE;
+        String inspectionFilePath = FILE_PATH + INSPECTION_FILE;
         try {
-            String restaurantFilePath = FILE_PATH + RESTAURANTS_FILE;
-            String inspectionFilePath = FILE_PATH + INSPECTION_FILE;
             File restaurantFile = new File(restaurantFilePath);
             File inspectionFile = new File(inspectionFilePath);
             InputStream restaurantStream = new FileInputStream(restaurantFile);
             InputStream inspectionStream = new FileInputStream(inspectionFile);
-            readRestaurantData(manager, restaurantStream);
-            readInspectionData(manager, inspectionStream);
+
+            readRestaurantData(restaurants, restaurantStream);
+            restaurants.sort(new RestaurantManager.SortAscendingByTrackingNumber());
+            readInspectionData(restaurants, inspectionStream);
+            return restaurants;
         } catch (Exception e) {
-            readDefaultRestaurantData(manager);
+            return readDefaultRestaurantData();
         }
     }
 
-    public static void readDefaultRestaurantData(RestaurantManager manager) {
+    public static ArrayList<Restaurant> readDefaultRestaurantData() {
+        ArrayList<Restaurant> restaurants = new ArrayList<>();
         try {
-            InputStream inputStream = App.resources().openRawResource(R.raw.restaurants_itr1);
-            readRestaurantData(manager, inputStream);
-            inputStream = App.resources().openRawResource(R.raw.inspectionreports_itr1);
-            readInspectionData(manager, inputStream);
+            InputStream restaurantStream = App.resources().openRawResource(R.raw.restaurants_itr1);
+            InputStream inspectionStream = App.resources().openRawResource(R.raw.inspectionreports_itr1);
+
+            readRestaurantData(restaurants, restaurantStream);
+            restaurants.sort(new RestaurantManager.SortAscendingByTrackingNumber());
+            readInspectionData(restaurants, inspectionStream);
+            return restaurants;
         } catch (IOException e) {
-            e.printStackTrace();
+            return restaurants;
         }
     }
 
-    private static void readRestaurantData(RestaurantManager manager, InputStream inputStream) throws IOException {
+    private static void readRestaurantData(ArrayList<Restaurant> restaurants, InputStream inputStream) throws IOException {
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(inputStream, StandardCharsets.UTF_8)
         );
@@ -61,8 +69,8 @@ public class CsvDataParser {
             while ((line = reader.readLine()) != null) {
                 try {
                     Restaurant restaurant = getRestaurantFromData(line);
-                    manager.addRestaurant(restaurant);
-                } catch (IllegalArgumentException e) {
+                    restaurants.add(restaurant);
+                } catch (Exception e) {
                     // No way to handle corrupt data, just skip it
                     continue;
                 }
@@ -74,7 +82,7 @@ public class CsvDataParser {
         }
     }
 
-    private static void readInspectionData(RestaurantManager manager, InputStream inputStream) throws IOException {
+    private static void readInspectionData(ArrayList<Restaurant> restaurants, InputStream inputStream) throws IOException {
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(inputStream, StandardCharsets.UTF_8)
         );
@@ -87,9 +95,9 @@ public class CsvDataParser {
                 try {
                     Inspection inspection = getInspectionFromData(line);
                     String trackingNumber = inspection.getTrackingNumber();
-                    Restaurant restaurant = manager.getRestaurantByTrackingNumber(trackingNumber);
+                    Restaurant restaurant = binarySearch(restaurants, trackingNumber);
                     restaurant.addInspection(inspection);
-                } catch (IllegalArgumentException e) {
+                } catch (Exception e) {
                     // If inspection line data is corrupt, inspection cannot be added
                     // If restaurant is not found inspections cannot be added
                     continue;
@@ -240,5 +248,24 @@ public class CsvDataParser {
             s = s.substring(0, s.length() - 1);
         }
         return s;
+    }
+
+    private static Restaurant binarySearch(ArrayList<Restaurant> restaurants, String trackingNumber) {
+        int max = restaurants.size() - 1;
+        int min = 0;
+        while (max >= min) {
+            int index = (max + min) / 2;
+            Restaurant restaurant = restaurants.get(index);
+            int compare = trackingNumber.compareTo(restaurant.getTrackingNumber());
+            if (compare > 0) {
+                min = index + 1;
+            } else if (compare < 0) {
+                max = index - 1;
+            } else {
+                return restaurant;
+            }
+        }
+
+        return null;
     }
 }
