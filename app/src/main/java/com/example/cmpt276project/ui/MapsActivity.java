@@ -351,8 +351,6 @@ public class MapsActivity extends AppCompatActivity
         }
     }
 
-    public static Intent makeIntent(Context context) {
-        return new Intent(context, MapsActivity.class);
     public static Intent makeIntent(Context context, boolean isUpdateNeeded) {
         Intent intent =  new Intent(context, MapsActivity.class);
         intent.putExtra("isUpdateNeeded", isUpdateNeeded);
