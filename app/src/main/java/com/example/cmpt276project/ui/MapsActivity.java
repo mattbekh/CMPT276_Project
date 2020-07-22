@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.AllRestaurant;
@@ -264,23 +265,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             String hazard;
             Inspection inspection = tmp.getInspectionByIndex(0);
 
-            switch (inspection.getHazardRating()) {
-                case LOW:
-                    snippet = "Hazard Level: LOW";
-                    hazard = "hazard_low";
-                    break;
-                case MODERATE:
-                    snippet = "Hazard Level: MODERATE";
-                    hazard = "hazard_mid";
-                    break;
-                case HIGH:
-                    snippet = "Hazard Level: HIGH";
-                    hazard = "hazard_high";
-                    break;
-                default:
-                    snippet = "Hazard Level: No Inspection Yet";
-                    hazard = "";
-                    break;
+            if(inspection.getTrackingNumber().equals("EMPTY")) {
+                snippet = "Hazard Level: No Inspection Yet";
+                hazard = "hazard_unknown";
+            } else {
+                switch (inspection.getHazardRating()) {
+                    case LOW:
+                        snippet = "Hazard Level: LOW";
+                        hazard = "hazard_low";
+                        break;
+                    case MODERATE:
+                        snippet = "Hazard Level: MODERATE";
+                        hazard = "hazard_mid";
+                        break;
+                    case HIGH:
+                        snippet = "Hazard Level: HIGH";
+                        hazard = "hazard_high";
+                        break;
+                    default:
+                        snippet = "Hazard Level: No Inspection Yet";
+                        hazard = "";
+                        break;
+                }
             }
 
             AllRestaurant offsetItem = new AllRestaurant(lat, lng, title, snippet, hazard);
