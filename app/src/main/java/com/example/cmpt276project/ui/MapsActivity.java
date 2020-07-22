@@ -79,6 +79,12 @@ public class MapsActivity extends AppCompatActivity
     // Declare a variable for the cluster manager.
     private ClusterManager<AllRestaurant> mClusterManager;
 
+    public static Intent makeIntent(Context context, boolean isUpdateNeeded) {
+        Intent intent =  new Intent(context, MapsActivity.class);
+        intent.putExtra("isUpdateNeeded", isUpdateNeeded);
+        return intent;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +107,12 @@ public class MapsActivity extends AppCompatActivity
         setupToolbar();
         checkUpdateDialog();
     }
+// TODO : Find the function to load the downloaded data and refresh the entire page after the load is complete
+//    public void onClick(View v) {
+//        Intent intent = getIntent();
+//        finish();
+//        startActivity(intent);
+//    }
 
     private void checkUpdateDialog() {
         Bundle extras = this.getIntent().getExtras();
@@ -159,6 +171,7 @@ public class MapsActivity extends AppCompatActivity
         // get permission
         getLocationPermission();
 
+//        checkUpdateDialog();
         // Turn on the My Location layer and the related control on the map.
         updateLocationUI();
 
@@ -175,15 +188,15 @@ public class MapsActivity extends AppCompatActivity
     *   Reference Document: Google Maps Platform: https://developers.google.com/maps/documentation/javascript/adding-a-google-map
     */
 
-    public void addRestaurantMarkers() {
-        for (Restaurant tmp : manager.getRestaurantList()) {
-            double lat = tmp.getLatitude();
-            double lng = tmp.getLongitude();
-            String title = tmp.getName();
-            LatLng restPosition = new LatLng(lat, lng);
-            mMap.addMarker(new MarkerOptions().position(restPosition).title(title));
-        }
-    }
+//    public void addRestaurantMarkers() {
+//        for (Restaurant tmp : manager.getRestaurantList()) {
+//            double lat = tmp.getLatitude();
+//            double lng = tmp.getLongitude();
+//            String title = tmp.getName();
+//            LatLng restPosition = new LatLng(lat, lng);
+//            mMap.addMarker(new MarkerOptions().position(restPosition).title(title));
+//        }
+//    }
 
     private void updateLocationUI() {
         if (mMap == null) {
@@ -271,7 +284,7 @@ public class MapsActivity extends AppCompatActivity
     }
 
     // Marker clustering
-    private void setUpCluster() {
+    public void setUpCluster() {
         // Position the map.
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.503186, -0.126446), 10));
 
@@ -341,7 +354,7 @@ public class MapsActivity extends AppCompatActivity
 
 
     // add restaurant markers
-    private void addRestaurant() {
+    public void addRestaurant() {
         for (Restaurant tmp:manager.getRestaurantList()) {
             double lat = tmp.getLatitude();
             double lng = tmp.getLongitude();
@@ -393,12 +406,6 @@ public class MapsActivity extends AppCompatActivity
         }
     }
 
-    public static Intent makeIntent(Context context, boolean isUpdateNeeded) {
-        Intent intent =  new Intent(context, MapsActivity.class);
-        intent.putExtra("isUpdateNeeded", isUpdateNeeded);
-        return intent;
-    }
-
     private void launchUpdateDialog() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         UpdateDialog dialog = new UpdateDialog();
@@ -406,8 +413,6 @@ public class MapsActivity extends AppCompatActivity
     }
 
     private void launchLoadingDataDialog() {
-//        manager.updateData();
-//        addRestaurantMarkers();
         FragmentManager fragmentManager = getSupportFragmentManager();
         loadDataDialog = new LoadDataDialog();
         loadDataDialog.show(fragmentManager, "LoadDataDialog");
@@ -420,7 +425,7 @@ public class MapsActivity extends AppCompatActivity
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            addRestaurantMarkers();
+                            setUpCluster();
                         }
                     });
                 } catch (Exception e) {

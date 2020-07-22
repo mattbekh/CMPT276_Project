@@ -40,6 +40,6 @@ public class LoadDataDialog extends AppCompatDialogFragment {
     }
 
     public interface OnDismissListener {
-        void addRestaurantMarkers();
+        void setUpCluster();
     }
 }
