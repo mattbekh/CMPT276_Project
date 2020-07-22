@@ -114,8 +114,8 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
                 return R.drawable.restaurant_mcdonalds_logo;
             case WENDYS:
                 return R.drawable.restaurant_wendys_logo;
-            case TOPTOWN:
-                return R.drawable.restaurant_toptown_logo;
+            case BLENZ:
+                return R.drawable.restaurant_blenz_logo;
             case PIZZAHUT:
                 return R.drawable.restaurant_pizzahut_logo;
             case AW:
@@ -126,8 +126,10 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
                 return R.drawable.restaurant_starbucks_logo;
             case ELEVEN:
                 return R.drawable.restaurant_eleven_logo;
-            case LEEYUEN:
-                return R.drawable.restaurant_leeyeun_logo;
+            case BOSTON:
+                return R.drawable.restaurant_boston_logo;
+            case SUBWAY:
+                return R.drawable.restaurant_subway_logo;
             case UNKNOWN:
                 return R.drawable.fork_spoon_icon;
         }

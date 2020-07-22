@@ -14,7 +14,7 @@ import java.util.Iterator;
  */
 public class Restaurant implements Iterable<Inspection> {
 
-    public enum RestaurantName{MCDONALDS, WENDYS, TOPTOWN, PIZZAHUT, AW, TIMS, STARBUCKS, ELEVEN, LEEYUEN, UNKNOWN};
+    public enum RestaurantName{MCDONALDS, WENDYS, BLENZ, PIZZAHUT, AW, TIMS, STARBUCKS, ELEVEN, BOSTON, SUBWAY, UNKNOWN};
     private RestaurantName restaurantName;
 
     private String trackingNumber;
@@ -84,23 +84,25 @@ public class Restaurant implements Iterable<Inspection> {
     private static String getKeywordPattern(RestaurantName restaurantName){
         switch(restaurantName){
             case MCDONALDS:
-                return ".*((mcdonalds)).*";
+                return ".*((mcdonald)).*";
             case WENDYS:
-                return ".*((wendys)).*";
-            case TOPTOWN:
-                return ".*((top)|(town)).*";
+                return ".*((wendy)).*";
+            case BLENZ:
+                return ".*((blenz)).*";
             case PIZZAHUT:
-                return ".*((hut)).*";
+                return ".*((pizza hut)).*";
             case AW:
-                return ".*((a&w)).*";
+                return ".*((a&w)|(a & w #)).*";
             case TIMS:
-                return ".*((tim)|(hortons)).*";
+                return ".*((horton)).*";
             case STARBUCKS:
                 return ".*((starbucks)).*";
             case ELEVEN:
-                return ".*((7)).*";
-            case LEEYUEN:
-                return ".*((lee)|(yuen)).*";
+                return ".*((eleven)).*";
+            case BOSTON:
+                return ".*((boston)).*";
+            case SUBWAY:
+                return ".*((subway)).*";
             case UNKNOWN:
                 return ".*(( )).*";
             default:
