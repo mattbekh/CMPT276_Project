@@ -10,7 +10,7 @@ import com.example.cmpt276project.R;
  */
 public class Violation {
 
-    public enum Category { PERMITS, EMPLOYEES, EQUIPMENT, PESTS, FOOD }
+    public enum Category { PESTS, PERMITS, EMPLOYEES, EQUIPMENT, FOOD }
 
     private int id;
     private boolean isCritical;

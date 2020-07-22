@@ -5,14 +5,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 
+import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +29,13 @@ import com.example.cmpt276project.model.AllRestaurant;
 import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
+import com.example.cmpt276project.model.DataDownloader;
+import com.example.cmpt276project.model.DataUpdater;
+import com.example.cmpt276project.model.Restaurant;
+import com.example.cmpt276project.model.RestaurantManager;
+import com.example.cmpt276project.ui.LoadDataDialog;
+import com.example.cmpt276project.ui.RestaurantListActivity;
+import com.example.cmpt276project.ui.UpdateDialog;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -39,11 +51,24 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 
+import java.io.FileDescriptor;
 import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity
+        implements OnMapReadyCallback, UpdateDialog.UpdateDialogListener, LoadDataDialog.OnDismissListener
+{
 
     private RestaurantManager manager;
+
+    private ProgressDialog progressBarDialog;
+    private LoadDataDialog loadDataDialog;
+    private Future<Boolean> downloadDataResult;
+    private Future<Boolean> loadDataResult;
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -76,6 +101,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         setupToolbar();
+        checkUpdateDialog();
+    }
+
+    private void checkUpdateDialog() {
+        Bundle extras = this.getIntent().getExtras();
+        boolean isUpdateNeeded = extras.getBoolean("isUpdateNeeded");
+        downloadDataResult = null;
+        if (isUpdateNeeded) {
+            launchUpdateDialog();
+        }
     }
 
     private void setupToolbar() {
@@ -90,7 +125,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.toolbar_menu, menu);
 
-        MenuItem viewRestaurantListItem = (MenuItem) menu.findItem(R.id.ToolbarMenu_switch_context);
+        MenuItem viewRestaurantListItem = menu.findItem(R.id.ToolbarMenu_switch_context);
         viewRestaurantListItem.setVisible(true);
         viewRestaurantListItem.setTitle(R.string.MapsActivity_toolbar_list_btn_text);
 
@@ -141,6 +176,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
     *   Reference Document: Google Maps Platform: https://developers.google.com/maps/documentation/javascript/adding-a-google-map
     */
+
+    public void addRestaurantMarkers() {
+        for (Restaurant tmp : manager.getRestaurantList()) {
+            double lat = tmp.getLatitude();
+            double lng = tmp.getLongitude();
+            String title = tmp.getName();
+            LatLng restPosition = new LatLng(lat, lng);
+            mMap.addMarker(new MarkerOptions().position(restPosition).title(title));
+        }
+    }
 
     private void updateLocationUI() {
         if (mMap == null) {
@@ -306,8 +351,170 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    public static Intent makeIntent(Context context) {
-        return new Intent(context, MapsActivity.class);
+    public static Intent makeIntent(Context context, boolean isUpdateNeeded) {
+        Intent intent =  new Intent(context, MapsActivity.class);
+        intent.putExtra("isUpdateNeeded", isUpdateNeeded);
+        return intent;
     }
 
+    private void launchUpdateDialog() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        UpdateDialog dialog = new UpdateDialog();
+        dialog.show(fragmentManager, "TestDialog");
+    }
+
+    private void launchLoadingDataDialog() {
+//        manager.updateData();
+//        addRestaurantMarkers();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        loadDataDialog = new LoadDataDialog();
+        loadDataDialog.show(fragmentManager, "LoadDataDialog");
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        Callable<Boolean> dataLoader = new Callable<Boolean>() {
+            @Override
+            public Boolean call() {
+                try {
+                    manager.updateData();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            addRestaurantMarkers();
+                        }
+                    });
+                } catch (Exception e) {
+                    return false;
+                }
+                return true;
+            }
+        };
+        loadDataResult = executor.submit(dataLoader);
+        executor.submit(new LoadDataWaiter());
+    }
+
+    @Override
+    public void downloadData() {
+        checkFilePermissions();
+        try {
+            if (filePermissionGranted()) {
+                DataDownloader downloader = new CsvDataDownloader(this);
+                ExecutorService executor = Executors.newFixedThreadPool(1);
+                launchProgressDialog();
+                downloadDataResult = executor.submit(downloader);
+            };
+        } catch (InterruptedException e) {
+            // Thread was interrupted waiting for permission
+        }
+    }
+
+    private void checkFilePermissions() {
+        int permission = checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permission == PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        int requestCode = 1;
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        }, requestCode);
+    }
+
+    private boolean filePermissionGranted() throws InterruptedException {
+        int permission = checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        long timeBetweenChecks = 100; // milliseconds
+        int maxChecks = 50; // total wait time of 5 seconds
+        int numChecks = 0;
+
+        // Check permission until granted, waiting between each check
+        while (permission != PackageManager.PERMISSION_GRANTED
+               && numChecks < maxChecks)
+        {
+            Thread.sleep(timeBetweenChecks);
+            permission = checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            numChecks++;
+        }
+
+        return permission == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void launchProgressDialog() {
+        progressBarDialog = new ProgressDialog(this);
+        progressBarDialog.setTitle(getString(R.string.MapsActivity_download_progress));
+        progressBarDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressBarDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+                                    getString(R.string.MapsActivity_cancel_download_btn),
+                                    new OnCancelDownloadListener());
+        progressBarDialog.setButton(DialogInterface.BUTTON_POSITIVE,
+                                    getString(R.string.MapsActivity_accept_download_btn),
+                                    new OnAcceptDownloadListener());
+        progressBarDialog.setProgress(0);
+        progressBarDialog.show();
+    }
+
+    private class LoadDataWaiter implements Runnable {
+
+        @Override
+        public void run() {
+            int timeBetweenChecks = 100; // milliseconds
+            while (!loadDataResult.isDone()) {
+                try {
+                    Thread.sleep(timeBetweenChecks);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            try {
+                loadDataResult.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                loadDataDialog.dismiss();
+            }
+        }
+    }
+
+    private class OnAcceptDownloadListener implements DialogInterface.OnClickListener {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            try {
+                boolean isDownloadSuccess = downloadDataResult.get();
+                if (isDownloadSuccess) {
+                    DataUpdater updater = new DataUpdater();
+                    boolean isUpdateSuccess = updater.tryUpdateData();
+                    if (isUpdateSuccess) {
+                        launchLoadingDataDialog();
+                    }
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                progressBarDialog.dismiss();
+            }
+        }
+    }
+
+    private class OnCancelDownloadListener implements DialogInterface.OnClickListener {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            downloadDataResult.cancel(true);
+            progressBarDialog.dismiss();
+        }
+    }
+
+    private class CsvDataDownloader extends DataDownloader {
+
+        public CsvDataDownloader(Context context) {
+            super(context);
+        }
+
+        public void updateProgress(int progress) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressBarDialog.setProgress(progress);
+                }
+            });
+        }
+    }
 }
