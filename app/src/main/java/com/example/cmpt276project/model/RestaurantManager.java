@@ -2,6 +2,7 @@ package com.example.cmpt276project.model;
 
 import androidx.annotation.NonNull;
 
+import java.io.FileDescriptor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,7 +20,7 @@ public class RestaurantManager implements Iterable<Restaurant> {
     public static RestaurantManager getInstance() {
         if (instance == null) {
             instance = new RestaurantManager();
-            CsvDataParser.readRestaurantData(instance);
+            CsvDataParser.readUpdatedRestaurantData(instance);
         }
         return instance;
     }
@@ -76,6 +77,11 @@ public class RestaurantManager implements Iterable<Restaurant> {
         }
         String errorMessage = String.format("Tracking number [%s] not found.", trackingNumber);
         throw new IllegalArgumentException(errorMessage);
+    }
+
+    public void updateData() {
+        instance.restaurantList.clear();
+        CsvDataParser.readUpdatedRestaurantData(instance);
     }
 
     @NonNull

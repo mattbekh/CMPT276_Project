@@ -9,6 +9,7 @@ import android.os.Environment;
 
 import org.json.JSONObject;
 
+import java.io.FileDescriptor;
 import java.util.GregorianCalendar;
 import java.util.concurrent.Callable;
 
@@ -18,11 +19,9 @@ import static android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMP
 
 public abstract class DataDownloader implements Callable<Boolean> {
 
+    private static int NUM_DOWNLOADS = 2;
     private static String RESTAURANTS_URL = "https://data.surrey.ca/api/3/action/package_show?id=restaurants";
     private static String INSPECTIONS_URL = "https://data.surrey.ca/api/3/action/package_show?id=fraser-health-restaurant-inspection-reports";
-    private static String RESTAURANTS_FILE = "restaurant_data.csv";
-    private static String INSPECTION_FILE = "inspection_data.csv";
-    private static int NUM_DOWNLOADS = 2;
 
     private DownloadManager downloadManager;
     private SharedPreferences csvDataPrefs;
@@ -36,8 +35,8 @@ public abstract class DataDownloader implements Callable<Boolean> {
     @Override
     public Boolean call() {
         try {
-            downloadFile(RESTAURANTS_URL, RESTAURANTS_FILE);
-            downloadFile(INSPECTIONS_URL, INSPECTION_FILE);
+            downloadFile(RESTAURANTS_URL, DataUpdater.TEMP_RESTAURANT_FILE);
+            downloadFile(INSPECTIONS_URL, DataUpdater.TEMP_INSPECTION_FILE);
             updateModificationDate();
         } catch (Exception e) {
             return false;
@@ -47,9 +46,6 @@ public abstract class DataDownloader implements Callable<Boolean> {
 
     private void downloadFile(String url, String fileName) {
         DownloadManager.Request request = getDownloadRequest(url, fileName);
-        if (request == null) {
-            return;
-        }
 
         long downloadId = downloadManager.enqueue(request);
         processRequest(downloadId);
@@ -117,9 +113,6 @@ public abstract class DataDownloader implements Callable<Boolean> {
 
             storeModDateSharedPrefs("updatedOn", currentTime);
             storeModDateSharedPrefs("localModifyTime", modifyTime);
-
-            // For testing download
-            clearSharedPrefs();
         } catch (Exception e) {
             // Do nothing
         }
