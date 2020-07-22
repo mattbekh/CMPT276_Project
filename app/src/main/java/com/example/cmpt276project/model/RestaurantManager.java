@@ -19,14 +19,13 @@ public class RestaurantManager implements Iterable<Restaurant> {
     public static RestaurantManager getInstance() {
         if (instance == null) {
             instance = new RestaurantManager();
-            CsvDataParser.readRestaurantData(instance);
         }
         return instance;
     }
 
     // Ensure private for singleton
     private RestaurantManager() {
-        restaurantList = new ArrayList<>();
+        this.restaurantList = CsvDataParser.readUpdatedRestaurantData();
     }
 
     // return whole restaurant list
@@ -56,14 +55,21 @@ public class RestaurantManager implements Iterable<Restaurant> {
 
     // Sort restaurants by name
     public void sortByRestaurantName() {
-        Collections.sort(restaurantList, new SortByName());
+        Collections.sort(restaurantList, new SortAscendingByName());
     }
 
     // Override comparator function to sort restaurants by name
-    static class SortByName implements Comparator<Restaurant> {
+    static class SortAscendingByName implements Comparator<Restaurant> {
         @Override
         public int compare(Restaurant o1, Restaurant o2) {
             return o1.getName().compareTo(o2.getName());
+        }
+    }
+
+    static class SortAscendingByTrackingNumber implements Comparator<Restaurant> {
+        @Override
+        public int compare(Restaurant o1, Restaurant o2) {
+            return o1.getTrackingNumber().compareTo(o2.getTrackingNumber());
         }
     }
 
@@ -76,6 +82,11 @@ public class RestaurantManager implements Iterable<Restaurant> {
         }
         String errorMessage = String.format("Tracking number [%s] not found.", trackingNumber);
         throw new IllegalArgumentException(errorMessage);
+    }
+
+    public void updateData() {
+        instance.restaurantList = CsvDataParser.readUpdatedRestaurantData();
+        instance.sortByRestaurantName();
     }
 
     @NonNull

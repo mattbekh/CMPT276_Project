@@ -4,6 +4,7 @@ import android.content.res.Resources;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.example.cmpt276project.model.DataUpdateChecker;
 import com.example.cmpt276project.model.DateHelper;
 
 import org.junit.Test;
@@ -14,6 +15,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * This class tests the functionality of the DateHelper class
@@ -36,7 +39,6 @@ public class DateHelperTest {
     @Test
     public void shouldGetMonthAndDayForDateWithinOneYear() {
         GregorianCalendar pastCalendar = numDaysAgoCalendar(50);
-        Resources res = App.resources();
         String month = DateHelper.getMonthString(pastCalendar.get(Calendar.MONTH));
         int day = pastCalendar.get(Calendar.DAY_OF_MONTH);
         String correctResult = String.format("%s %d", month, day);
@@ -48,7 +50,6 @@ public class DateHelperTest {
     @Test
     public void shouldGetMonthAndYearForDateWithinOneYear() {
         GregorianCalendar pastCalendar = numDaysAgoCalendar(400);
-        Resources res = App.resources();
         String month = DateHelper.getMonthString(pastCalendar.get(Calendar.MONTH));
         int year = pastCalendar.get(Calendar.YEAR);
         String correctResult = String.format("%s %d", month, year);
@@ -75,9 +76,30 @@ public class DateHelperTest {
         assertEquals(expectedFullDate, fullDate);
     }
 
-    private GregorianCalendar numDaysAgoCalendar(int numDays) {
+    @Test
+    public void ShouldBeAbleToTellIfUpdateWasLessThanTwentyHoursAgo() {
+        String timeString = DateHelper.getTimeString(numHoursAgoCalendar(19));
+        assertFalse(DateHelper.isTwentyHoursSince(timeString));
+    }
+
+    @Test
+    public void ShouldBeAbleToTellIfUpdateWasMoreThanTwentyHoursAgo() {
+        String timeString = DateHelper.getTimeString(numHoursAgoCalendar(20));
+        assertTrue(DateHelper.isTwentyHoursSince(timeString));
+    }
+
+    private GregorianCalendar numHoursAgoCalendar(long numHours) {
+        final long MILLISECONDS_PER_HOUR = 1000 * 60 * 60;
+        return pastCalendar(numHours, MILLISECONDS_PER_HOUR);
+    }
+
+    private GregorianCalendar numDaysAgoCalendar(long numDays) {
         final long MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
-        long timeNumDaysAgo = new Date().getTime() - numDays * MILLISECONDS_PER_DAY;
+        return pastCalendar(numDays, MILLISECONDS_PER_DAY);
+    }
+
+    private GregorianCalendar pastCalendar(long amount, long unit) {
+        long timeNumDaysAgo = new Date().getTime() - amount * unit;
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(new Date(timeNumDaysAgo));
         return calendar;

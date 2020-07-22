@@ -10,7 +10,7 @@ import com.example.cmpt276project.R;
  */
 public class Violation {
 
-    public enum Category { PERMITS, EMPLOYEES, EQUIPMENT, PESTS, FOOD }
+    public enum Category { PESTS, PERMITS, EQUIPMENT, EMPLOYEES, FOOD }
 
     private int id;
     private boolean isCritical;
@@ -83,11 +83,11 @@ public class Violation {
     private static String getKeywordPattern(Category category) {
         switch (category) {
             case PERMITS:
-                return ".*((permit)|(operation)|(premise)).*";
+                return ".*((permit)|(operation)|(plan)).*";
             case EMPLOYEES:
                 return ".*((employee)|(operator)).*";
             case EQUIPMENT:
-                return ".*((equipment)|(utensil)|(surface)|(chemical)).*";
+                return ".*((equipment)|(utensil)|(surface)|(chemical)|(station)).*";
             case PESTS:
                 return ".*((pest)|(animal)).*";
             case FOOD:

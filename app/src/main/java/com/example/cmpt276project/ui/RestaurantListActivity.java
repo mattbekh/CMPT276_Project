@@ -12,7 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
 
-import com.example.cmpt276project.MapsActivity;
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.RestaurantManager;
 
@@ -36,7 +35,7 @@ public class RestaurantListActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.toolbar_menu,menu);
 
-        MenuItem viewMapItem = (MenuItem) menu.findItem(R.id.ToolbarMenu_switch_context);
+        MenuItem viewMapItem = menu.findItem(R.id.ToolbarMenu_switch_context);
         viewMapItem.setVisible(true);
         viewMapItem.setTitle(R.string.RestaurantListActivity_toolbar_map_btn_text);
 
@@ -50,7 +49,7 @@ public class RestaurantListActivity extends AppCompatActivity {
                 finish();
                 return true;
             case R.id.ToolbarMenu_switch_context:
-                startActivity(MapsActivity.makeIntent(this));
+                startActivity(MapsActivity.makeIntent(this, false));
                 return true;
         }
         return super.onOptionsItemSelected(item);
