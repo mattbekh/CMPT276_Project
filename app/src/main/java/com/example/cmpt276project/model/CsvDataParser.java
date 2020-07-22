@@ -142,7 +142,7 @@ public class CsvDataParser {
             // Check which column is the rating and assign them accordingly
             String rating;
             String violations;
-            if (tokens.get(5).toLowerCase().matches("(low)|(moderate)|(high)")) {
+            if (tokens.get(5).toLowerCase().matches("\"?(low|moderate|high)\"?")) {
                 rating = tokens.get(5);
                 violations = tokens.get(6);
             } else {
@@ -171,6 +171,19 @@ public class CsvDataParser {
         }
     }
 
+    private static void addViolationsToInspection(String violationLump, Inspection inspection) {
+        if (violationLump.length() == 0) {
+            return;
+        }
+
+        violationLump = withQuotesRemoved(violationLump);
+        ArrayList<String> violationStrings = tokenize(violationLump, '|');
+        for (String violationData : violationStrings) {
+            Violation violation = getViolationFromData(violationData);
+            inspection.addViolation(violation);
+        }
+    }
+
     public static Violation getViolationFromData(String violationData) {
 
         try {
@@ -178,9 +191,9 @@ public class CsvDataParser {
             ArrayList<String> tokens = tokenize(violationData, ',');
 
             int id = Integer.parseInt(tokens.get(0));
-            String description = tokens.get(2);
-            String criticalString = tokens.get(1);
-            String repeatString = tokens.get(3);
+            String description = withQuotesRemoved(tokens.get(2));
+            String criticalString = withQuotesRemoved(tokens.get(1));
+            String repeatString = withQuotesRemoved(tokens.get(3));
             boolean isCritical = true;
             boolean isRepeat = true;
 
@@ -201,19 +214,6 @@ public class CsvDataParser {
                 String errorMessage = String.format("Illegal string of violation data [%s]", violationData);
                 throw new IllegalArgumentException(errorMessage, e);
             }
-    }
-
-    private static void addViolationsToInspection(String violationLump, Inspection inspection) {
-        if (violationLump.length() == 0) {
-            return;
-        }
-
-        violationLump = withQuotesRemoved(violationLump);
-        ArrayList<String> violationStrings = tokenize(violationLump, '|');
-        for (String violationData : violationStrings) {
-            Violation violation = getViolationFromData(violationData);
-            inspection.addViolation(violation);
-        }
     }
 
     private static ArrayList<String> tokenize(String s, char delimiter) {
@@ -241,6 +241,9 @@ public class CsvDataParser {
     }
 
     private static String withQuotesRemoved(String s) {
+        if (s.length() == 0) {
+            return s;
+        }
         if (s.charAt(0) == '"') {
             s = s.substring(1, s.length());
         }
