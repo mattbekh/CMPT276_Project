@@ -6,12 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 
 import com.example.cmpt276project.MapsActivity;
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.DataUpdateChecker;
+import com.example.cmpt276project.model.RestaurantManager;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -23,26 +24,18 @@ import java.util.concurrent.Future;
 public class OpeningScreenActivity extends FragmentActivity {
 
     Future<Boolean> updateCheckResult;
+    Future<Boolean> loadDataResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_opening_screen);
 
-        startUpdate();
-        waitForUpdate();
-    }
-
-    private void startUpdate() {
         SharedPreferences prefs = this.getSharedPreferences("CSVData", Context.MODE_PRIVATE);
-        DataUpdateChecker updateChecker = new DataUpdateChecker(prefs);
-        ExecutorService executor = Executors.newFixedThreadPool(1);
-        updateCheckResult = executor.submit(updateChecker);
-    }
-
-    private void waitForUpdate() {
-        Handler handler = new Handler();
-        handler.postDelayed(new ActivityLauncherRunnable(),3200);
+        ExecutorService executor = Executors.newFixedThreadPool(3);
+        updateCheckResult = executor.submit(new DataUpdateChecker(prefs));
+        loadDataResult = executor.submit(new DataLoader());
+        executor.submit(new ActivityLauncherRunnable());
     }
 
     private void launchMainActivity(boolean isUpdateNeeded) {
@@ -51,10 +44,32 @@ public class OpeningScreenActivity extends FragmentActivity {
         finish();
     }
 
+    private class DataLoader implements Callable<Boolean> {
+        @Override
+        public Boolean call() {
+            RestaurantManager manager = RestaurantManager.getInstance();
+            if (manager == null) {
+                return false;
+            }
+            return true;
+        }
+    }
+
     private class ActivityLauncherRunnable implements Runnable {
 
         @Override
         public void run() {
+            int timeBetweenChecks = 100; // milliseconds
+            while (!updateCheckResult.isDone()
+                    || !loadDataResult.isDone())
+            {
+                try {
+                    Thread.sleep(timeBetweenChecks);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
             boolean isUpdateNeeded = false;
 
             try {
