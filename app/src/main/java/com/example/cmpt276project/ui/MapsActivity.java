@@ -322,7 +322,10 @@ public class MapsActivity extends AppCompatActivity
         mClusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<AllRestaurant>() {
             @Override
             public void onClusterItemInfoWindowClick(AllRestaurant item) {
-                startActivity(new Intent(MapsActivity.this, Restaurant.class));
+//                startActivity(new Intent(MapsActivity.this, RestaurantActivity.class));
+                Intent intent = RestaurantActivity.makeIntent(MapsActivity.this);
+                intent.putExtra("tracking_number",item.getTrackingNumber());
+                startActivity(intent);
             }
         });
 
@@ -344,6 +347,7 @@ public class MapsActivity extends AppCompatActivity
             double lng = tmp.getLongitude();
             String title = tmp.getName();
             String address = tmp.getAddress();
+            String trackingNum = tmp.getTrackingNumber();
             String snippet;
             String hazard;
             Inspection inspection = tmp.getInspectionByIndex(0);
@@ -372,7 +376,7 @@ public class MapsActivity extends AppCompatActivity
                 }
             }
 
-            AllRestaurant offsetItem = new AllRestaurant(lat, lng, title, snippet, hazard);
+            AllRestaurant offsetItem = new AllRestaurant(lat, lng, title, snippet, hazard, trackingNum);
             mClusterManager.addItem(offsetItem);
         }
     }
