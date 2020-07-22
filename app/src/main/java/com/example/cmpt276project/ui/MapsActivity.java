@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.AllRestaurant;
@@ -45,6 +46,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
@@ -293,11 +295,47 @@ public class MapsActivity extends AppCompatActivity
         clusterInfoWindow();
     }
 
+    private void clusterInfoWindow() {
+        mClusterManager.getMarkerCollection().setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                final View view = getLayoutInflater().inflate(R.layout.info_window, null);
+                TextView nameView = view.findViewById(R.id.text_name);
+                TextView detailsView = view.findViewById(R.id.text_detail);
+
+                String name = (marker.getTitle() != null) ? marker.getTitle() : "Zoom in for Details";
+                nameView.setText(name);
+                String details = (marker.getSnippet() != null) ? marker.getSnippet() : "Zoom in for Details";
+                detailsView.setText(details);
+
+                return view;
+            }
+        });
+
+        mClusterManager.setRenderer(new MyClusterRenderer(getApplicationContext()));
+
+        mClusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<AllRestaurant>() {
+            @Override
+            public void onClusterItemInfoWindowClick(AllRestaurant item) {
+                startActivity(new Intent(MapsActivity.this, Restaurant.class));
+            }
+        });
+
+
+    }
+
     public Bitmap resizeMapIcons (String iconName, int width, int height) {
         Bitmap imageBitmap  = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier(iconName, "drawable", getPackageName()));
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
         return resizedBitmap;
     }
+
+
 
     // add restaurant markers
     private void addRestaurant() {
@@ -305,25 +343,26 @@ public class MapsActivity extends AppCompatActivity
             double lat = tmp.getLatitude();
             double lng = tmp.getLongitude();
             String title = tmp.getName();
+            String address = tmp.getAddress();
             String snippet;
             String hazard;
             Inspection inspection = tmp.getInspectionByIndex(0);
 
             if(inspection.getTrackingNumber().equals("EMPTY")) {
-                snippet = "Hazard Level: No Inspection Yet";
+                snippet = address + "\nHazard Level: No Inspection Yet";
                 hazard = "hazard_unknown";
             } else {
                 switch (inspection.getHazardRating()) {
                     case LOW:
-                        snippet = "Hazard Level: LOW";
+                        snippet = address + "\nHazard Level: LOW";
                         hazard = "hazard_low";
                         break;
                     case MODERATE:
-                        snippet = "Hazard Level: MODERATE";
+                        snippet = address + "\nHazard Level: MODERATE";
                         hazard = "hazard_mid";
                         break;
                     case HIGH:
-                        snippet = "Hazard Level: HIGH";
+                        snippet = address + "\nHazard Level: HIGH";
                         hazard = "hazard_high";
                         break;
                     default:
@@ -348,45 +387,6 @@ public class MapsActivity extends AppCompatActivity
             Bitmap resized = resizeMapIcons(item.getHazard(), 100, 100);
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resized));
         }
-    }
-
-    private void clusterInfoWindow() {
-        mClusterManager.getMarkerCollection().setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-            @Override
-            public View getInfoWindow(Marker marker) {
-                return null;
-            }
-
-            @Override
-            public View getInfoContents(Marker marker) {
-
-
-//                Restaurant tmp = manager.getRestaurantByTrackingNumber(marker.getId());
-//                Inspection inspection = tmp.getInspectionByIndex(0);
-//
-                final View view = getLayoutInflater().inflate(R.layout.info_window, null);
-                TextView nameView = view.findViewById(R.id.text_name);
-                TextView addressView = view.findViewById(R.id.text_address);
-                TextView hazardView = view.findViewById(R.id.text_hazard);
-
-                nameView.setText(marker.getTitle());
-                addressView.setText("jsut test ttttttttttttttttttttttttttttttt");
-//                if(inspection.getTrackingNumber().equals("EMPTY")) {
-//                    hazardView.setText("Hazard Level: No Inspection Yet");
-//                } else {
-//                    hazardView.setText(inspection.getHazardRatingString());
-//                }
-                return view;
-            }
-        });
-
-        mClusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<AllRestaurant>() {
-            @Override
-            public void onClusterItemInfoWindowClick(AllRestaurant item) {
-//                Intent intent = new Intent(RestaurantActivity.getContext(), MapsActivity.class);
-                startActivity(new Intent(MapsActivity.this, RestaurantActivity.class));
-            }
-        });
     }
 
     public static Intent makeIntent(Context context, boolean isUpdateNeeded) {
