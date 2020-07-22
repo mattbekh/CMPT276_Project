@@ -39,7 +39,7 @@ public class UpdateDialog extends AppCompatDialogFragment {
         };
 
         return new AlertDialog.Builder(getActivity())
-                .setTitle("Update Available, download data?")
+                .setTitle(getString(R.string.UpdateDialog_title))
                 .setView(v)
                 .setPositiveButton("Yes",listener)
                 .setNegativeButton("No",listener)
