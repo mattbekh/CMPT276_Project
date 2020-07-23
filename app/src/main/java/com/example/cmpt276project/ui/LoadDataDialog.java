@@ -14,6 +14,9 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.example.cmpt276project.R;
 
+/**
+ * Creates a fragment dialog which serves as a holding screen while data loads
+ */
 public class LoadDataDialog extends AppCompatDialogFragment {
 
     @NonNull

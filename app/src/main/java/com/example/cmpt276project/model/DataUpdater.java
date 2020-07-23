@@ -16,6 +16,9 @@ import java.io.OutputStreamWriter;
 import java.util.GregorianCalendar;
 import java.util.concurrent.Callable;
 
+/**
+ * Class which handles the data from URL being stored in device storage and making sure initialized data is handled correctly
+ */
 public class DataUpdater implements Callable<Boolean> {
     public static String RESTAURANTS_FILE = "restaurant_data.csv";
     public static String INSPECTION_FILE = "inspection_data.csv";

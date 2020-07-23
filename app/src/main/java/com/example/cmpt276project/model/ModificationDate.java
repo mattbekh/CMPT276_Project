@@ -24,7 +24,11 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import static java.lang.Integer.parseInt;
-
+/**
+ * Class to keep track of modification date. Gets modification date from URL and compares it with current date and time.
+ * If shared prefs dont have a modification date stored, it stores current date. If modification date from URL is newer than
+ * stored date, updates the stored date to modification date from URL
+ */
 public class ModificationDate {
 
     private static String inputRestaurantUrl;
@@ -75,11 +79,6 @@ public class ModificationDate {
 
                 // Nice looking date for a TextView
 //                String currentTime = java.text.DateFormat.getDateTimeInstance().format(new Date());
-
-                Log.v("ModiDate","The current date is " + formattedDate);
-
-                Log.v("ModiDate","The shared prefs for " + inputRestaurantUrl +" is " + getModDateSharedPrefs(inputRestaurantUrl));
-                Log.v("ModiDate","The shared prefs for updatedOn is " + getModDateSharedPrefs("updatedOn"));
 
                 if(modifiedDate != null){
 
