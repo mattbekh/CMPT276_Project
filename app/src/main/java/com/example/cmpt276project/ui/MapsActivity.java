@@ -162,6 +162,7 @@ public class MapsActivity extends AppCompatActivity
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        System.exit(0);
     }
 
     private void getNewLocation(String tracking_number) {
@@ -192,7 +193,11 @@ public class MapsActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.ToolbarMenu_back:
-                finish();
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                System.exit(0);
                 return true;
             case R.id.ToolbarMenu_switch_context:
                 startActivity(RestaurantListActivity.makeIntent(this));

@@ -57,7 +57,6 @@ public class RestaurantActivity extends AppCompatActivity {
     //Takes user back to RestaurantList
     @Override
     public void onBackPressed(){
-
         finish();
     }
 
