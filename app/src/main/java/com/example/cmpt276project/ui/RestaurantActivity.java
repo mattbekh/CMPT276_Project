@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.Inspection;
@@ -50,6 +52,13 @@ public class RestaurantActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.toolbar_menu,menu);
         return true;
+    }
+
+    //Takes user back to RestaurantList
+    @Override
+    public void onBackPressed(){
+
+        finish();
     }
 
     @Override
@@ -108,6 +117,21 @@ public class RestaurantActivity extends AppCompatActivity {
         restaurantName.setText(restaurant.getName());
         restaurantAddress.setText(fullAddress);
         restaurantGPS.setText(coordinates);
+
+
+
+        restaurantGPS.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Log.v("RestaurantActivity","Calling map activity");
+
+                Intent intent = MapsActivity.makeIntent(RestaurantActivity.this,false);
+                intent.putExtra("tracking_number",restaurant.getTrackingNumber());
+                startActivity(intent);
+
+            }
+        });
     }
 
     private void populateListView() {

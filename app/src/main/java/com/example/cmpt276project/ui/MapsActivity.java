@@ -113,7 +113,33 @@ public class MapsActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    protected void onNewIntent (Intent intent) {
+        super.onNewIntent(intent);
+        if (intent != null) {
+            setIntent(intent);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+
+        Log.v("MapActivity","On resume called");
+        super.onResume();
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
+        if(intent.hasExtra("tracking_number")){
+
+            assert extras != null;
+            String tracking_number = extras.getString("tracking_number");
+            getNewLocation(tracking_number);
+        }
+    }
+
     private void checkUpdateDialog() {
+
         Bundle extras = this.getIntent().getExtras();
         boolean isUpdateNeeded = extras.getBoolean("isUpdateNeeded");
         downloadDataResult = null;
@@ -129,6 +155,25 @@ public class MapsActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
     }
+
+    @Override
+    public void onBackPressed(){
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    private void getNewLocation(String tracking_number) {
+
+        Restaurant restaurant = manager.getRestaurantByTrackingNumber(tracking_number);
+        double lon = restaurant.getLongitude();
+        double lat = restaurant.getLatitude();
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 20));
+        // TODO : Fragment call to restaurant fragment dialog
+    }
+
 
     // Setup toolbar
     @Override
@@ -167,6 +212,8 @@ public class MapsActivity extends AppCompatActivity
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
+        Log.v("Map Ready","On Map Ready Called");
         mMap = googleMap;
 
         if (!mLocationPermissionGranted) {
@@ -184,6 +231,7 @@ public class MapsActivity extends AppCompatActivity
     }
 
     /**
+    *   Reference Document: Google Maps Platform: https://developers.google.com/maps/documentation/javascript/adding-a-google-map
     *   Reference Document: Google Maps Platform: https://developers.google.com/maps/documentation/javascript/adding-a-google-map
     */
 
@@ -215,11 +263,15 @@ public class MapsActivity extends AppCompatActivity
          */
         try {
             if (mLocationPermissionGranted) {
+
+
                 Task locationResult = mFusedLocationProviderClient.getLastLocation();
                 locationResult.addOnCompleteListener(this, new OnCompleteListener() {
                     @Override
                     public void onComplete(@NonNull Task task) {
+
                         if (task.isSuccessful()) {
+
                             // Set the map's camera position to the current location of the device.
                             mLastKnownLocation = (Location) task.getResult();
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
