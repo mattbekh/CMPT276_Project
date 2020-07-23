@@ -52,6 +52,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+/**
+ * For this map, apply for user permissions, locate users, allow to interact with the map,
+ * display all restaurants, display restaurants of different levels through different icons,
+ * jump to the restaurant details page by clicking the restaurant,
+ * and switch from the map to list by clicking the List button.
+ */
+
 public class MapsActivity extends AppCompatActivity
         implements OnMapReadyCallback, UpdateDialog.UpdateDialogListener, LoadDataDialog.OnDismissListener
 {
