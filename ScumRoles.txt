@@ -4,3 +4,11 @@ Scrum Master: sevenas
 Product Owner: mbekhter
 Repo Manager: rad8
 Team Member: yza363
+
+
+
+Iteration 2
+Scrum Master: yza363
+Product Owner: sevenas
+Repo Manager: mbekhter
+Team Member: rad8
