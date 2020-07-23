@@ -78,10 +78,6 @@ public class MapsActivity extends AppCompatActivity
     private final LatLng surrey = new LatLng(49.187500, -122.849000);
     private final int DEFAULT_ZOOM = 10;
 
-    private double lat;
-    private double lon;
-    private int restaurantPos;
-
     // Declare a variable for the cluster manager.
     private ClusterManager<AllRestaurant> mClusterManager;
 
@@ -102,13 +98,41 @@ public class MapsActivity extends AppCompatActivity
         // Construct a PlaceDetectionClient.
 //        mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
 
+        Log.v("MapsActivity","Created new Map");
+
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         setupToolbar();
         checkUpdateDialog();
     }
 
+    @Override
+    protected void onNewIntent (Intent intent) {
+        super.onNewIntent(intent);
+        if (intent != null) {
+            setIntent(intent);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+
+        Log.v("MapActivity","On resume called");
+        super.onResume();
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
+        if(intent.hasExtra("tracking_number")){
+
+            assert extras != null;
+            String tracking_number = extras.getString("tracking_number");
+            getNewLocation(tracking_number);
+        }
+    }
+
     private void checkUpdateDialog() {
+
         Bundle extras = this.getIntent().getExtras();
         boolean isUpdateNeeded = extras.getBoolean("isUpdateNeeded");
         downloadDataResult = null;
@@ -131,21 +155,16 @@ public class MapsActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    private void getNewLocation() {
-        Intent intent = getIntent();
-        for (Restaurant restaurant : manager.getRestaurantList()) {
-            if (intent.hasExtra("tracking_number")) {
-                Bundle extras = intent.getExtras();
-                assert extras != null;
-                String tracking_number = extras.getString("tracking_number");
-                restaurant = manager.getRestaurantByTrackingNumber(tracking_number);
-            }
-        }
+    private void getNewLocation(String tracking_number) {
+
+        Restaurant restaurant = manager.getRestaurantByTrackingNumber(tracking_number);
+        double lon = restaurant.getLongitude();
+        double lat = restaurant.getLatitude();
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 20));
+        // TODO : Fragment call to restaurant fragment dialog
     }
 
-    private void setupNewLocation(){
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), DEFAULT_ZOOM));
-    }
 
     // Setup toolbar
     @Override
@@ -184,6 +203,8 @@ public class MapsActivity extends AppCompatActivity
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
+        Log.v("Map Ready","On Map Ready Called");
         mMap = googleMap;
 
         // get permission
@@ -192,19 +213,21 @@ public class MapsActivity extends AppCompatActivity
         // Turn on the My Location layer and the related control on the map.
         updateLocationUI();
 
+        Log.v("Map Ready","pre get Device location");
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
 
 
         // set clusters / add restaurant markers
         setUpCluster();
+//
+//        getNewLocation();
 
-        getNewLocation();
-        setupNewLocation();
 
     }
 
     /**
+    *   Reference Document: Google Maps Platform: https://developers.google.com/maps/documentation/javascript/adding-a-google-map
     *   Reference Document: Google Maps Platform: https://developers.google.com/maps/documentation/javascript/adding-a-google-map
     */
 
@@ -245,16 +268,23 @@ public class MapsActivity extends AppCompatActivity
          */
         try {
             if (mLocationPermissionGranted) {
+
+
                 Task locationResult = mFusedLocationProviderClient.getLastLocation();
                 locationResult.addOnCompleteListener(this, new OnCompleteListener() {
                     @Override
                     public void onComplete(@NonNull Task task) {
+
                         if (task.isSuccessful()) {
+
                             // Set the map's camera position to the current location of the device.
                             mLastKnownLocation = (Location) task.getResult();
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(mLastKnownLocation.getLatitude(),
                                             mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+
+                            // mMap.moveCamera < --- Restaurant
+
                         } else {
                             Log.d("Get Current Location", "Current location is null. Using defaults.");
                             Log.e("Get Current Location", "Exception: %s", task.getException());

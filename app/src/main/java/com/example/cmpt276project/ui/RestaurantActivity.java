@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -117,10 +118,13 @@ public class RestaurantActivity extends AppCompatActivity {
         restaurantGPS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(RestaurantActivity.this, MapsActivity.class);
+
+                Log.v("RestaurantActivity","Calling map activity");
+
+                Intent intent = MapsActivity.makeIntent(RestaurantActivity.this,false);
                 intent.putExtra("tracking_number",restaurant.getTrackingNumber());
-                RestaurantActivity.this.startActivity(intent);
                 startActivity(intent);
+
             }
         });
     }
