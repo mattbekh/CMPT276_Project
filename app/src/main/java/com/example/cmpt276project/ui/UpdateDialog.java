@@ -29,12 +29,13 @@ public class UpdateDialog extends AppCompatDialogFragment {
             public void onClick(DialogInterface dialogInterface, int buttonPressed) {
                 dismiss();
                 Activity parentActivity = getActivity();
-                if (buttonPressed == DialogInterface.BUTTON_POSITIVE
-                    && parentActivity instanceof UpdateDialogListener)
-                {
-                    ((UpdateDialogListener) parentActivity).downloadData();
+                if (parentActivity instanceof UpdateDialogListener) {
+                    if (buttonPressed == DialogInterface.BUTTON_POSITIVE) {
+                        ((UpdateDialogListener) parentActivity).downloadData();
+                    } else if (buttonPressed == DialogInterface.BUTTON_NEGATIVE) {
+                        ((UpdateDialogListener) parentActivity).setUpCluster();
+                    }
                 }
-
             }
         };
 
@@ -48,5 +49,6 @@ public class UpdateDialog extends AppCompatDialogFragment {
 
     public interface UpdateDialogListener {
         void downloadData();
+        void setUpCluster();
     }
 }

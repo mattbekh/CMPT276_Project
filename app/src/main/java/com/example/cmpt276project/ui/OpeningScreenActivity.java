@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.DataUpdateChecker;
@@ -31,10 +32,12 @@ public class OpeningScreenActivity extends FragmentActivity {
         setContentView(R.layout.activity_opening_screen);
 
         SharedPreferences prefs = this.getSharedPreferences("CSVData", Context.MODE_PRIVATE);
-        ExecutorService executor = Executors.newFixedThreadPool(3);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
         updateCheckResult = executor.submit(new DataUpdateChecker(prefs));
         loadDataResult = executor.submit(new DataLoader());
-        executor.submit(new ActivityLauncherRunnable());
+        Handler handler = new Handler();
+        handler.postDelayed(new ActivityLauncherRunnable(), 3200);
+
     }
 
     private void launchMainActivity(boolean isUpdateNeeded) {
