@@ -78,6 +78,10 @@ public class MapsActivity extends AppCompatActivity
     private final LatLng surrey = new LatLng(49.187500, -122.849000);
     private final int DEFAULT_ZOOM = 10;
 
+    private double lat;
+    private double lon;
+    private int restaurantPos;
+
     // Declare a variable for the cluster manager.
     private ClusterManager<AllRestaurant> mClusterManager;
 
@@ -117,6 +121,30 @@ public class MapsActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
+    }
+
+    @Override
+    public void onBackPressed(){
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    private void getNewLocation() {
+        Intent intent = getIntent();
+        for (Restaurant restaurant : manager.getRestaurantList()) {
+            if (intent.hasExtra("tracking_number")) {
+                Bundle extras = intent.getExtras();
+                assert extras != null;
+                String tracking_number = extras.getString("tracking_number");
+                restaurant = manager.getRestaurantByTrackingNumber(tracking_number);
+            }
+        }
+    }
+
+    private void setupNewLocation(){
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), DEFAULT_ZOOM));
     }
 
     // Setup toolbar
@@ -170,6 +198,9 @@ public class MapsActivity extends AppCompatActivity
 
         // set clusters / add restaurant markers
         setUpCluster();
+
+        getNewLocation();
+        setupNewLocation();
 
     }
 
@@ -508,7 +539,7 @@ public class MapsActivity extends AppCompatActivity
             super(context);
         }
 
-        public void updateProgress(int progress) {
+        public void updateProgress(final int progress) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
