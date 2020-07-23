@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 
 import android.Manifest;
@@ -22,9 +21,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.AllRestaurant;
@@ -45,8 +42,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.maps.android.clustering.Cluster;
-import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
@@ -71,7 +66,9 @@ public class MapsActivity extends AppCompatActivity
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private boolean mLocationPermissionGranted;
+    private boolean mDownloadPermissionGranted;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
+    private static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
     private Location mLastKnownLocation;
     private final LatLng surrey = new LatLng(49.187500, -122.849000);
     private final int DEFAULT_ZOOM = 10;
@@ -88,6 +85,7 @@ public class MapsActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setPermissions();
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -96,23 +94,24 @@ public class MapsActivity extends AppCompatActivity
 
         manager = RestaurantManager.getInstance();
 
-        // Construct a GeoDataClient.
-//        mGeoDataClient = Places.getGeoDataClient(this, null);
-
-        // Construct a PlaceDetectionClient.
-//        mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
-
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         setupToolbar();
-        checkUpdateDialog();
     }
-// TODO : Find the function to load the downloaded data and refresh the entire page after the load is complete
-//    public void onClick(View v) {
-//        Intent intent = getIntent();
-//        finish();
-//        startActivity(intent);
-//    }
+
+    private void setPermissions() {
+        int locationPermission = checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
+        int downloadPermission = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        mLocationPermissionGranted = false;
+        mDownloadPermissionGranted = false;
+
+        if (locationPermission == PackageManager.PERMISSION_GRANTED) {
+            mLocationPermissionGranted = true;
+        }
+        if (downloadPermission == PackageManager.PERMISSION_GRANTED) {
+            mDownloadPermissionGranted = true;
+        }
+    }
 
     private void checkUpdateDialog() {
         Bundle extras = this.getIntent().getExtras();
@@ -120,6 +119,8 @@ public class MapsActivity extends AppCompatActivity
         downloadDataResult = null;
         if (isUpdateNeeded) {
             launchUpdateDialog();
+        } else {
+            setUpCluster();
         }
     }
 
@@ -168,35 +169,23 @@ public class MapsActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // get permission
-        getLocationPermission();
+        if (!mLocationPermissionGranted) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        } else {
+            initializeMap();
+        }
+    }
 
-//        checkUpdateDialog();
-        // Turn on the My Location layer and the related control on the map.
+    private void initializeMap() {
         updateLocationUI();
-
-        // Get the current location of the device and set the position of the map.
-        getDeviceLocation();
-
-
-        // set clusters / add restaurant markers
-        setUpCluster();
-
+        checkUpdateDialog();
     }
 
     /**
     *   Reference Document: Google Maps Platform: https://developers.google.com/maps/documentation/javascript/adding-a-google-map
     */
-
-//    public void addRestaurantMarkers() {
-//        for (Restaurant tmp : manager.getRestaurantList()) {
-//            double lat = tmp.getLatitude();
-//            double lng = tmp.getLongitude();
-//            String title = tmp.getName();
-//            LatLng restPosition = new LatLng(lat, lng);
-//            mMap.addMarker(new MarkerOptions().position(restPosition).title(title));
-//        }
-//    }
 
     private void updateLocationUI() {
         if (mMap == null) {
@@ -207,11 +196,12 @@ public class MapsActivity extends AppCompatActivity
                 mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
                 mMap.getUiSettings().setZoomControlsEnabled(true);
+                getDeviceLocation();
             } else {
                 mMap.setMyLocationEnabled(false);
                 mMap.getUiSettings().setMyLocationButtonEnabled(false);
                 mLastKnownLocation = null;
-                getLocationPermission();
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(surrey, DEFAULT_ZOOM));
             }
         } catch (SecurityException e)  {
             Log.e("Exception: %s", e.getMessage());
@@ -235,34 +225,12 @@ public class MapsActivity extends AppCompatActivity
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(mLastKnownLocation.getLatitude(),
                                             mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
-                        } else {
-                            Log.d("Get Current Location", "Current location is null. Using defaults.");
-                            Log.e("Get Current Location", "Exception: %s", task.getException());
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(surrey, DEFAULT_ZOOM));
-                            mMap.getUiSettings().setMyLocationButtonEnabled(false);
                         }
                     }
                 });
             }
-        } catch(SecurityException e)  {
-            Log.e("Exception: %s", e.getMessage());
-        }
-    }
-
-    private void getLocationPermission() {
-        /*
-         * Request location permission, so that we can get the location of the
-         * device. The result of the permission request is handled by a callback,
-         * onRequestPermissionsResult.
-         */
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            mLocationPermissionGranted = true;
-        } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        } catch(Exception e)  {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(surrey, DEFAULT_ZOOM));
         }
     }
 
@@ -270,38 +238,41 @@ public class MapsActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        mLocationPermissionGranted = false;
         switch (requestCode) {
-            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
                     mLocationPermissionGranted = true;
                 }
-            }
+                initializeMap();
+                break;
+            case PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE:
+                if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    mDownloadPermissionGranted = true;
+                    startDownload();
+                } else {
+                    setUpCluster();
+                }
+                break;
         }
-        updateLocationUI();
     }
 
     // Marker clustering
     public void setUpCluster() {
-        // Position the map.
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.503186, -0.126446), 10));
-
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
         mClusterManager = new ClusterManager<AllRestaurant>(this, mMap);
 
-        // Point the map's listeners at the listeners implemented by the cluster
-        // manager.
-
+        // Point the map's listeners at the listeners implemented by the cluster manager
         mMap.setOnCameraIdleListener(mClusterManager);
-
         mMap.setOnMarkerClickListener(mClusterManager);
 
         // Add cluster items (markers) to the cluster manager.
-        addRestaurant();
-
+        addRestaurants();
         mClusterManager.setRenderer(new MyClusterRenderer(getApplicationContext()));
 
         // custom info window
@@ -335,7 +306,6 @@ public class MapsActivity extends AppCompatActivity
         mClusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<AllRestaurant>() {
             @Override
             public void onClusterItemInfoWindowClick(AllRestaurant item) {
-//                startActivity(new Intent(MapsActivity.this, RestaurantActivity.class));
                 Intent intent = RestaurantActivity.makeIntent(MapsActivity.this);
                 intent.putExtra("tracking_number",item.getTrackingNumber());
                 startActivity(intent);
@@ -354,7 +324,7 @@ public class MapsActivity extends AppCompatActivity
 
 
     // add restaurant markers
-    public void addRestaurant() {
+    private void addRestaurants() {
         for (Restaurant tmp:manager.getRestaurantList()) {
             double lat = tmp.getLatitude();
             double lng = tmp.getLongitude();
@@ -400,7 +370,6 @@ public class MapsActivity extends AppCompatActivity
         }
         @Override
         protected void onBeforeClusterItemRendered(@NonNull AllRestaurant item, @NonNull MarkerOptions markerOptions) {
-//            super.onBeforeClusterItemRendered(item, markerOptions);
             Bitmap resized = resizeMapIcons(item.getHazard(), 100, 100);
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resized));
         }
@@ -440,47 +409,20 @@ public class MapsActivity extends AppCompatActivity
 
     @Override
     public void downloadData() {
-        checkFilePermissions();
-        try {
-            if (filePermissionGranted()) {
-                DataDownloader downloader = new CsvDataDownloader(this);
-                ExecutorService executor = Executors.newFixedThreadPool(1);
-                launchProgressDialog();
-                downloadDataResult = executor.submit(downloader);
-            };
-        } catch (InterruptedException e) {
-            // Thread was interrupted waiting for permission
+        if (mDownloadPermissionGranted) {
+            startDownload();
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
         }
     }
 
-    private void checkFilePermissions() {
-        int permission = checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (permission == PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-
-        int requestCode = 1;
-        ActivityCompat.requestPermissions(this, new String[]{
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-        }, requestCode);
-    }
-
-    private boolean filePermissionGranted() throws InterruptedException {
-        int permission = checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        long timeBetweenChecks = 100; // milliseconds
-        int maxChecks = 50; // total wait time of 5 seconds
-        int numChecks = 0;
-
-        // Check permission until granted, waiting between each check
-        while (permission != PackageManager.PERMISSION_GRANTED
-               && numChecks < maxChecks)
-        {
-            Thread.sleep(timeBetweenChecks);
-            permission = checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            numChecks++;
-        }
-
-        return permission == PackageManager.PERMISSION_GRANTED;
+    private void startDownload() {
+        DataDownloader downloader = new CsvDataDownloader(this);
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        launchProgressDialog();
+        downloadDataResult = executor.submit(downloader);
     }
 
     private void launchProgressDialog() {
@@ -489,10 +431,10 @@ public class MapsActivity extends AppCompatActivity
         progressBarDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressBarDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
                                     getString(R.string.MapsActivity_cancel_download_btn),
-                                    new OnCancelDownloadListener());
+                                    new OnCancelDownloadListener(this));
         progressBarDialog.setButton(DialogInterface.BUTTON_POSITIVE,
                                     getString(R.string.MapsActivity_accept_download_btn),
-                                    new OnAcceptDownloadListener());
+                                    new OnAcceptDownloadListener(this));
         progressBarDialog.setProgress(0);
         progressBarDialog.show();
     }
@@ -521,12 +463,19 @@ public class MapsActivity extends AppCompatActivity
     }
 
     private class OnAcceptDownloadListener implements DialogInterface.OnClickListener {
+
+        private Context context;
+
+        public OnAcceptDownloadListener(Context context) {
+            this.context = context;
+        }
+
         @Override
         public void onClick(DialogInterface dialog, int which) {
             try {
                 boolean isDownloadSuccess = downloadDataResult.get();
                 if (isDownloadSuccess) {
-                    DataUpdater updater = new DataUpdater();
+                    DataUpdater updater = new DataUpdater(context);
                     boolean isUpdateSuccess = updater.tryUpdateData();
                     if (isUpdateSuccess) {
                         launchLoadingDataDialog();
@@ -542,10 +491,25 @@ public class MapsActivity extends AppCompatActivity
     }
 
     private class OnCancelDownloadListener implements DialogInterface.OnClickListener {
+
+        private Context context;
+
+        public OnCancelDownloadListener(Context context) {
+            this.context = context;
+        }
+
         @Override
         public void onClick(DialogInterface dialog, int which) {
             downloadDataResult.cancel(true);
             progressBarDialog.dismiss();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    DataUpdater updater = new DataUpdater(context);
+                    updater.deleteTempData();
+                    setUpCluster();
+                }
+            });
         }
     }
 

@@ -9,8 +9,6 @@ import android.os.Environment;
 
 import org.json.JSONObject;
 
-import java.io.FileDescriptor;
-import java.util.GregorianCalendar;
 import java.util.concurrent.Callable;
 
 import static android.app.DownloadManager.Request.NETWORK_MOBILE;
@@ -20,16 +18,14 @@ import static android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMP
 public abstract class DataDownloader implements Callable<Boolean> {
 
     private static int NUM_DOWNLOADS = 2;
-    private static String RESTAURANTS_URL = "https://data.surrey.ca/api/3/action/package_show?id=restaurants";
-    private static String INSPECTIONS_URL = "https://data.surrey.ca/api/3/action/package_show?id=fraser-health-restaurant-inspection-reports";
+    public static String RESTAURANTS_URL = "https://data.surrey.ca/api/3/action/package_show?id=restaurants";
+    public static String INSPECTIONS_URL = "https://data.surrey.ca/api/3/action/package_show?id=fraser-health-restaurant-inspection-reports";
 
     private DownloadManager downloadManager;
-    private SharedPreferences csvDataPrefs;
     private int totalProgress;
 
     public DataDownloader(Context context) {
         this.downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-        this.csvDataPrefs = context.getSharedPreferences("CSVData", Context.MODE_PRIVATE);
     }
 
     @Override
@@ -37,7 +33,6 @@ public abstract class DataDownloader implements Callable<Boolean> {
         try {
             downloadFile(RESTAURANTS_URL, DataUpdater.TEMP_RESTAURANT_FILE);
             downloadFile(INSPECTIONS_URL, DataUpdater.TEMP_INSPECTION_FILE);
-            updateModificationDate();
         } catch (Exception e) {
             return false;
         }
@@ -100,34 +95,6 @@ public abstract class DataDownloader implements Callable<Boolean> {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    private void updateModificationDate() {
-        try {
-            JSONObject response = HttpRequestHandler.get(RESTAURANTS_URL);
-
-            String currentTime = DateHelper.getTimeString(new GregorianCalendar());
-            String modifyTime = (String) response.getJSONObject("result").get("metadata_modified");
-            modifyTime = modifyTime.replaceAll("[^0-9]", "");
-            modifyTime = modifyTime.substring(0, 14);
-
-            storeModDateSharedPrefs("updatedOn", currentTime);
-            storeModDateSharedPrefs("localModifyTime", modifyTime);
-        } catch (Exception e) {
-            // Do nothing
-        }
-    }
-
-    private void storeModDateSharedPrefs(String key, String date) {
-        SharedPreferences.Editor editor = csvDataPrefs.edit();
-        editor.putString(key,date);
-        editor.apply();
-    }
-
-    public void clearSharedPrefs(){
-        SharedPreferences.Editor editor = csvDataPrefs.edit();
-        editor.clear();
-        editor.apply();
     }
 
     public abstract void updateProgress(int progress);
