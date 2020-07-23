@@ -14,7 +14,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.example.cmpt276project.R;
-
+/**
+ * Creates a fragment dialog which asks the user if they would like to download data (if update is available)
+ */
 public class UpdateDialog extends AppCompatDialogFragment {
 
     @NonNull

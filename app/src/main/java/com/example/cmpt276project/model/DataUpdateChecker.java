@@ -12,8 +12,6 @@ import static com.example.cmpt276project.model.DateHelper.isTwentyHoursSince;
 
 public class DataUpdateChecker implements Callable<Boolean> {
 
-    private static String RESTAURANTS_URL = "https://data.surrey.ca/api/3/action/package_show?id=restaurants";
-
     private SharedPreferences csvDataPrefs;
 
     public DataUpdateChecker(SharedPreferences csvDataPrefs) {
@@ -30,7 +28,7 @@ public class DataUpdateChecker implements Callable<Boolean> {
         }
 
         try {
-            JSONObject response = HttpRequestHandler.get(RESTAURANTS_URL);
+            JSONObject response = HttpRequestHandler.get(DataDownloader.RESTAURANTS_URL);
             String remoteModifiedTime = (String) response.getJSONObject("result").get("metadata_modified");
             remoteModifiedTime = remoteModifiedTime.replaceAll("[^0-9]", "");
             remoteModifiedTime = remoteModifiedTime.substring(0,14);

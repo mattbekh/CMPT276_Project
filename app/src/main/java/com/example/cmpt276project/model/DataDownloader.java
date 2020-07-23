@@ -15,6 +15,9 @@ import static android.app.DownloadManager.Request.NETWORK_MOBILE;
 import static android.app.DownloadManager.Request.NETWORK_WIFI;
 import static android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED;
 
+/**
+ * Class which downloads the data and keeps track of progress
+ */
 public abstract class DataDownloader implements Callable<Boolean> {
 
     private static int NUM_DOWNLOADS = 2;

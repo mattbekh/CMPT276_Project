@@ -48,9 +48,17 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import java.util.Objects;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+/**
+ * For this map, apply for user permissions, locate users, allow to interact with the map,
+ * display all restaurants, display restaurants of different levels through different icons,
+ * jump to the restaurant details page by clicking the restaurant,
+ * and switch from the map to list by clicking the List button.
+ */
 
 public class MapsActivity extends AppCompatActivity
         implements OnMapReadyCallback, UpdateDialog.UpdateDialogListener, LoadDataDialog.OnDismissListener
@@ -532,12 +540,13 @@ public class MapsActivity extends AppCompatActivity
             try {
                 boolean isDownloadSuccess = downloadDataResult.get();
                 if (isDownloadSuccess) {
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
                     DataUpdater updater = new DataUpdater(context);
-                    boolean isUpdateSuccess = updater.tryUpdateData();
+                    Future<Boolean> updateResult = executor.submit(updater);
+                    boolean isUpdateSuccess = updateResult.get();
                     if (isUpdateSuccess) {
                         launchLoadingDataDialog();
                     }
-
                 }
             } catch (Exception e) {
                 e.printStackTrace();

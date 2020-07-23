@@ -32,11 +32,10 @@ public class OpeningScreenActivity extends FragmentActivity {
         setContentView(R.layout.activity_opening_screen);
 
         SharedPreferences prefs = this.getSharedPreferences("CSVData", Context.MODE_PRIVATE);
-        ExecutorService executor = Executors.newFixedThreadPool(2);
+        ExecutorService executor = Executors.newFixedThreadPool(3);
         updateCheckResult = executor.submit(new DataUpdateChecker(prefs));
         loadDataResult = executor.submit(new DataLoader());
-        Handler handler = new Handler();
-        handler.postDelayed(new ActivityLauncherRunnable(), 3200);
+        executor.submit(new ActivityLauncherRunnable());
 
     }
 

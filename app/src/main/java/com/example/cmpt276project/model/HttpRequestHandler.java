@@ -6,6 +6,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 
+/**
+ * This class gets a Json object which is the result of a HTTP request
+ */
 public class HttpRequestHandler {
 
     public static JSONObject get(String urlString) throws Exception {
