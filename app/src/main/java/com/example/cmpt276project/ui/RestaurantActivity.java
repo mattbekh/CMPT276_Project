@@ -90,6 +90,11 @@ public class RestaurantActivity extends AppCompatActivity {
             assert extras != null;
             restaurantPos = extras.getInt("restaurant");
             restaurant = manager.get(restaurantPos);
+        } else if (intent.hasExtra("tracking_number")) {
+            Bundle extras = intent.getExtras();
+            assert extras != null;
+            String trackingNumber = extras.getString("tracking_number");
+            restaurant = manager.getRestaurantByTrackingNumber(trackingNumber);
         }
     }
 
