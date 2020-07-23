@@ -48,6 +48,7 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import java.util.Objects;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -539,12 +540,13 @@ public class MapsActivity extends AppCompatActivity
             try {
                 boolean isDownloadSuccess = downloadDataResult.get();
                 if (isDownloadSuccess) {
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
                     DataUpdater updater = new DataUpdater(context);
-                    boolean isUpdateSuccess = updater.tryUpdateData();
+                    Future<Boolean> updateResult = executor.submit(updater);
+                    boolean isUpdateSuccess = updateResult.get();
                     if (isUpdateSuccess) {
                         launchLoadingDataDialog();
                     }
-
                 }
             } catch (Exception e) {
                 e.printStackTrace();
