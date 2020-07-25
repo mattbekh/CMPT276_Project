@@ -14,8 +14,7 @@ import java.util.Iterator;
  */
 public class Restaurant implements Iterable<Inspection> {
 
-    public enum RestaurantName{MCDONALDS, WENDYS, BLENZ, PIZZAHUT, AW, TIMS, STARBUCKS, ELEVEN, BOSTON, SUBWAY, UNKNOWN};
-    private RestaurantName restaurantName;
+    public enum RestaurantName{ MCDONALDS, WENDYS, BLENZ, PIZZAHUT, AW, TIMS, STARBUCKS, ELEVEN, BOSTON, SUBWAY, UNKNOWN }
 
     private String trackingNumber;
     private String name;
@@ -39,7 +38,6 @@ public class Restaurant implements Iterable<Inspection> {
         this.latitude = latitude;
         this.longitude = longitude;
         this.inspectionList = new ArrayList<>();
-        this.restaurantName = getRestaurantFromName(name);
     }
 
     public String getTrackingNumber() {
@@ -67,10 +65,6 @@ public class Restaurant implements Iterable<Inspection> {
     }
 
     public RestaurantName getRestaurantName() {
-        return restaurantName;
-    }
-
-    private RestaurantName getRestaurantFromName(String name) {
         name = name.toLowerCase();
         for (RestaurantName restaurantName : RestaurantName.values()) {
             if (name.matches(getKeywordPattern(restaurantName))) {

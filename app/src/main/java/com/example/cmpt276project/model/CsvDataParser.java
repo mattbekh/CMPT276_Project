@@ -2,6 +2,7 @@ package com.example.cmpt276project.model;
 
 import com.example.cmpt276project.App;
 import com.example.cmpt276project.R;
+import com.example.cmpt276project.model.database.DatabaseManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,49 +28,63 @@ public class CsvDataParser {
         ArrayList<Restaurant> restaurants = new ArrayList<>();
         String restaurantFilePath = FILE_PATH + RESTAURANTS_FILE;
         String inspectionFilePath = FILE_PATH + INSPECTION_FILE;
+        DatabaseManager dbManager = DatabaseManager.getInstance();
         try {
+            dbManager.open();
             File restaurantFile = new File(restaurantFilePath);
             File inspectionFile = new File(inspectionFilePath);
             InputStream restaurantStream = new FileInputStream(restaurantFile);
             InputStream inspectionStream = new FileInputStream(inspectionFile);
 
-            readRestaurantData(restaurants, restaurantStream);
+            readRestaurantData(dbManager, restaurants, restaurantStream);
             restaurants.sort(new RestaurantManager.SortAscendingByTrackingNumber());
             readInspectionData(restaurants, inspectionStream);
             return restaurants;
         } catch (Exception e) {
             return readDefaultRestaurantData();
+        } finally {
+            if (dbManager != null) {
+                dbManager.close();
+            }
         }
     }
 
     public static ArrayList<Restaurant> readDefaultRestaurantData() {
         ArrayList<Restaurant> restaurants = new ArrayList<>();
+        DatabaseManager dbManager = DatabaseManager.getInstance();
         try {
+            dbManager.open();
             InputStream restaurantStream = App.resources().openRawResource(R.raw.restaurants_itr1);
             InputStream inspectionStream = App.resources().openRawResource(R.raw.inspectionreports_itr1);
 
-            readRestaurantData(restaurants, restaurantStream);
+            readRestaurantData(dbManager, restaurants, restaurantStream);
             restaurants.sort(new RestaurantManager.SortAscendingByTrackingNumber());
             readInspectionData(restaurants, inspectionStream);
             return restaurants;
         } catch (IOException e) {
             return restaurants;
+        } finally {
+            if (dbManager != null) {
+                dbManager.close();
+            }
         }
     }
 
-    private static void readRestaurantData(ArrayList<Restaurant> restaurants, InputStream inputStream) throws IOException {
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(inputStream, StandardCharsets.UTF_8)
-        );
+    private static void readRestaurantData(DatabaseManager dbManager, ArrayList<Restaurant> restaurants, InputStream inputStream) throws IOException {
 
-        String line;
-        try {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(inputStream, StandardCharsets.UTF_8)
+        )) {
+            String line;
+            int restaurantId = 0;
             reader.readLine();
 
             while ((line = reader.readLine()) != null) {
                 try {
                     Restaurant restaurant = getRestaurantFromData(line);
                     restaurants.add(restaurant);
+                    insertDataToDatabase(line, dbManager, restaurantId);
+                    restaurantId++;
                 } catch (Exception e) {
                     // No way to handle corrupt data, just skip it
                     continue;
@@ -77,18 +92,15 @@ public class CsvDataParser {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            reader.close();
         }
     }
 
     private static void readInspectionData(ArrayList<Restaurant> restaurants, InputStream inputStream) throws IOException {
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(inputStream, StandardCharsets.UTF_8)
-        );
 
-        String line;
-        try {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(inputStream, StandardCharsets.UTF_8)
+        )) {
+            String line;
             reader.readLine();
 
             while ((line = reader.readLine()) != null) {
@@ -105,8 +117,6 @@ public class CsvDataParser {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            reader.close();
         }
     }
 
@@ -128,6 +138,23 @@ public class CsvDataParser {
                     latitude,
                     longitude
             );
+        } catch (Exception e) {
+            String errorMessage = String.format("Illegal string of restaurant data [%s]", restaurantData);
+            throw new IllegalArgumentException(errorMessage, e);
+        }
+    }
+
+    public static void insertDataToDatabase(String restaurantData, DatabaseManager dbManager, int id) {
+        try {
+            ArrayList<String> tokens = tokenize(restaurantData, ',');
+
+            String name = withQuotesRemoved(tokens.get(1));
+            String address = withQuotesRemoved(tokens.get(2));
+            String city = withQuotesRemoved(tokens.get(3));
+            double latitude = Double.parseDouble(tokens.get(5));
+            double longitude = Double.parseDouble(tokens.get(6));
+
+            dbManager.insertToRestaurants(id, name, address, city, latitude, longitude);
         } catch (Exception e) {
             String errorMessage = String.format("Illegal string of restaurant data [%s]", restaurantData);
             throw new IllegalArgumentException(errorMessage, e);
