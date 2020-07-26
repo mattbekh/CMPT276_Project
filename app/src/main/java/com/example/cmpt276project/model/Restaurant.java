@@ -2,8 +2,6 @@ package com.example.cmpt276project.model;
 
 import androidx.annotation.NonNull;
 
-import com.example.cmpt276project.ui.RestaurantActivity;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
@@ -16,7 +14,7 @@ public class Restaurant implements Iterable<Inspection> {
 
     public enum RestaurantName{ MCDONALDS, WENDYS, BLENZ, PIZZAHUT, AW, TIMS, STARBUCKS, ELEVEN, BOSTON, SUBWAY, UNKNOWN }
 
-    private String trackingNumber;
+    private String id;
     private String name;
     private String address;
     private String city;
@@ -24,14 +22,14 @@ public class Restaurant implements Iterable<Inspection> {
     private double longitude;
     private ArrayList<Inspection> inspectionList;
 
-    public Restaurant(String trackingNumber,
+    public Restaurant(String id,
                       String name,
                       String address,
                       String city,
                       double latitude,
                       double longitude)
     {
-        this.trackingNumber = trackingNumber;
+        this.id = id;
         this.name = name;
         this.address = address;
         this.city = city;
@@ -40,8 +38,8 @@ public class Restaurant implements Iterable<Inspection> {
         this.inspectionList = new ArrayList<>();
     }
 
-    public String getTrackingNumber() {
-        return trackingNumber;
+    public String getId() {
+        return id;
     }
 
     public String getName() {

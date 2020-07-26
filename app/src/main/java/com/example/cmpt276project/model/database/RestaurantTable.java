@@ -29,7 +29,7 @@ public class RestaurantTable {
 
     public static final String CREATE =
             "CREATE TABLE " + NAME + " (" +
-                FIELD_ID + " INT PRIMARY KEY, " +
+                FIELD_ID + " TEXT PRIMARY KEY, " +
                 FIELD_NAME + " TEXT NOT NULL," +
                 FIELD_ADDRESS + " TEXT NOT NULL," +
                 FIELD_CITY + " TEXT NOT NULL," +

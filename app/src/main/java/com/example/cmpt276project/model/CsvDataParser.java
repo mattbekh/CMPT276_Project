@@ -38,7 +38,7 @@ public class CsvDataParser {
 
             readRestaurantData(dbManager, restaurants, restaurantStream);
             restaurants.sort(new RestaurantManager.SortAscendingByTrackingNumber());
-            readInspectionData(restaurants, inspectionStream);
+            readInspectionData(dbManager, restaurants, inspectionStream);
             return restaurants;
         } catch (Exception e) {
             return readDefaultRestaurantData();
@@ -59,7 +59,7 @@ public class CsvDataParser {
 
             readRestaurantData(dbManager, restaurants, restaurantStream);
             restaurants.sort(new RestaurantManager.SortAscendingByTrackingNumber());
-            readInspectionData(restaurants, inspectionStream);
+            readInspectionData(dbManager, restaurants, inspectionStream);
             return restaurants;
         } catch (IOException e) {
             return restaurants;
@@ -76,15 +76,13 @@ public class CsvDataParser {
                 new InputStreamReader(inputStream, StandardCharsets.UTF_8)
         )) {
             String line;
-            int restaurantId = 0;
             reader.readLine();
 
             while ((line = reader.readLine()) != null) {
                 try {
                     Restaurant restaurant = getRestaurantFromData(line);
                     restaurants.add(restaurant);
-                    insertDataToDatabase(line, dbManager, restaurantId);
-                    restaurantId++;
+                    insertRestaurantToDatabase(line, dbManager);
                 } catch (Exception e) {
                     // No way to handle corrupt data, just skip it
                     continue;
@@ -95,12 +93,17 @@ public class CsvDataParser {
         }
     }
 
-    private static void readInspectionData(ArrayList<Restaurant> restaurants, InputStream inputStream) throws IOException {
+    private static void readInspectionData(
+            DatabaseManager dbManager,
+            ArrayList<Restaurant> restaurants,
+            InputStream inputStream
+    ) throws IOException {
 
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(inputStream, StandardCharsets.UTF_8)
         )) {
             String line;
+            int inspectionId = 0;
             reader.readLine();
 
             while ((line = reader.readLine()) != null) {
@@ -109,6 +112,8 @@ public class CsvDataParser {
                     String trackingNumber = inspection.getTrackingNumber();
                     Restaurant restaurant = binarySearch(restaurants, trackingNumber);
                     restaurant.addInspection(inspection);
+                    insertInspectionToDatabase(line, dbManager, inspectionId);
+                    inspectionId++;
                 } catch (Exception e) {
                     // If inspection line data is corrupt, inspection cannot be added
                     // If restaurant is not found inspections cannot be added
@@ -144,10 +149,11 @@ public class CsvDataParser {
         }
     }
 
-    public static void insertDataToDatabase(String restaurantData, DatabaseManager dbManager, int id) {
+    public static void insertRestaurantToDatabase(String restaurantData, DatabaseManager dbManager) {
         try {
             ArrayList<String> tokens = tokenize(restaurantData, ',');
 
+            String id = withQuotesRemoved(tokens.get(0));
             String name = withQuotesRemoved(tokens.get(1));
             String address = withQuotesRemoved(tokens.get(2));
             String city = withQuotesRemoved(tokens.get(3));
@@ -159,6 +165,43 @@ public class CsvDataParser {
             String errorMessage = String.format("Illegal string of restaurant data [%s]", restaurantData);
             throw new IllegalArgumentException(errorMessage, e);
         }
+    }
+
+    public static void insertInspectionToDatabase(
+            String inspectionData,
+            DatabaseManager dbManager,
+            int inspectionId
+    ) {
+        ArrayList<String> tokens = tokenize(inspectionData, ',');
+
+        // The violation lump and hazard rating are not always in the same column
+        // Check which column is the rating and assign them accordingly
+        String rating;
+        String violations;
+        if (tokens.get(5).toLowerCase().matches("\"?(low|moderate|high)\"?")) {
+            rating = tokens.get(5);
+            violations = tokens.get(6);
+        } else {
+            violations = tokens.get(5);
+            rating = tokens.get(6);
+        }
+
+        String restaurantId = withQuotesRemoved(tokens.get(0));
+        String inspectionType = withQuotesRemoved(tokens.get(2));
+        String hazardRating = withQuotesRemoved(rating);
+        int date = Integer.parseInt(withQuotesRemoved(tokens.get(1)));
+        int numCritical = Integer.parseInt(withQuotesRemoved(tokens.get(3)));
+        int numNonCritical = Integer.parseInt(withQuotesRemoved(tokens.get(4)));
+
+        dbManager.insertToInspections(
+                inspectionId,
+                restaurantId,
+                date,
+                inspectionType,
+                hazardRating,
+                numCritical,
+                numNonCritical
+        );
     }
 
     public static Inspection getInspectionFromData(String inspectionData) {
@@ -286,7 +329,7 @@ public class CsvDataParser {
         while (max >= min) {
             int index = (max + min) / 2;
             Restaurant restaurant = restaurants.get(index);
-            int compare = trackingNumber.compareTo(restaurant.getTrackingNumber());
+            int compare = trackingNumber.compareTo(restaurant.getId());
             if (compare > 0) {
                 min = index + 1;
             } else if (compare < 0) {

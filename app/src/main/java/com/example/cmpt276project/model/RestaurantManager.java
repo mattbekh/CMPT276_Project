@@ -69,14 +69,14 @@ public class RestaurantManager implements Iterable<Restaurant> {
     static class SortAscendingByTrackingNumber implements Comparator<Restaurant> {
         @Override
         public int compare(Restaurant o1, Restaurant o2) {
-            return o1.getTrackingNumber().compareTo(o2.getTrackingNumber());
+            return o1.getId().compareTo(o2.getId());
         }
     }
 
     // Return restaurant by tracking number
     public Restaurant getRestaurantByTrackingNumber(String trackingNumber) {
         for (Restaurant restaurant : restaurantList) {
-            if (restaurant.getTrackingNumber().equals(trackingNumber)) {
+            if (restaurant.getId().equals(trackingNumber)) {
                 return restaurant;
             }
         }

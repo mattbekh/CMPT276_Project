@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.Inspection;
@@ -126,7 +125,7 @@ public class RestaurantActivity extends AppCompatActivity {
                 Log.v("RestaurantActivity","Calling map activity");
 
                 Intent intent = MapsActivity.makeIntent(RestaurantActivity.this,false);
-                intent.putExtra("tracking_number",restaurant.getTrackingNumber());
+                intent.putExtra("tracking_number",restaurant.getId());
                 startActivity(intent);
 
             }

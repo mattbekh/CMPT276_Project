@@ -48,7 +48,7 @@ public class DatabaseManager {
     }
 
     public long insertToRestaurants(
-            int id,
+            String id,
             String name,
             String address,
             String city,
@@ -64,6 +64,27 @@ public class DatabaseManager {
         values.put(RestaurantTable.FIELD_LONGITUDE, longitude);
 
         return db.insert(RestaurantTable.NAME, null, values);
+    }
+
+    public long insertToInspections(
+            int inspectionId,
+            String restaurantId,
+            int date,
+            String type,
+            String hazardRating,
+            int numCritical,
+            int numNonCritical
+    ) {
+        ContentValues values = new ContentValues();
+        values.put(InspectionTable.FIELD_ID, inspectionId);
+        values.put(InspectionTable.FIELD_RESTAURANT_ID, restaurantId);
+        values.put(InspectionTable.FIELD_DATE, date);
+        values.put(InspectionTable.FIELD_TYPE, type);
+        values.put(InspectionTable.FIELD_HAZARD_RATING, hazardRating);
+        values.put(InspectionTable.FIELD_CRITICAL_ISSUES, numCritical);
+        values.put(InspectionTable.FIELD_NON_CRITICAL_ISSUES, numNonCritical);
+
+        return db.insert(InspectionTable.NAME, null, values);
     }
 
     // Private class for DatabaseHelper

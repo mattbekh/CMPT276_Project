@@ -118,7 +118,7 @@ public class Inspection implements Iterable<Violation> {
         }
     }
 
-    private InspectionType getInspectionTypeEnum(String inspectionType) {
+    public static InspectionType getInspectionTypeEnum(String inspectionType) {
         switch (inspectionType.toLowerCase()) {
             case "routine":
                 return InspectionType.ROUTINE;
@@ -130,7 +130,7 @@ public class Inspection implements Iterable<Violation> {
         }
     }
 
-    private HazardRating getHazardRatingEnum(String hazardRating) {
+    public static HazardRating getHazardRatingEnum(String hazardRating) {
         switch (hazardRating.toLowerCase()) {
             case "low":
                 return HazardRating.LOW;
