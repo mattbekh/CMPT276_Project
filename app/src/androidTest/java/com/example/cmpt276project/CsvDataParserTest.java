@@ -6,7 +6,6 @@ import com.example.cmpt276project.model.CsvDataParser;
 import com.example.cmpt276project.model.DateHelper;
 import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.Restaurant;
-import com.example.cmpt276project.model.RestaurantManager;
 import com.example.cmpt276project.model.Violation;
 
 import org.junit.Test;
@@ -55,7 +54,7 @@ public class CsvDataParserTest {
     public void shouldBeAbleToGetViolationFromData() {
         String violationData = "308,Not Critical,Equipment/utensils/food contact surfaces are not in good working order [s. 16(b)],Not Repeat";
         Violation sut = CsvDataParser.getViolationFromData(violationData);
-        assertEquals(308, sut.getId());
+        assertEquals(308, sut.getCode());
         assertFalse(sut.isCritical());
         assertFalse(sut.isRepeat());
         assertEquals("Equipment/utensils/food contact surfaces are not in good working order [s. 16(b)]", sut.getDescription());

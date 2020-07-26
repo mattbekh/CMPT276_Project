@@ -177,12 +177,12 @@ public class CsvDataParser {
         // The violation lump and hazard rating are not always in the same column
         // Check which column is the rating and assign them accordingly
         String rating;
-        String violations;
+        String violationLump;
         if (tokens.get(5).toLowerCase().matches("\"?(low|moderate|high)\"?")) {
             rating = tokens.get(5);
-            violations = tokens.get(6);
+            violationLump = tokens.get(6);
         } else {
-            violations = tokens.get(5);
+            violationLump = tokens.get(5);
             rating = tokens.get(6);
         }
 
@@ -193,6 +193,8 @@ public class CsvDataParser {
         int numCritical = Integer.parseInt(withQuotesRemoved(tokens.get(3)));
         int numNonCritical = Integer.parseInt(withQuotesRemoved(tokens.get(4)));
 
+        parseViolationLump(violationLump, dbManager, inspectionId);
+
         dbManager.insertToInspections(
                 inspectionId,
                 restaurantId,
@@ -202,6 +204,44 @@ public class CsvDataParser {
                 numCritical,
                 numNonCritical
         );
+    }
+
+    private static void parseViolationLump(String violationLump, DatabaseManager dbManager, int inspectionId) {
+        if (violationLump.length() == 0) {
+            return;
+        }
+
+        violationLump = withQuotesRemoved(violationLump);
+        ArrayList<String> violationStrings = tokenize(violationLump, '|');
+
+        for (String violationData : violationStrings) {
+            insertViolationToDatabase(violationData, dbManager, inspectionId);
+        }
+    }
+
+    public static void insertViolationToDatabase(String violationData, DatabaseManager dbManager, int inspectionId) {
+        try {
+            ArrayList<String> tokens = tokenize(violationData, ',');
+
+            int code = Integer.parseInt(tokens.get(0));
+            String description = withQuotesRemoved(tokens.get(2));
+            String criticalString = withQuotesRemoved(tokens.get(1));
+            String repeatString = withQuotesRemoved(tokens.get(3));
+            int isCritical = criticalString.toLowerCase().equals("critical") ? 1 : 0;
+            int isRepeat = repeatString.toLowerCase().equals("repeat") ? 1 : 0;
+
+            dbManager.insertToViolations(
+                    inspectionId,
+                    code,
+                    description,
+                    isCritical,
+                    isRepeat
+            );
+
+        } catch (Exception e) {
+            String errorMessage = String.format("Illegal string of violation data [%s]", violationData);
+            throw new IllegalArgumentException(errorMessage, e);
+        }
     }
 
     public static Inspection getInspectionFromData(String inspectionData) {
@@ -281,9 +321,9 @@ public class CsvDataParser {
                     description
             );
         } catch (Exception e) {
-                String errorMessage = String.format("Illegal string of violation data [%s]", violationData);
-                throw new IllegalArgumentException(errorMessage, e);
-            }
+            String errorMessage = String.format("Illegal string of violation data [%s]", violationData);
+            throw new IllegalArgumentException(errorMessage, e);
+        }
     }
 
     private static ArrayList<String> tokenize(String s, char delimiter) {

@@ -12,26 +12,24 @@ public class Violation {
 
     public enum Category { PESTS, PERMITS, EQUIPMENT, EMPLOYEES, FOOD }
 
-    private int id;
+    private int code;
     private boolean isCritical;
     private boolean isRepeat;
     private String description;
-    private Category category;
 
-    public Violation(int id,
+    public Violation(int code,
                      boolean isCritical,
                      boolean isRepeat,
                      String description)
     {
-        this.id = id;
+        this.code = code;
         this.isCritical = isCritical;
         this.isRepeat = isRepeat;
         this.description = description;
-        this.category = getCategoryFromDescription(description);
     }
 
-    public int getId() {
-        return id;
+    public int getCode() {
+        return code;
     }
 
     public boolean isCritical() {
@@ -46,12 +44,9 @@ public class Violation {
         return description;
     }
 
-    public Category getCategory() {
-        return category;
-    }
-
     public String getSummary() {
         Resources res = App.resources();
+        Category category = getCategory();
         switch (category) {
             case PERMITS:
                 return res.getString(R.string.Violation_permit_text);
@@ -69,7 +64,7 @@ public class Violation {
         }
     }
 
-    private Category getCategoryFromDescription(String description) {
+    public Category getCategory() {
         description = description.toLowerCase();
         for (Category category : Category.values()) {
             if (description.matches(getKeywordPattern(category))) {

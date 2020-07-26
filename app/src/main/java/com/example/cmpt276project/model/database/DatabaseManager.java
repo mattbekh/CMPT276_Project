@@ -87,6 +87,23 @@ public class DatabaseManager {
         return db.insert(InspectionTable.NAME, null, values);
     }
 
+    public long insertToViolations(
+            int inspectionId,
+            int code,
+            String description,
+            int isCritical,
+            int isRepeat
+    ) {
+        ContentValues values = new ContentValues();
+        values.put(ViolationTable.FIELD_INSPECTION_ID, inspectionId);
+        values.put(ViolationTable.FIELD_CODE, code);
+        values.put(ViolationTable.FIELD_DESCRIPTION, description);
+        values.put(ViolationTable.FIELD_IS_CRITICAL, isCritical);
+        values.put(ViolationTable.FIELD_IS_REPEAT, isRepeat);
+
+        return db.insert(ViolationTable.NAME, null, values);
+    }
+
     // Private class for DatabaseHelper
     // Must be private to ensure DatabaseManager is singleton object
     private class DatabaseHelper extends SQLiteOpenHelper {
