@@ -96,7 +96,7 @@ public class RestaurantActivity extends AppCompatActivity {
             Bundle extras = intent.getExtras();
             assert extras != null;
             restaurantPos = extras.getInt("restaurant");
-            restaurant = manager.get(restaurantPos);
+            restaurant = manager.getRestaurantList().get(restaurantPos);
         } else if (intent.hasExtra("tracking_number")) {
             Bundle extras = intent.getExtras();
             assert extras != null;

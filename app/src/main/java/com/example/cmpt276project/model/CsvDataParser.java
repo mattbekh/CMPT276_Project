@@ -125,30 +125,6 @@ public class CsvDataParser {
         }
     }
 
-    public static Restaurant getRestaurantFromData(String restaurantData) {
-        try {
-            ArrayList<String> tokens = tokenize(restaurantData, ',');
-
-            String trackingNumber = withQuotesRemoved(tokens.get(0));
-            String name = withQuotesRemoved(tokens.get(1));
-            String address = withQuotesRemoved(tokens.get(2));
-            String city = withQuotesRemoved(tokens.get(3));
-            double latitude = Double.parseDouble(tokens.get(5));
-            double longitude = Double.parseDouble(tokens.get(6));
-            return new Restaurant(
-                    trackingNumber,
-                    name,
-                    address,
-                    city,
-                    latitude,
-                    longitude
-            );
-        } catch (Exception e) {
-            String errorMessage = String.format("Illegal string of restaurant data [%s]", restaurantData);
-            throw new IllegalArgumentException(errorMessage, e);
-        }
-    }
-
     public static void insertRestaurantToDatabase(String restaurantData, DatabaseManager dbManager) {
         try {
             ArrayList<String> tokens = tokenize(restaurantData, ',');
@@ -244,6 +220,86 @@ public class CsvDataParser {
         }
     }
 
+    private static ArrayList<String> tokenize(String s, char delimiter) {
+        StringBuilder currentToken = new StringBuilder();
+        ArrayList<String> tokens = new ArrayList<>();
+        boolean isInQuotes = false;
+
+        for (int i = 0; i < s.length(); i++) {
+            char currentChar = s.charAt(i);
+
+            if (currentChar == delimiter && !isInQuotes) {
+                tokens.add(currentToken.toString());
+                currentToken = new StringBuilder();
+            } else {
+                currentToken.append(currentChar);
+            }
+
+            if (currentChar == '"') {
+                isInQuotes = !isInQuotes;
+            }
+        }
+        tokens.add(currentToken.toString());
+
+        return tokens;
+    }
+
+    private static String withQuotesRemoved(String s) {
+        if (s.length() == 0) {
+            return s;
+        }
+        if (s.charAt(0) == '"') {
+            s = s.substring(1, s.length());
+        }
+        if (s.charAt(s.length() - 1) == '"') {
+            s = s.substring(0, s.length() - 1);
+        }
+        return s;
+    }
+
+    private static Restaurant binarySearch(ArrayList<Restaurant> restaurants, String trackingNumber) {
+        int max = restaurants.size() - 1;
+        int min = 0;
+        while (max >= min) {
+            int index = (max + min) / 2;
+            Restaurant restaurant = restaurants.get(index);
+            int compare = trackingNumber.compareTo(restaurant.getId());
+            if (compare > 0) {
+                min = index + 1;
+            } else if (compare < 0) {
+                max = index - 1;
+            } else {
+                return restaurant;
+            }
+        }
+
+        return null;
+    }
+
+    public static Restaurant getRestaurantFromData(String restaurantData) {
+        try {
+            ArrayList<String> tokens = tokenize(restaurantData, ',');
+
+            String trackingNumber = withQuotesRemoved(tokens.get(0));
+            String name = withQuotesRemoved(tokens.get(1));
+            String address = withQuotesRemoved(tokens.get(2));
+            String city = withQuotesRemoved(tokens.get(3));
+            double latitude = Double.parseDouble(tokens.get(5));
+            double longitude = Double.parseDouble(tokens.get(6));
+            return new Restaurant(
+                    trackingNumber,
+                    name,
+                    address,
+                    city,
+                    latitude,
+                    longitude
+            );
+        } catch (Exception e) {
+            String errorMessage = String.format("Illegal string of restaurant data [%s]", restaurantData);
+            throw new IllegalArgumentException(errorMessage, e);
+        }
+    }
+
     public static Inspection getInspectionFromData(String inspectionData) {
         try {
             ArrayList<String> tokens = tokenize(inspectionData, ',');
@@ -324,61 +380,5 @@ public class CsvDataParser {
             String errorMessage = String.format("Illegal string of violation data [%s]", violationData);
             throw new IllegalArgumentException(errorMessage, e);
         }
-    }
-
-    private static ArrayList<String> tokenize(String s, char delimiter) {
-        StringBuilder currentToken = new StringBuilder();
-        ArrayList<String> tokens = new ArrayList<>();
-        boolean isInQuotes = false;
-
-        for (int i = 0; i < s.length(); i++) {
-            char currentChar = s.charAt(i);
-
-            if (currentChar == delimiter && !isInQuotes) {
-                tokens.add(currentToken.toString());
-                currentToken = new StringBuilder();
-            } else {
-                currentToken.append(currentChar);
-            }
-
-            if (currentChar == '"') {
-                isInQuotes = !isInQuotes;
-            }
-        }
-        tokens.add(currentToken.toString());
-
-        return tokens;
-    }
-
-    private static String withQuotesRemoved(String s) {
-        if (s.length() == 0) {
-            return s;
-        }
-        if (s.charAt(0) == '"') {
-            s = s.substring(1, s.length());
-        }
-        if (s.charAt(s.length() - 1) == '"') {
-            s = s.substring(0, s.length() - 1);
-        }
-        return s;
-    }
-
-    private static Restaurant binarySearch(ArrayList<Restaurant> restaurants, String trackingNumber) {
-        int max = restaurants.size() - 1;
-        int min = 0;
-        while (max >= min) {
-            int index = (max + min) / 2;
-            Restaurant restaurant = restaurants.get(index);
-            int compare = trackingNumber.compareTo(restaurant.getId());
-            if (compare > 0) {
-                min = index + 1;
-            } else if (compare < 0) {
-                max = index - 1;
-            } else {
-                return restaurant;
-            }
-        }
-
-        return null;
     }
 }

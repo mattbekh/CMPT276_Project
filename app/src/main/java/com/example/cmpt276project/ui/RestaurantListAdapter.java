@@ -19,6 +19,8 @@ import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
 
+import java.util.ArrayList;
+
 /**
  * This class modifies RecyclerView UI of Restaurants and it
  * sets up onclick listener for each Restaurant which launches an activity specifically
@@ -28,16 +30,16 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
 
     // Stores an array of restaurant names (Should be pre-ordered)
     private Context context;
-    private RestaurantManager restaurants;
+    private ArrayList<Restaurant> restaurants;
 
     public static Intent makeIntent(Context context) {
         return new Intent(context, RestaurantListAdapter.class);
     }
 
-    public RestaurantListAdapter(Context context, RestaurantManager manager){
+    public RestaurantListAdapter(Context context, ArrayList<Restaurant> restaurants){
 
         this.context = context;
-        this.restaurants = manager;
+        this.restaurants = restaurants;
 
     }
 
@@ -141,7 +143,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
     @Override
     public int getItemCount() {
         // Change with restaurants.getLength()
-        return restaurants.getLength();
+        return restaurants.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

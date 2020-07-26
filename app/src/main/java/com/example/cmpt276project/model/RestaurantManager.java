@@ -1,6 +1,10 @@
 package com.example.cmpt276project.model;
 
+import android.provider.ContactsContract;
+
 import androidx.annotation.NonNull;
+
+import com.example.cmpt276project.model.database.DatabaseManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +29,7 @@ public class RestaurantManager implements Iterable<Restaurant> {
 
     // Ensure private for singleton
     private RestaurantManager() {
-        this.restaurantList = CsvDataParser.readUpdatedRestaurantData();
+        this.restaurantList = DatabaseManager.getInstance().getRestaurants();
     }
 
     // return whole restaurant list
@@ -33,29 +37,9 @@ public class RestaurantManager implements Iterable<Restaurant> {
         return instance.restaurantList;
     }
 
-    // Return the length of restaurant list
-    public int getLength() {
-        return restaurantList.size();
-    }
-
-    // Add new restaurant to restaurant list
-    public void addRestaurant(Restaurant restaurant) {
-        restaurantList.add(restaurant);
-    }
-
-    // Return restaurant by position
-    public Restaurant get(int position) {
-        return restaurantList.get(position);
-    }
-
-    // Delete restaurant from restaurant list
-    public void removeRestaurant(Restaurant restaurant) {
-        restaurantList.remove(restaurant);
-    }
-
     // Sort restaurants by name
     public void sortByRestaurantName() {
-        Collections.sort(restaurantList, new SortAscendingByName());
+        restaurantList.sort(new SortAscendingByName());
     }
 
     // Override comparator function to sort restaurants by name

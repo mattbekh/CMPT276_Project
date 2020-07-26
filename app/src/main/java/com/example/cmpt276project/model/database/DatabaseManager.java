@@ -2,12 +2,18 @@ package com.example.cmpt276project.model.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
 import com.example.cmpt276project.model.CsvDataParser;
+import com.example.cmpt276project.model.Restaurant;
+import com.example.cmpt276project.ui.RestaurantActivity;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class DatabaseManager {
 
@@ -102,6 +108,33 @@ public class DatabaseManager {
         values.put(ViolationTable.FIELD_IS_REPEAT, isRepeat);
 
         return db.insert(ViolationTable.NAME, null, values);
+    }
+
+    public ArrayList<Restaurant> getRestaurants() {
+        open();
+        ArrayList<Restaurant> restaurants = new ArrayList<>();
+        String where = null;
+        Cursor cursor = db.query(true, RestaurantTable.NAME, RestaurantTable.FIELDS, where,
+                null, null, null, null, null);
+        if (cursor == null) {
+            return restaurants;
+        }
+
+        cursor.moveToFirst();
+        do {
+            restaurants.add(new Restaurant(
+                    cursor.getString(RestaurantTable.COL_ID),
+                    cursor.getString(RestaurantTable.COL_NAME),
+                    cursor.getString(RestaurantTable.COL_ADDRESS),
+                    cursor.getString(RestaurantTable.COL_CITY),
+                    cursor.getDouble(RestaurantTable.COL_LATITUDE),
+                    cursor.getDouble(RestaurantTable.COL_LONGITUDE)
+            ));
+        } while (cursor.moveToNext());
+
+        close();
+
+        return restaurants;
     }
 
     // Private class for DatabaseHelper

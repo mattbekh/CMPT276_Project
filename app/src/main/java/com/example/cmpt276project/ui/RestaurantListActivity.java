@@ -23,8 +23,7 @@ import java.util.Objects;
 public class RestaurantListActivity extends AppCompatActivity {
 
     private RecyclerView restaurantList;
-    RestaurantManager restaurants;
-
+    RestaurantManager manager;
     public static Intent makeIntent(Context context) {
         return new Intent(context, RestaurantListActivity.class);
     }
@@ -75,8 +74,8 @@ public class RestaurantListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_restaurant_list);
         setupToolbar();
 
-        restaurants = RestaurantManager.getInstance();
-        restaurants.sortByRestaurantName();
+        manager = RestaurantManager.getInstance();
+        manager.sortByRestaurantName();
 
         populateRecyclerView();
     }
@@ -90,7 +89,7 @@ public class RestaurantListActivity extends AppCompatActivity {
     private void populateRecyclerView() {
 
         restaurantList = findViewById(R.id.restaurantList);
-        RestaurantListAdapter adapter = new RestaurantListAdapter(this,restaurants);
+        RestaurantListAdapter adapter = new RestaurantListAdapter(this, manager.getRestaurantList());
         restaurantList.setAdapter(adapter);
         restaurantList.setLayoutManager(new LinearLayoutManager(this));
     }
