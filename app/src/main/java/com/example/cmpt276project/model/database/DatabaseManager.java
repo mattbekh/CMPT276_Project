@@ -76,6 +76,7 @@ public class DatabaseManager {
         values.put(RestaurantTable.FIELD_CITY, city);
         values.put(RestaurantTable.FIELD_LATITUDE, latitude);
         values.put(RestaurantTable.FIELD_LONGITUDE, longitude);
+        values.put(RestaurantTable.FIELD_IS_FAVOURITE, 0);
 
         return db.insert(RestaurantTable.NAME, null, values);
     }
@@ -131,7 +132,6 @@ public class DatabaseManager {
 
     public ArrayList<Restaurant> getRestaurants(String selection, String limit) {
         open();
-        ArrayList<Restaurant> restaurants = new ArrayList<>();
         Cursor cursor = db.query(
                 true,
                 RestaurantTable.NAME,
@@ -144,6 +144,11 @@ public class DatabaseManager {
                 limit
         );
         if (cursor == null) {
+            return null;
+        }
+
+        ArrayList<Restaurant> restaurants = new ArrayList<>();
+        if (cursor.getCount() == 0) {
             return restaurants;
         }
 
@@ -165,7 +170,8 @@ public class DatabaseManager {
     }
 
     public ArrayList<Restaurant> getRestaurants() {
-        return getRestaurants(null, null);
+        String selection = RestaurantFilter.getFilterSelectionCriteria();
+        return getRestaurants(selection, null);
     }
 
     public Restaurant getRestaurant(String restaurantId) {

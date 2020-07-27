@@ -1,13 +1,10 @@
 package com.example.cmpt276project.model;
 
-import android.provider.ContactsContract;
-
 import androidx.annotation.NonNull;
 
 import com.example.cmpt276project.model.database.DatabaseManager;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -71,6 +68,12 @@ public class RestaurantManager implements Iterable<Restaurant> {
     public void updateData() {
         DatabaseManager dbManager = DatabaseManager.getInstance();
         dbManager.update();
+        instance.restaurantList = dbManager.getRestaurants();
+        instance.sortByRestaurantName();
+    }
+
+    public void applyFilter() {
+        DatabaseManager dbManager = DatabaseManager.getInstance();
         instance.restaurantList = dbManager.getRestaurants();
         instance.sortByRestaurantName();
     }

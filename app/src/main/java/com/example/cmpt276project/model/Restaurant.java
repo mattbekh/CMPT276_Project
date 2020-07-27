@@ -20,6 +20,7 @@ public class Restaurant {
     private String city;
     private double latitude;
     private double longitude;
+    private boolean isFavourite;
 
     public Restaurant(String id,
                       String name,
@@ -34,6 +35,7 @@ public class Restaurant {
         this.city = city;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.isFavourite = false;
     }
 
     public String getId() {
@@ -60,6 +62,10 @@ public class Restaurant {
         return longitude;
     }
 
+    public boolean isFavourite() {
+        return isFavourite;
+    }
+
     public RestaurantName getRestaurantName() {
         name = name.toLowerCase();
         for (RestaurantName restaurantName : RestaurantName.values()) {
@@ -69,6 +75,10 @@ public class Restaurant {
         }
         String errorMessage = String.format("Failing description [%s]", name);
         throw new IllegalArgumentException(errorMessage);
+    }
+
+    public void setFavourite() {
+        this.isFavourite = true;
     }
 
     private static String getKeywordPattern(RestaurantName restaurantName){

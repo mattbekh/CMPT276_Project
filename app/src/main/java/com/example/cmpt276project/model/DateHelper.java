@@ -59,6 +59,13 @@ public class DateHelper {
         return String.format("%04d%02d%02d%02d%02d%02d", year, month, day, hour, minute, second);
     }
 
+    public static String getDateString(GregorianCalendar date) {
+        int year = date.get(Calendar.YEAR);
+        int month = date.get(Calendar.MONTH) + 1;
+        int day = date.get(Calendar.DAY_OF_MONTH);
+        return String.format("%04d%02d%02d", year, month, day);
+    }
+
     public static GregorianCalendar getDateFromString(String dateString) {
         if (dateString.length() != 8) {
             String errorMessage = String.format("Invalid date string [%s]", dateString);

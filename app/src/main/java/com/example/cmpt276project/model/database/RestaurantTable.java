@@ -10,6 +10,7 @@ public class RestaurantTable {
     public static final String FIELD_CITY = "City";
     public static final String FIELD_LATITUDE = "Latitude";
     public static final String FIELD_LONGITUDE = "Longitude";
+    public static final String FIELD_IS_FAVOURITE = "IsFavourite";
 
     public static final int COL_ID = 0;
     public static final int COL_NAME = 1;
@@ -17,6 +18,7 @@ public class RestaurantTable {
     public static final int COL_CITY = 3;
     public static final int COL_LATITUDE = 4;
     public static final int COL_LONGITUDE = 5;
+    public static final int COL_IS_FAVOURITE = 6;
     
     public static final String[] FIELDS = new String[] {
             FIELD_ID,
@@ -24,7 +26,8 @@ public class RestaurantTable {
             FIELD_ADDRESS,
             FIELD_CITY,
             FIELD_LATITUDE,
-            FIELD_LONGITUDE
+            FIELD_LONGITUDE,
+            FIELD_IS_FAVOURITE
     };
 
     public static final String CREATE =
@@ -34,6 +37,7 @@ public class RestaurantTable {
                 FIELD_ADDRESS + " TEXT NOT NULL," +
                 FIELD_CITY + " TEXT NOT NULL," +
                 FIELD_LATITUDE + " REAL NOT NULL," +
-                FIELD_LONGITUDE + " REAL NOT NULL" +
+                FIELD_LONGITUDE + " REAL NOT NULL," +
+                FIELD_IS_FAVOURITE + " INT NOT NULL" +
             ");";
 }

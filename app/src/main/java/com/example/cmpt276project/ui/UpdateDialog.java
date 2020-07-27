@@ -2,7 +2,6 @@ package com.example.cmpt276project.ui;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,6 +13,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.example.cmpt276project.R;
+
 /**
  * Creates a fragment dialog which asks the user if they would like to download data (if update is available)
  */
