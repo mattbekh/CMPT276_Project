@@ -2,8 +2,6 @@ package com.example.cmpt276project.model;
 
 import androidx.annotation.NonNull;
 
-import com.example.cmpt276project.ui.RestaurantActivity;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
@@ -12,38 +10,36 @@ import java.util.Iterator;
 /**
  * This class represents a restaurant and all the inspections it has been subject to.
  */
-public class Restaurant implements Iterable<Inspection> {
+public class Restaurant {
 
-    public enum RestaurantName{MCDONALDS, WENDYS, BLENZ, PIZZAHUT, AW, TIMS, STARBUCKS, ELEVEN, BOSTON, SUBWAY, UNKNOWN};
-    private RestaurantName restaurantName;
+    public enum RestaurantName { MCDONALDS, WENDYS, BLENZ, PIZZAHUT, AW, TIMS, STARBUCKS, ELEVEN, BOSTON, SUBWAY, UNKNOWN }
 
-    private String trackingNumber;
+    private String id;
     private String name;
     private String address;
     private String city;
     private double latitude;
     private double longitude;
-    private ArrayList<Inspection> inspectionList;
+    private boolean isFavourite;
 
-    public Restaurant(String trackingNumber,
+    public Restaurant(String id,
                       String name,
                       String address,
                       String city,
                       double latitude,
                       double longitude)
     {
-        this.trackingNumber = trackingNumber;
+        this.id = id;
         this.name = name;
         this.address = address;
         this.city = city;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.inspectionList = new ArrayList<>();
-        this.restaurantName = getRestaurantFromName(name);
+        this.isFavourite = false;
     }
 
-    public String getTrackingNumber() {
-        return trackingNumber;
+    public String getId() {
+        return id;
     }
 
     public String getName() {
@@ -66,11 +62,11 @@ public class Restaurant implements Iterable<Inspection> {
         return longitude;
     }
 
-    public RestaurantName getRestaurantName() {
-        return restaurantName;
+    public boolean isFavourite() {
+        return isFavourite;
     }
 
-    private RestaurantName getRestaurantFromName(String name) {
+    public RestaurantName getRestaurantName() {
         name = name.toLowerCase();
         for (RestaurantName restaurantName : RestaurantName.values()) {
             if (name.matches(getKeywordPattern(restaurantName))) {
@@ -79,6 +75,10 @@ public class Restaurant implements Iterable<Inspection> {
         }
         String errorMessage = String.format("Failing description [%s]", name);
         throw new IllegalArgumentException(errorMessage);
+    }
+
+    public void setFavourite() {
+        this.isFavourite = true;
     }
 
     private static String getKeywordPattern(RestaurantName restaurantName){
@@ -109,35 +109,5 @@ public class Restaurant implements Iterable<Inspection> {
                 String errorMessage = String.format("Illegal category [%s]", restaurantName.toString());
                 throw new IllegalStateException(errorMessage);
         }
-    }
-
-    public Inspection getInspectionByIndex(int i) {
-        if(inspectionList.size() == 0) {
-            return new Inspection(
-                "EMPTY",
-                "Routine",
-                "Low",
-                new GregorianCalendar(2019, 11, 26)
-            );
-        }
-        return inspectionList.get(i);
-    }
-
-    @NonNull
-    @Override
-    public Iterator<Inspection> iterator() {
-        return inspectionList.iterator();
-    }
-
-    public void addInspection(Inspection inspection) {
-        inspectionList.add(inspection);
-    }
-
-    public void sort(Comparator<Inspection> comparator) {
-        inspectionList.sort(comparator);
-    }
-
-    public ArrayList<Inspection> getInspectionList() {
-        return inspectionList;
     }
 }

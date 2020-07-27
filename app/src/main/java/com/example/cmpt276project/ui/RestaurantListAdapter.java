@@ -18,6 +18,7 @@ import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
+import com.example.cmpt276project.model.database.DatabaseManager;
 
 /**
  * This class modifies RecyclerView UI of Restaurants and it
@@ -28,7 +29,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
 
     // Stores an array of restaurant names (Should be pre-ordered)
     private Context context;
-    private RestaurantManager restaurants;
+    private RestaurantManager manager;
 
     public static Intent makeIntent(Context context) {
         return new Intent(context, RestaurantListAdapter.class);
@@ -37,7 +38,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
     public RestaurantListAdapter(Context context, RestaurantManager manager){
 
         this.context = context;
-        this.restaurants = manager;
+        this.manager = manager;
 
     }
 
@@ -52,9 +53,8 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
     // Sets the name to the card according to the position in the recycler view
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        final int pos = holder.getAdapterPosition();
         // Get Restaurant
-        Restaurant restaurant = restaurants.get(pos);
+        Restaurant restaurant = manager.getRestaurantList().get(position);
         // Store Restaurant name
         holder.restaurantName.setText(restaurant.getName());
         // Store Restaurant address
@@ -63,8 +63,9 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         int iconResource = getResourceID(restaurant.getRestaurantName());
         holder.restaurantIcon.setImageResource(iconResource);
         // Store most recent inspections # of issues
-        Inspection topInspection= restaurant.getInspectionByIndex(0);
-        if(topInspection.getTrackingNumber().equals("EMPTY")) {
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+        Inspection topInspection = dbManager.getMostRecentInspection(restaurant.getId());
+        if(topInspection == null) {
             holder.inspectionDate.setText(R.string.Inspection_no_inspections_found);
             holder.numberOfIssues.setText("");
             holder.hazardLevel.setVisibility(View.INVISIBLE);
@@ -98,10 +99,8 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         holder.restaurantListLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent =RestaurantActivity.makeIntent(context);
-
-                // put index of Restaurant as extra
-                intent.putExtra("restaurant",pos);
+                Intent intent = RestaurantActivity.makeIntent(context);
+                intent.putExtra("restaurantId", restaurant.getId());
                 context.startActivity(intent);
             }
         });
@@ -141,7 +140,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
     @Override
     public int getItemCount() {
         // Change with restaurants.getLength()
-        return restaurants.getLength();
+        return manager.getRestaurantList().size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

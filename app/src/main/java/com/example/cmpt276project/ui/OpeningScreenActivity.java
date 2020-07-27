@@ -11,6 +11,7 @@ import android.os.Handler;
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.DataUpdateChecker;
 import com.example.cmpt276project.model.RestaurantManager;
+import com.example.cmpt276project.model.database.DatabaseManager;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -23,13 +24,15 @@ import java.util.concurrent.Future;
 
 public class OpeningScreenActivity extends FragmentActivity {
 
-    Future<Boolean> updateCheckResult;
-    Future<Boolean> loadDataResult;
+    private Future<Boolean> updateCheckResult;
+    private Future<Boolean> loadDataResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_opening_screen);
+
+        DatabaseManager.initialize(this);
 
         SharedPreferences prefs = this.getSharedPreferences("CSVData", Context.MODE_PRIVATE);
         ExecutorService executor = Executors.newFixedThreadPool(3);

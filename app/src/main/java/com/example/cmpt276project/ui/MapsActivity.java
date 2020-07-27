@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -30,6 +31,7 @@ import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
 import com.example.cmpt276project.model.DataDownloader;
 import com.example.cmpt276project.model.DataUpdater;
+import com.example.cmpt276project.model.database.DatabaseManager;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -45,10 +47,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
-
 import java.util.Objects;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -138,11 +138,11 @@ public class MapsActivity extends AppCompatActivity
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
-        if(intent.hasExtra("tracking_number")){
+        if(intent.hasExtra("restaurantId")){
 
             assert extras != null;
-            String tracking_number = extras.getString("tracking_number");
-            getNewLocation(tracking_number);
+            String restaurantId = extras.getString("restaurantId");
+            getNewLocation(restaurantId);
         }
     }
 
@@ -173,9 +173,10 @@ public class MapsActivity extends AppCompatActivity
         System.exit(0);
     }
 
-    private void getNewLocation(String tracking_number) {
+    private void getNewLocation(String restaurantId) {
 
-        Restaurant restaurant = manager.getRestaurantByTrackingNumber(tracking_number);
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+        Restaurant restaurant = dbManager.getRestaurant(restaurantId);
         double lon = restaurant.getLongitude();
         double lat = restaurant.getLatitude();
 
@@ -278,7 +279,7 @@ public class MapsActivity extends AppCompatActivity
             if (mLocationPermissionGranted) {
 
 
-                Task locationResult = mFusedLocationProviderClient.getLastLocation();
+                @SuppressLint("MissingPermission") Task locationResult = mFusedLocationProviderClient.getLastLocation();
                 locationResult.addOnCompleteListener(this, new OnCompleteListener() {
                     @Override
                     public void onComplete(@NonNull Task task) {
@@ -287,6 +288,9 @@ public class MapsActivity extends AppCompatActivity
 
                             // Set the map's camera position to the current location of the device.
                             mLastKnownLocation = (Location) task.getResult();
+                            if (mLastKnownLocation == null) {
+                                return;
+                            }
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(mLastKnownLocation.getLatitude(),
                                             mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
@@ -372,7 +376,7 @@ public class MapsActivity extends AppCompatActivity
             @Override
             public void onClusterItemInfoWindowClick(AllRestaurant item) {
                 Intent intent = RestaurantActivity.makeIntent(MapsActivity.this);
-                intent.putExtra("tracking_number",item.getTrackingNumber());
+                intent.putExtra("restaurantId",item.getId());
                 startActivity(intent);
             }
         });
@@ -395,12 +399,14 @@ public class MapsActivity extends AppCompatActivity
             double lng = tmp.getLongitude();
             String title = tmp.getName();
             String address = tmp.getAddress();
-            String trackingNum = tmp.getTrackingNumber();
+            String restaurantId = tmp.getId();
             String snippet;
             String hazard;
-            Inspection inspection = tmp.getInspectionByIndex(0);
 
-            if(inspection.getTrackingNumber().equals("EMPTY")) {
+            DatabaseManager dbManager = DatabaseManager.getInstance();
+            Inspection inspection = dbManager.getMostRecentInspection(restaurantId);
+
+            if (inspection == null) {
                 snippet = address + "\nHazard Level: No Inspection Yet";
                 hazard = "hazard_unknown";
             } else {
@@ -424,7 +430,7 @@ public class MapsActivity extends AppCompatActivity
                 }
             }
 
-            AllRestaurant offsetItem = new AllRestaurant(lat, lng, title, snippet, hazard, trackingNum);
+            AllRestaurant offsetItem = new AllRestaurant(lat, lng, title, snippet, hazard, restaurantId);
             mClusterManager.addItem(offsetItem);
         }
     }
