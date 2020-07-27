@@ -89,7 +89,7 @@ public class RestaurantListActivity extends AppCompatActivity {
     private void populateRecyclerView() {
 
         restaurantList = findViewById(R.id.restaurantList);
-        RestaurantListAdapter adapter = new RestaurantListAdapter(this, manager.getRestaurantList());
+        RestaurantListAdapter adapter = new RestaurantListAdapter(this, manager);
         restaurantList.setAdapter(adapter);
         restaurantList.setLayoutManager(new LinearLayoutManager(this));
     }

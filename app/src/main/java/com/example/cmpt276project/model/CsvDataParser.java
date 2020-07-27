@@ -24,8 +24,7 @@ import static com.example.cmpt276project.model.DataUpdater.INSPECTION_FILE;
  */
 public class CsvDataParser {
 
-    public static ArrayList<Restaurant> readUpdatedRestaurantData() {
-        ArrayList<Restaurant> restaurants = new ArrayList<>();
+    public static void readUpdatedRestaurantData() {
         String restaurantFilePath = FILE_PATH + RESTAURANTS_FILE;
         String inspectionFilePath = FILE_PATH + INSPECTION_FILE;
         DatabaseManager dbManager = DatabaseManager.getInstance();
@@ -36,12 +35,12 @@ public class CsvDataParser {
             InputStream restaurantStream = new FileInputStream(restaurantFile);
             InputStream inspectionStream = new FileInputStream(inspectionFile);
 
-            readRestaurantData(dbManager, restaurants, restaurantStream);
-            restaurants.sort(new RestaurantManager.SortAscendingByTrackingNumber());
-            readInspectionData(dbManager, restaurants, inspectionStream);
-            return restaurants;
+            readRestaurantData(dbManager, restaurantStream);
+            readInspectionData(dbManager, inspectionStream);
+        } catch (IOException e) {
+            readDefaultRestaurantData();
         } catch (Exception e) {
-            return readDefaultRestaurantData();
+            readDefaultRestaurantData();
         } finally {
             if (dbManager != null) {
                 dbManager.close();
@@ -49,20 +48,17 @@ public class CsvDataParser {
         }
     }
 
-    public static ArrayList<Restaurant> readDefaultRestaurantData() {
-        ArrayList<Restaurant> restaurants = new ArrayList<>();
+    public static void readDefaultRestaurantData() {
         DatabaseManager dbManager = DatabaseManager.getInstance();
         try {
             dbManager.open();
             InputStream restaurantStream = App.resources().openRawResource(R.raw.restaurants_itr1);
             InputStream inspectionStream = App.resources().openRawResource(R.raw.inspectionreports_itr1);
 
-            readRestaurantData(dbManager, restaurants, restaurantStream);
-            restaurants.sort(new RestaurantManager.SortAscendingByTrackingNumber());
-            readInspectionData(dbManager, restaurants, inspectionStream);
-            return restaurants;
-        } catch (IOException e) {
-            return restaurants;
+            readRestaurantData(dbManager, restaurantStream);
+            readInspectionData(dbManager, inspectionStream);
+        } catch (IllegalArgumentException e) {
+
         } finally {
             if (dbManager != null) {
                 dbManager.close();
@@ -70,18 +66,17 @@ public class CsvDataParser {
         }
     }
 
-    private static void readRestaurantData(DatabaseManager dbManager, ArrayList<Restaurant> restaurants, InputStream inputStream) throws IOException {
+    private static void readRestaurantData(DatabaseManager dbManager, InputStream inputStream) {
 
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(inputStream, StandardCharsets.UTF_8)
         )) {
             String line;
             reader.readLine();
+            dbManager.beginTransaction();
 
             while ((line = reader.readLine()) != null) {
                 try {
-                    Restaurant restaurant = getRestaurantFromData(line);
-                    restaurants.add(restaurant);
                     insertRestaurantToDatabase(line, dbManager);
                 } catch (Exception e) {
                     // No way to handle corrupt data, just skip it
@@ -89,30 +84,26 @@ public class CsvDataParser {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            String errorMessage = e.getMessage();
+            throw new IllegalArgumentException(errorMessage);
+        } finally {
+            dbManager.endTransaction();
         }
     }
 
-    private static void readInspectionData(
-            DatabaseManager dbManager,
-            ArrayList<Restaurant> restaurants,
-            InputStream inputStream
-    ) throws IOException {
-
+    private static void readInspectionData(DatabaseManager dbManager, InputStream inputStream) {
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(inputStream, StandardCharsets.UTF_8)
         )) {
             String line;
             int inspectionId = 0;
+            int violationId = 0;
             reader.readLine();
+            dbManager.beginTransaction();
 
             while ((line = reader.readLine()) != null) {
                 try {
-                    Inspection inspection = getInspectionFromData(line);
-                    String trackingNumber = inspection.getTrackingNumber();
-                    Restaurant restaurant = binarySearch(restaurants, trackingNumber);
-                    restaurant.addInspection(inspection);
-                    insertInspectionToDatabase(line, dbManager, inspectionId);
+                    violationId = insertInspectionToDatabase(line, dbManager, inspectionId, violationId);
                     inspectionId++;
                 } catch (Exception e) {
                     // If inspection line data is corrupt, inspection cannot be added
@@ -121,7 +112,10 @@ public class CsvDataParser {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            String errorMessage = e.getMessage();
+            throw new IllegalArgumentException(errorMessage);
+        } finally {
+            dbManager.endTransaction();
         }
     }
 
@@ -143,10 +137,11 @@ public class CsvDataParser {
         }
     }
 
-    public static void insertInspectionToDatabase(
+    public static int insertInspectionToDatabase(
             String inspectionData,
             DatabaseManager dbManager,
-            int inspectionId
+            int inspectionId,
+            int violationId
     ) {
         ArrayList<String> tokens = tokenize(inspectionData, ',');
 
@@ -162,14 +157,17 @@ public class CsvDataParser {
             rating = tokens.get(6);
         }
 
+
         String restaurantId = withQuotesRemoved(tokens.get(0));
         String inspectionType = withQuotesRemoved(tokens.get(2));
         String hazardRating = withQuotesRemoved(rating);
         int date = Integer.parseInt(withQuotesRemoved(tokens.get(1)));
         int numCritical = Integer.parseInt(withQuotesRemoved(tokens.get(3)));
         int numNonCritical = Integer.parseInt(withQuotesRemoved(tokens.get(4)));
+        Inspection.getInspectionTypeEnum(inspectionType);
+        Inspection.getHazardRatingEnum(hazardRating);
 
-        parseViolationLump(violationLump, dbManager, inspectionId);
+        violationId = parseViolationLump(violationLump, dbManager, inspectionId, violationId);
 
         dbManager.insertToInspections(
                 inspectionId,
@@ -180,22 +178,37 @@ public class CsvDataParser {
                 numCritical,
                 numNonCritical
         );
+
+        return violationId;
     }
 
-    private static void parseViolationLump(String violationLump, DatabaseManager dbManager, int inspectionId) {
+    private static int parseViolationLump(
+            String violationLump,
+            DatabaseManager dbManager,
+            int inspectionId,
+            int violationId
+    ) {
         if (violationLump.length() == 0) {
-            return;
+            return violationId;
         }
 
         violationLump = withQuotesRemoved(violationLump);
         ArrayList<String> violationStrings = tokenize(violationLump, '|');
 
         for (String violationData : violationStrings) {
-            insertViolationToDatabase(violationData, dbManager, inspectionId);
+            insertViolationToDatabase(violationData, dbManager, inspectionId, violationId);
+            violationId++;
         }
+
+        return violationId;
     }
 
-    public static void insertViolationToDatabase(String violationData, DatabaseManager dbManager, int inspectionId) {
+    public static void insertViolationToDatabase(
+            String violationData,
+            DatabaseManager dbManager,
+            int inspectionId,
+            int violationId
+    ) {
         try {
             ArrayList<String> tokens = tokenize(violationData, ',');
 
@@ -207,6 +220,7 @@ public class CsvDataParser {
             int isRepeat = repeatString.toLowerCase().equals("repeat") ? 1 : 0;
 
             dbManager.insertToViolations(
+                    violationId,
                     inspectionId,
                     code,
                     description,
@@ -274,111 +288,5 @@ public class CsvDataParser {
         }
 
         return null;
-    }
-
-    public static Restaurant getRestaurantFromData(String restaurantData) {
-        try {
-            ArrayList<String> tokens = tokenize(restaurantData, ',');
-
-            String trackingNumber = withQuotesRemoved(tokens.get(0));
-            String name = withQuotesRemoved(tokens.get(1));
-            String address = withQuotesRemoved(tokens.get(2));
-            String city = withQuotesRemoved(tokens.get(3));
-            double latitude = Double.parseDouble(tokens.get(5));
-            double longitude = Double.parseDouble(tokens.get(6));
-            return new Restaurant(
-                    trackingNumber,
-                    name,
-                    address,
-                    city,
-                    latitude,
-                    longitude
-            );
-        } catch (Exception e) {
-            String errorMessage = String.format("Illegal string of restaurant data [%s]", restaurantData);
-            throw new IllegalArgumentException(errorMessage, e);
-        }
-    }
-
-    public static Inspection getInspectionFromData(String inspectionData) {
-        try {
-            ArrayList<String> tokens = tokenize(inspectionData, ',');
-
-            // The violation lump and hazard rating are not always in the same column
-            // Check which column is the rating and assign them accordingly
-            String rating;
-            String violations;
-            if (tokens.get(5).toLowerCase().matches("\"?(low|moderate|high)\"?")) {
-                rating = tokens.get(5);
-                violations = tokens.get(6);
-            } else {
-                violations = tokens.get(5);
-                rating = tokens.get(6);
-            }
-
-            String trackingNumber = withQuotesRemoved(tokens.get(0));
-            GregorianCalendar date = DateHelper.getDateFromString(tokens.get(1));
-            String inspectionType = withQuotesRemoved(tokens.get(2));
-            String hazardRating = withQuotesRemoved(rating);
-
-            Inspection inspection = new Inspection(
-                    trackingNumber,
-                    inspectionType,
-                    hazardRating,
-                    date
-            );
-
-            addViolationsToInspection(violations, inspection);
-
-            return inspection;
-        } catch (Exception e) {
-            String errorMessage = String.format("Illegal string of inspection data [%s]", inspectionData);
-            throw new IllegalArgumentException(errorMessage, e);
-        }
-    }
-
-    private static void addViolationsToInspection(String violationLump, Inspection inspection) {
-        if (violationLump.length() == 0) {
-            return;
-        }
-
-        violationLump = withQuotesRemoved(violationLump);
-        ArrayList<String> violationStrings = tokenize(violationLump, '|');
-        for (String violationData : violationStrings) {
-            Violation violation = getViolationFromData(violationData);
-            inspection.addViolation(violation);
-        }
-    }
-
-    public static Violation getViolationFromData(String violationData) {
-
-        try {
-
-            ArrayList<String> tokens = tokenize(violationData, ',');
-
-            int id = Integer.parseInt(tokens.get(0));
-            String description = withQuotesRemoved(tokens.get(2));
-            String criticalString = withQuotesRemoved(tokens.get(1));
-            String repeatString = withQuotesRemoved(tokens.get(3));
-            boolean isCritical = true;
-            boolean isRepeat = true;
-
-            if (criticalString.toLowerCase().equals("not critical")) {
-                isCritical = false;
-            }
-            if (repeatString.toLowerCase().equals("not repeat")) {
-                isRepeat = false;
-            }
-
-            return new Violation(
-                    id,
-                    isCritical,
-                    isRepeat,
-                    description
-            );
-        } catch (Exception e) {
-            String errorMessage = String.format("Illegal string of violation data [%s]", violationData);
-            throw new IllegalArgumentException(errorMessage, e);
-        }
     }
 }

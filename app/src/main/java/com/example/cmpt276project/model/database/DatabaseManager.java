@@ -9,11 +9,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
 
 import com.example.cmpt276project.model.CsvDataParser;
+import com.example.cmpt276project.model.DateHelper;
+import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.Restaurant;
-import com.example.cmpt276project.ui.RestaurantActivity;
+import com.example.cmpt276project.model.Violation;
 
-import java.lang.reflect.Array;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 public class DatabaseManager {
 
@@ -36,8 +39,13 @@ public class DatabaseManager {
 
     public static void initialize(Context context) {
         if (instance == null) {
-            instance = new DatabaseManager(context);
-//            CsvDataParser.readUpdatedRestaurantData();
+            File dbFilepath = context.getDatabasePath(DATABASE_NAME);
+            if (dbFilepath.exists()) {
+                instance = new DatabaseManager(context);
+            } else {
+                instance = new DatabaseManager(context);
+                CsvDataParser.readUpdatedRestaurantData();
+            }
         }
     }
 
@@ -94,6 +102,7 @@ public class DatabaseManager {
     }
 
     public long insertToViolations(
+            int violationId,
             int inspectionId,
             int code,
             String description,
@@ -101,6 +110,7 @@ public class DatabaseManager {
             int isRepeat
     ) {
         ContentValues values = new ContentValues();
+        values.put(ViolationTable.FIELD_ID, violationId);
         values.put(ViolationTable.FIELD_INSPECTION_ID, inspectionId);
         values.put(ViolationTable.FIELD_CODE, code);
         values.put(ViolationTable.FIELD_DESCRIPTION, description);
@@ -110,12 +120,29 @@ public class DatabaseManager {
         return db.insert(ViolationTable.NAME, null, values);
     }
 
-    public ArrayList<Restaurant> getRestaurants() {
+    public void beginTransaction() {
+        db.beginTransaction();
+    }
+
+    public void endTransaction() {
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
+
+    public ArrayList<Restaurant> getRestaurants(String selection, String limit) {
         open();
         ArrayList<Restaurant> restaurants = new ArrayList<>();
-        String where = null;
-        Cursor cursor = db.query(true, RestaurantTable.NAME, RestaurantTable.FIELDS, where,
-                null, null, null, null, null);
+        Cursor cursor = db.query(
+                true,
+                RestaurantTable.NAME,
+                RestaurantTable.FIELDS,
+                selection,
+                null,
+                null,
+                null,
+                null,
+                limit
+        );
         if (cursor == null) {
             return restaurants;
         }
@@ -137,6 +164,137 @@ public class DatabaseManager {
         return restaurants;
     }
 
+    public ArrayList<Restaurant> getRestaurants() {
+        return getRestaurants(null, null);
+    }
+
+    public Restaurant getRestaurant(String restaurantId) {
+        String selection = RestaurantTable.FIELD_ID + " = '" + restaurantId + "'";
+        return getRestaurants(selection, "1").get(0);
+    }
+
+    public ArrayList<Inspection> getInspections(String selection, String limit) {
+        open();
+        String orderBy = InspectionTable.FIELD_DATE + " DESC";
+        Cursor cursor = db.query(
+                true,
+                InspectionTable.NAME,
+                InspectionTable.FIELDS,
+                selection,
+                null,
+                null,
+                null,
+                orderBy,
+                null
+        );
+        if (cursor == null) {
+            String errorMessage = String.format("Invalid database query selection criteria [%s]", selection);
+            throw new IllegalArgumentException(errorMessage);
+        }
+
+        ArrayList<Inspection> inspections = new ArrayList<>();
+        if (cursor.getCount() == 0) {
+            return inspections;
+        }
+
+        cursor.moveToFirst();
+
+        do {
+            String dateString = cursor.getString(InspectionTable.COL_DATE);
+            GregorianCalendar date = DateHelper.getDateFromString(dateString);
+
+            inspections.add(new Inspection(
+                    cursor.getInt(InspectionTable.COL_ID),
+                    cursor.getString(InspectionTable.COL_RESTAURANT_ID),
+                    cursor.getString(InspectionTable.COL_TYPE),
+                    cursor.getString(InspectionTable.COL_HAZARD_RATING),
+                    date,
+                    cursor.getInt(InspectionTable.COL_CRITICAL_ISSUES),
+                    cursor.getInt(InspectionTable.COL_NON_CRITICAL_ISSUES)
+            ));
+        } while (cursor.moveToNext());
+
+        close();
+
+        return inspections;
+    }
+
+    public ArrayList<Inspection> getInspections(String restaurantId) {
+        String selection = InspectionTable.FIELD_RESTAURANT_ID + " = '" + restaurantId + "'";
+        return getInspections(selection, null);
+    }
+
+    public Inspection getInspection(int inspectionId) {
+        String selection = InspectionTable.FIELD_ID + " = " + inspectionId;
+        return getInspections(selection, "1").get(0);
+    }
+
+    public Inspection getMostRecentInspection(String restaurantId) {
+        String selection = InspectionTable.FIELD_RESTAURANT_ID + " = '" + restaurantId + "'";
+        ArrayList<Inspection> inspections = getInspections(selection, "1");
+        if (inspections.size() == 0) {
+            return null;
+        }
+        return inspections.get(0);
+    }
+
+    public ArrayList<Violation> getViolations(String selection, String limit) {
+        open();
+        Cursor cursor = db.query(
+                true,
+                ViolationTable.NAME,
+                ViolationTable.FIELDS,
+                selection,
+                null,
+                null,
+                null,
+                null,
+                limit
+        );
+        if (cursor == null) {
+            String errorMessage = String.format("Invalid database query selection criteria [%s]", selection);
+            throw new IllegalArgumentException(errorMessage);
+        }
+
+        ArrayList<Violation> violations = new ArrayList<>();
+        if (cursor.getCount() == 0) {
+            return violations;
+        }
+
+        cursor.moveToFirst();
+
+        do {
+
+            boolean isCritical = cursor.getInt(ViolationTable.COL_IS_CRITICAL) == 1 ? true : false;
+            boolean isRepeat = cursor.getInt(ViolationTable.COL_IS_REPEAT) == 1 ? true : false;
+
+            violations.add(new Violation(
+                    cursor.getInt(ViolationTable.COL_ID),
+                    cursor.getInt(ViolationTable.COL_INSPECTION_ID),
+                    cursor.getInt(ViolationTable.COL_CODE),
+                    isCritical,
+                    isRepeat,
+                    cursor.getString(ViolationTable.COL_DESCRIPTION)
+            ));
+        } while (cursor.moveToNext());
+
+        close();
+
+        return violations;
+    }
+
+    public ArrayList<Violation> getViolations(int inspectionId) {
+        String selection = ViolationTable.FIELD_INSPECTION_ID + " = " + inspectionId;
+        return getViolations(selection, null);
+    }
+
+    public void update() {
+        open();
+        dbHelper.onUpgrade(db, 0, 0);
+        close();
+        CsvDataParser.readUpdatedRestaurantData();
+    }
+
     // Private class for DatabaseHelper
     // Must be private to ensure DatabaseManager is singleton object
     private class DatabaseHelper extends SQLiteOpenHelper {
@@ -148,10 +306,14 @@ public class DatabaseManager {
         @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(RestaurantTable.CREATE);
+            db.execSQL(InspectionTable.CREATE);
+            db.execSQL(ViolationTable.CREATE);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            db.execSQL(DROP_TABLE + ViolationTable.NAME);
+            db.execSQL(DROP_TABLE + InspectionTable.NAME);
             db.execSQL(DROP_TABLE + RestaurantTable.NAME);
             onCreate(db);
         }

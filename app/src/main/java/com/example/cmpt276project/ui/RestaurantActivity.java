@@ -20,7 +20,9 @@ import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
+import com.example.cmpt276project.model.database.DatabaseManager;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -32,6 +34,7 @@ public class RestaurantActivity extends AppCompatActivity {
 
     private RestaurantManager manager;
     private Restaurant restaurant;
+    private ArrayList<Inspection> inspections;
     private int restaurantPos;
 
     private TextView restaurantName;
@@ -92,16 +95,12 @@ public class RestaurantActivity extends AppCompatActivity {
 
     private void loadData() {
         Intent intent = getIntent();
-        if (intent.hasExtra("restaurant")) {
+        if (intent.hasExtra("restaurantId")) {
             Bundle extras = intent.getExtras();
             assert extras != null;
-            restaurantPos = extras.getInt("restaurant");
-            restaurant = manager.getRestaurantList().get(restaurantPos);
-        } else if (intent.hasExtra("tracking_number")) {
-            Bundle extras = intent.getExtras();
-            assert extras != null;
-            String trackingNumber = extras.getString("tracking_number");
-            restaurant = manager.getRestaurantByTrackingNumber(trackingNumber);
+            String restaurantId = extras.getString("restaurantId");
+            DatabaseManager dbManager = DatabaseManager.getInstance();
+            restaurant = dbManager.getRestaurant(restaurantId);
         }
     }
 
@@ -125,7 +124,7 @@ public class RestaurantActivity extends AppCompatActivity {
                 Log.v("RestaurantActivity","Calling map activity");
 
                 Intent intent = MapsActivity.makeIntent(RestaurantActivity.this,false);
-                intent.putExtra("tracking_number",restaurant.getId());
+                intent.putExtra("restaurantId", restaurant.getId());
                 startActivity(intent);
 
             }
@@ -135,12 +134,15 @@ public class RestaurantActivity extends AppCompatActivity {
     private void populateListView() {
         inspectionList = findViewById(R.id.inspectionList);
 
-        // Sort in descending order
-        restaurant.sort(new Inspection.DateDescendingComparator());
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+        inspections = dbManager.getInspections(restaurant.getId());
 
-        InspectionListAdapter adapter = new InspectionListAdapter(this,
-                                                                  R.layout.inspection_row,
-                                                                  restaurant.getInspectionList());
+        InspectionListAdapter adapter = new InspectionListAdapter(
+                this,
+                R.layout.inspection_row,
+                inspections
+        );
+
         inspectionList.setAdapter(adapter);
     }
 
@@ -154,9 +156,10 @@ public class RestaurantActivity extends AppCompatActivity {
             {
                 Intent intent = InspectionActivity.makeIntent(RestaurantActivity.this);
                 // put index of Restaurant as extra
-                intent.putExtra("restaurant", restaurantPos);
+                intent.putExtra("restaurantId", restaurant.getId());
                 // put index of Inspection as extra
-                intent.putExtra("inspection", position);
+                int inspectionId = inspections.get(position).getId();
+                intent.putExtra("inspectionId", inspectionId);
                 startActivity(intent);
             }
         });

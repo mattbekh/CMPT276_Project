@@ -19,6 +19,7 @@ public class ViolationTable {
 
     public static final String[] FIELDS = new String[]{
             FIELD_ID,
+            FIELD_INSPECTION_ID,
             FIELD_CODE,
             FIELD_DESCRIPTION,
             FIELD_IS_CRITICAL,
@@ -27,11 +28,12 @@ public class ViolationTable {
 
     public static final String CREATE =
             "CREATE TABLE " + NAME + " (" +
-                FIELD_ID + " INT PRIMARY KEY AUTOINCREMENT, " +
-                FIELD_INSPECTION_ID + "INT FOREIGN KEY" +
+                FIELD_ID + " INT PRIMARY KEY, " +
+                FIELD_INSPECTION_ID + " INT NOT NULL," +
                 FIELD_CODE + " INT NOT NULL," +
                 FIELD_DESCRIPTION + " TEXT NOT NULL," +
-                FIELD_IS_REPEAT + " INT NOT NULL," +
                 FIELD_IS_CRITICAL + " INT NOT NULL," +
+                FIELD_IS_REPEAT + " INT NOT NULL," +
+                "FOREIGN KEY (" + FIELD_INSPECTION_ID + ") REFERENCES " + InspectionTable.NAME +
             ");";
 }

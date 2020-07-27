@@ -69,7 +69,9 @@ public class RestaurantManager implements Iterable<Restaurant> {
     }
 
     public void updateData() {
-        instance.restaurantList = CsvDataParser.readUpdatedRestaurantData();
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+        dbManager.update();
+        instance.restaurantList = dbManager.getRestaurants();
         instance.sortByRestaurantName();
     }
 

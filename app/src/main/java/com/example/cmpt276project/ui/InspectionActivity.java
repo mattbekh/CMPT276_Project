@@ -14,6 +14,9 @@ import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
+import com.example.cmpt276project.model.Violation;
+import com.example.cmpt276project.model.database.DatabaseManager;
+
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
@@ -23,6 +26,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.sql.DatabaseMetaData;
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -77,17 +82,19 @@ public class InspectionActivity extends AppCompatActivity {
         manager = RestaurantManager.getInstance();
 
         getData(intent);
-        setData(inspection);
+        setData();
 
         populateListView();
     }
 
     void populateListView() {
         violationsList = findViewById(R.id.violationList);
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+        ArrayList<Violation> violations = dbManager.getViolations(inspection.getId());
         ViolationsListAdapter adapter = new ViolationsListAdapter(
-        this,
+            this,
             R.layout.violation_row,
-            inspection.getViolationsList1()
+            violations
         );
         violationsList.setAdapter(adapter);
     }
@@ -99,17 +106,16 @@ public class InspectionActivity extends AppCompatActivity {
     }
 
     private void getData(Intent intent) {
-        if (getIntent().hasExtra("inspection")) {
+        if (getIntent().hasExtra("inspectionId")) {
             Bundle extras = intent.getExtras();
             assert extras != null;
-            int restaurantPos = extras.getInt("restaurant");
-            int inspectionPos = extras.getInt("inspection");
-            restaurant = manager.getRestaurantList().get(restaurantPos);
-            inspection = restaurant.getInspectionByIndex(inspectionPos);
+            int inspectionId = extras.getInt("inspectionId");
+            DatabaseManager dbManager = DatabaseManager.getInstance();
+            inspection = dbManager.getInspection(inspectionId);
         }
     }
 
-    private void setData(Inspection inspection) {
+    private void setData() {
         inspectDate = findViewById(R.id.inspectDate);
         inspectType = findViewById(R.id.inspectType);
         inspectCritical = findViewById(R.id.inspectCritical);

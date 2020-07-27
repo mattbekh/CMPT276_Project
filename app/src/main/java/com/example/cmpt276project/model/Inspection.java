@@ -1,49 +1,52 @@
 package com.example.cmpt276project.model;
 
-import androidx.annotation.NonNull;
-
 import com.example.cmpt276project.App;
 import com.example.cmpt276project.R;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 
 /**
  * This class represents an inspection to a restaurant. It contains information regarding to the
  * date that the inspection took place, the type of inspection, a list of violations that were
  * documented, and counts of critical and non-critical issues.
  */
-public class Inspection implements Iterable<Violation> {
+public class Inspection {
 
     public enum InspectionType { ROUTINE, FOLLOW_UP }
     public enum HazardRating { LOW, MODERATE, HIGH }
 
-    private ArrayList<Violation> violationList;
-    private String trackingNumber;
+    private int id;
+    private String restaurantId;
     private GregorianCalendar date;
     private InspectionType inspectionType;
     private HazardRating hazardRating;
     private int numCriticalIssues;
     private int numNonCriticalIssues;
 
-    public Inspection(String trackingNumber,
+    public Inspection(int id,
+                      String restaurantId,
                       String inspectionType,
                       String hazardRating,
-                      GregorianCalendar date)
+                      GregorianCalendar date,
+                      int numCriticalIssues,
+                      int numNonCriticalIssues)
     {
-        this.trackingNumber = trackingNumber;
+        this.id = id;
+        this.restaurantId = restaurantId;
         this.date = date;
-        this.violationList = new ArrayList<>();
         this.inspectionType = getInspectionTypeEnum(inspectionType);
         this.hazardRating = getHazardRatingEnum(hazardRating);
-        this.numCriticalIssues = 0;
-        this.numNonCriticalIssues = 0;
+        this.numCriticalIssues = numCriticalIssues;
+        this.numNonCriticalIssues = numNonCriticalIssues;
     }
 
-    public String getTrackingNumber() {
-        return trackingNumber;
+    public int getId() {
+        return id;
+    }
+
+    public String getRestaurantId() {
+        return restaurantId;
     }
 
     public InspectionType getInspectionType() {
@@ -62,14 +65,8 @@ public class Inspection implements Iterable<Violation> {
         return numNonCriticalIssues;
     }
 
-    public ArrayList<Violation> getViolationsList1() { return violationList; }
-
     public GregorianCalendar getDate() {
         return date;
-    }
-
-    public Violation getViolationByIndex(int i) {
-        return violationList.get(i);
     }
 
     public String getFullDate() {
@@ -109,15 +106,6 @@ public class Inspection implements Iterable<Violation> {
         }
     }
 
-    public void addViolation(Violation violation) {
-        violationList.add(violation);
-        if (violation.isCritical()) {
-            numCriticalIssues++;
-        } else {
-            numNonCriticalIssues++;
-        }
-    }
-
     public static InspectionType getInspectionTypeEnum(String inspectionType) {
         switch (inspectionType.toLowerCase()) {
             case "routine":
@@ -142,12 +130,6 @@ public class Inspection implements Iterable<Violation> {
                 String errorMessage = String.format("Invalid hazardRating [%s]", hazardRating);
                 throw new IllegalArgumentException(errorMessage);
         }
-    }
-
-    @NonNull
-    @Override
-    public Iterator<Violation> iterator() {
-        return violationList.iterator();
     }
 
     public static class DateAscendingComparator implements Comparator<Inspection> {

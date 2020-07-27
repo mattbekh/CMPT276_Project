@@ -12,10 +12,10 @@ public class AllRestaurant implements ClusterItem {
     private final String mTitle;
     private final String mSnippet;
     private final String mHazard;
-    private final String trackingNumber;
+    private final String mId;
 
     public AllRestaurant(double lat, double lng) {
-        trackingNumber = "";
+        mId = "";
         mPosition = new LatLng(lat, lng);
         mTitle = "";
         mSnippet = "";
@@ -27,15 +27,15 @@ public class AllRestaurant implements ClusterItem {
         mTitle = title;
         mSnippet = "";
         mHazard = hazard;
-        trackingNumber = "";
+        mId = "";
     }
 
-    public AllRestaurant(double lat, double lng, String title, String snippet, String hazard, String trackingnum) {
+    public AllRestaurant(double lat, double lng, String title, String snippet, String hazard, String id) {
         mPosition = new LatLng(lat, lng);
         mTitle = title;
         mSnippet = snippet;
         mHazard = hazard;
-        trackingNumber = trackingnum;
+        mId = id;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class AllRestaurant implements ClusterItem {
         return mHazard;
     }
 
-    public String getTrackingNumber() {
-        return trackingNumber;
+    public String getId() {
+        return mId;
     }
 }

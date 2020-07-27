@@ -33,12 +33,13 @@ package com.example.cmpt276project.model.database;
 
         public static final String CREATE =
                 "CREATE TABLE " + NAME + " (" +
-                    FIELD_ID + " INT PRIMARY KEY, " +
-                    FIELD_RESTAURANT_ID + " TEXT FOREIGN KEY," +
+                    FIELD_ID + " INT PRIMARY KEY," +
+                    FIELD_RESTAURANT_ID + " TEXT NOT NULL," +
                     FIELD_DATE + " INT NOT NULL," +
                     FIELD_TYPE + " TEXT NOT NULL," +
                     FIELD_HAZARD_RATING + " TEXT NOT NULL," +
                     FIELD_CRITICAL_ISSUES + " INT NOT NULL," +
                     FIELD_NON_CRITICAL_ISSUES + " INT NOT NULL," +
+                    "FOREIGN KEY (" + FIELD_RESTAURANT_ID + ") REFERENCES " + RestaurantTable.NAME +
                 ");";
 }

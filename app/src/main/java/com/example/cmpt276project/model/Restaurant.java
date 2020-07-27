@@ -10,9 +10,9 @@ import java.util.Iterator;
 /**
  * This class represents a restaurant and all the inspections it has been subject to.
  */
-public class Restaurant implements Iterable<Inspection> {
+public class Restaurant {
 
-    public enum RestaurantName{ MCDONALDS, WENDYS, BLENZ, PIZZAHUT, AW, TIMS, STARBUCKS, ELEVEN, BOSTON, SUBWAY, UNKNOWN }
+    public enum RestaurantName { MCDONALDS, WENDYS, BLENZ, PIZZAHUT, AW, TIMS, STARBUCKS, ELEVEN, BOSTON, SUBWAY, UNKNOWN }
 
     private String id;
     private String name;
@@ -20,7 +20,6 @@ public class Restaurant implements Iterable<Inspection> {
     private String city;
     private double latitude;
     private double longitude;
-    private ArrayList<Inspection> inspectionList;
 
     public Restaurant(String id,
                       String name,
@@ -35,7 +34,6 @@ public class Restaurant implements Iterable<Inspection> {
         this.city = city;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.inspectionList = new ArrayList<>();
     }
 
     public String getId() {
@@ -101,35 +99,5 @@ public class Restaurant implements Iterable<Inspection> {
                 String errorMessage = String.format("Illegal category [%s]", restaurantName.toString());
                 throw new IllegalStateException(errorMessage);
         }
-    }
-
-    public Inspection getInspectionByIndex(int i) {
-        if(inspectionList.size() == 0) {
-            return new Inspection(
-                "EMPTY",
-                "Routine",
-                "Low",
-                new GregorianCalendar(2019, 11, 26)
-            );
-        }
-        return inspectionList.get(i);
-    }
-
-    @NonNull
-    @Override
-    public Iterator<Inspection> iterator() {
-        return inspectionList.iterator();
-    }
-
-    public void addInspection(Inspection inspection) {
-        inspectionList.add(inspection);
-    }
-
-    public void sort(Comparator<Inspection> comparator) {
-        inspectionList.sort(comparator);
-    }
-
-    public ArrayList<Inspection> getInspectionList() {
-        return inspectionList;
     }
 }

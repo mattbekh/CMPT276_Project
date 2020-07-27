@@ -12,16 +12,22 @@ public class Violation {
 
     public enum Category { PESTS, PERMITS, EQUIPMENT, EMPLOYEES, FOOD }
 
+    private int id;
+    private int inspectionId;
     private int code;
     private boolean isCritical;
     private boolean isRepeat;
     private String description;
 
-    public Violation(int code,
+    public Violation(int id,
+                     int inspectionId,
+                     int code,
                      boolean isCritical,
                      boolean isRepeat,
                      String description)
     {
+        this.id = id;
+        this.inspectionId = inspectionId;
         this.code = code;
         this.isCritical = isCritical;
         this.isRepeat = isRepeat;
