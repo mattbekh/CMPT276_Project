@@ -121,7 +121,6 @@ public class RestaurantActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Log.v("RestaurantActivity","Calling map activity");
 
                 Intent intent = MapsActivity.makeIntent(RestaurantActivity.this,false);
                 intent.putExtra("restaurantId", restaurant.getId());
