@@ -44,8 +44,8 @@ public class UpdateDialog extends AppCompatDialogFragment {
         return new AlertDialog.Builder(getActivity())
                 .setTitle(getString(R.string.UpdateDialog_title))
                 .setView(v)
-                .setPositiveButton("Yes",listener)
-                .setNegativeButton("No",listener)
+                .setPositiveButton(R.string.UpdateDialog_yes_button,listener)
+                .setNegativeButton(R.string.UpdateDialog_no_button,listener)
                 .create();
     }
 

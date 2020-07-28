@@ -131,8 +131,6 @@ public class MapsActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-
-        Log.v("MapActivity","On resume called");
         super.onResume();
 
         Intent intent = getIntent();
@@ -226,8 +224,6 @@ public class MapsActivity extends AppCompatActivity
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
-        Log.v("Map Ready","On Map Ready Called");
         mMap = googleMap;
 
         if (!mLocationPermissionGranted) {
@@ -360,10 +356,10 @@ public class MapsActivity extends AppCompatActivity
                 final View view = getLayoutInflater().inflate(R.layout.info_window, null);
                 TextView nameView = view.findViewById(R.id.text_name);
                 TextView detailsView = view.findViewById(R.id.text_detail);
-
-                String name = (marker.getTitle() != null) ? marker.getTitle() : "Zoom in for Details";
+                String detailsText = getString(R.string.MapsActivity_zoom_in_deets);
+                String name = (marker.getTitle() != null) ? marker.getTitle() : detailsText;
                 nameView.setText(name);
-                String details = (marker.getSnippet() != null) ? marker.getSnippet() : "Zoom in for Details";
+                String details = (marker.getSnippet() != null) ? marker.getSnippet() : detailsText;
                 detailsView.setText(details);
 
                 return view;

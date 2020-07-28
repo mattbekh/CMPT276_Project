@@ -88,6 +88,7 @@ public abstract class DataDownloader implements Callable<Boolean> {
             DownloadManager.Request request = new DownloadManager.Request(uri);
             request.setAllowedNetworkTypes(NETWORK_WIFI | NETWORK_MOBILE);
             request.setAllowedOverRoaming(false);
+            //TODO Potentially internationalize this Download/ Downloading file Notification in dropdown?
             request.setTitle("Download");
             request.setDescription("Downloading File");
             request.allowScanningByMediaScanner();
