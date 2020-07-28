@@ -1,0 +1,55 @@
+<resources>
+    <string name = "app_name">Проект CMPT276</string>
+
+    <string name = "Restaurant_first_activity_title"> Поиск ресторана </string>
+
+    <string name = "Inspection_hazard_rating_low"> Низкий </string>
+    <string name = "Inspection_hazard_rating_moderate"> Средний </string>
+    <string name = "Inspection_hazard_rating_high"> Высокий </string>
+    <string name = "Inspection_inspection_type_routine"> Рутина </string>
+    <string name = "Inspection_inspection_type_follow_up"> Follow Up </string>
+    <string name = "Inspection_date_january"> Январь </string>
+    <string name = "Inspection_date_february"> Февраль </string>
+    <string name = "Inspection_date_march"> Март </string>
+    <string name = "Inspection_date_april"> Апрель </string>
+    <string name = "Inspection_date_may"> Май </string>
+    <string name = "Inspection_date_june"> Июнь </string>
+    <string name = "Inspection_date_july"> Июль </string>
+    <string name = "Inspection_date_august"> Август </string>
+    <string name = "Inspection_date_september"> Сентябрь </string>
+    <string name = "Inspection_date_october"> Октябрь </string>
+    <string name = "Inspection_date_november"> Ноябрь </string>
+    <string name = "Inspection_date_december"> Декабрь </string>
+    <string name = "Inspection_days_ago_text"> дней назад </string>
+    <string name = "Inspection_num_critical_issues"> Количество критических проблем: \ </string>
+    <string name = "Inspection_num_non_critical_issues"> Количество некритических проблем: \ </string>
+    <string name = "Inspection_hazard_level"> Уровень опасности: \ </string>
+    <string name = "Inspection_num_of_issues"> Количество проблем: \ </string>
+    <string name = "Inspection_no_inspections_found"> ​​Пока нет проверок </string>
+    <string name = "Inspection_date"> Дата проверки: \ </string>
+
+    <string name = "Violation_date"> Дата нарушения: \ </string>
+    <string name = "Violation_permit_text"> Разрешение / проблема с операцией </string>
+    <string name = "Violation_employee_text"> Проблема сотрудника / оператора </string>
+    <string name = "Violation_equipment_text"> Проблема с оборудованием / посудой / рабочей станцией </string>
+    <string name = "Violation_pest_text"> Проблема с вредителями </string>
+    <string name = "Violation_food_text"> Проблема с продовольственной санитарией </string>
+    <string name = "restaurantList_most_recent_inspect"> Недавняя проверка: \ </string>
+
+    <string name = "MapsActivity_title"> Карта </string>
+    <string name = "MapsActivity_toolbar_list_btn_text"> Список </string>
+    <string name = "MapsActivity_cancel_download_btn"> ОТМЕНА </string>
+    <string name = "MapsActivity_accept_download_btn"> ОК </string>
+    <string name = "MapsActivity_download_progress"> Загрузка… </string>
+    <string name = "MapsActivity_zoom_in_deets"> Увеличить детали </string>
+
+    <string name = "UpdateDialog_title">Обновление доступно, загрузить данные? </string>
+
+    <string name = "LoadDataDialog_title">Обновление данных… </string>
+
+    <string name = "UpdateDialog_yes_button"> Да </string>
+    <string name = "UpdateDialog_no_button"> Нет </string>
+
+    <string name = "RestaurantListActivity_toolbar_map_btn_text"> Карта </string>
+
+</resources>

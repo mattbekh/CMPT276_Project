@@ -38,13 +38,17 @@
 
     <string name="MapsActivity_title">Map</string>
     <string name="MapsActivity_toolbar_list_btn_text">List</string>
-    <string name="MapsActivity_cancel_download_btn">CANCEL</string>
-    <string name="MapsActivity_accept_download_btn">OK</string>
-    <string name="MapsActivity_download_progress">Downloading update...</string>
+    <string name="MapsActivity_cancel_download_btn">Cancel</string>
+    <string name="MapsActivity_accept_download_btn">Ok</string>
+    <string name="MapsActivity_download_progress">Downloading update…</string>
+    <string name="MapsActivity_zoom_in_deets">Zoom in for Details</string>
 
     <string name="UpdateDialog_title">Update available, download data?</string>
 
-    <string name="LoadDataDialog_title">Updating data...</string>
+    <string name="LoadDataDialog_title">Updating data…</string>
+
+    <string name="UpdateDialog_yes_button">Yes</string>
+    <string name="UpdateDialog_no_button">No</string>
 
     <string name="RestaurantListActivity_toolbar_map_btn_text">Map</string>
 
