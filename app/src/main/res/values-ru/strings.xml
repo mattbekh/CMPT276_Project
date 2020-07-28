@@ -50,6 +50,9 @@
     <string name = "UpdateDialog_yes_button"> Да </string>
     <string name = "UpdateDialog_no_button"> Нет </string>
 
+    <string name="DataDownloader_download">Загрузка</string>
+    <string name="DataDownloader_download_file">Скачивание Файла</string>
+
     <string name = "RestaurantListActivity_toolbar_map_btn_text"> Карта </string>
 
 </resources>

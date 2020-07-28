@@ -50,6 +50,9 @@
     <string name="UpdateDialog_yes_button">Yes</string>
     <string name="UpdateDialog_no_button">No</string>
 
+    <string name="DataDownloader_download">Download</string>
+    <string name="DataDownloader_download_file">Downloading File</string>
+
     <string name="RestaurantListActivity_toolbar_map_btn_text">Map</string>
 
 </resources>

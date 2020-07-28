@@ -3,13 +3,19 @@ package com.example.cmpt276project.model;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 
+import com.example.cmpt276project.App;
+import com.example.cmpt276project.R;
+
 import org.json.JSONObject;
 
 import java.util.concurrent.Callable;
+
+import cz.msebera.android.httpclient.client.cache.Resource;
 
 import static android.app.DownloadManager.Request.NETWORK_MOBILE;
 import static android.app.DownloadManager.Request.NETWORK_WIFI;
@@ -84,13 +90,13 @@ public abstract class DataDownloader implements Callable<Boolean> {
                     .getJSONObject(0)
                     .get("url");
 
+            Resources res = App.resources();
             Uri uri = Uri.parse(linkCsv);
             DownloadManager.Request request = new DownloadManager.Request(uri);
             request.setAllowedNetworkTypes(NETWORK_WIFI | NETWORK_MOBILE);
             request.setAllowedOverRoaming(false);
-            //TODO Potentially internationalize this Download/ Downloading file Notification in dropdown?
-            request.setTitle("Download");
-            request.setDescription("Downloading File");
+            request.setTitle(res.getString(R.string.DataDownloader_download));
+            request.setDescription(res.getString(R.string.DataDownloader_download_file));
             request.allowScanningByMediaScanner();
             request.setNotificationVisibility(VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
             request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
