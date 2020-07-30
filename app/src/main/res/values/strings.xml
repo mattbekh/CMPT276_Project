@@ -47,5 +47,6 @@
     <string name="LoadDataDialog_title">Updating data...</string>
 
     <string name="RestaurantListActivity_toolbar_map_btn_text">Map</string>
+    <string name="search_filter_restaurant_name">Restaurant Name</string>
 
 </resources>
