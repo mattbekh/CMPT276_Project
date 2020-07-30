@@ -29,7 +29,7 @@
             android:layout_weight="2"
             android:ems="10"
             android:inputType="textPersonName"
-            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_gravity="center"/>
 
     </LinearLayout>
@@ -45,7 +45,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="@color/cardview_dark_background"
-        android:text="Number of Critical Issues in Last Year" />
+        android:text="@string/search_filter_number_of_critical_issues_in_last_year" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -57,8 +57,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="50dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="50dp"
             android:textStyle="bold"
             android:ems="10"
             android:inputType="number" />
@@ -68,8 +68,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="50dp"
             android:textStyle="bold"
             android:ems="10"
             android:inputType="number" />
@@ -81,9 +81,9 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="50dp"
         android:layout_marginLeft="50dp"
-        android:text="Favourites"
+        android:text="@string/saerch_filter_favourites"
         android:textStyle="bold"
-        android:textSize="18dp"/>
+        android:textSize="18sp"/>
 
 </LinearLayout>
 

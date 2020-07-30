@@ -48,5 +48,7 @@
 
     <string name="RestaurantListActivity_toolbar_map_btn_text">Map</string>
     <string name="search_filter_restaurant_name">Restaurant Name</string>
+    <string name="search_filter_number_of_critical_issues_in_last_year">Number of Critical Issues in Last Year</string>
+    <string name="saerch_filter_favourites">Favourites</string>
 
 </resources>
