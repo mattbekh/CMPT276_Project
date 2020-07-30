@@ -2,6 +2,7 @@ package com.example.cmpt276project.ui;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
@@ -35,8 +36,23 @@ public class RestaurantListActivity extends AppCompatActivity {
         inflater.inflate(R.menu.toolbar_menu,menu);
 
         MenuItem viewMapItem = menu.findItem(R.id.ToolbarMenu_switch_context);
+//        MenuItem searchMapItem = menu.findItem(R.id.ToolbarMenu_search);
+
         viewMapItem.setVisible(true);
         viewMapItem.setTitle(R.string.RestaurantListActivity_toolbar_map_btn_text);
+
+//        SearchView searchView = (SearchView) searchMapItem.getActionView();
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                return false;
+//            }
+//        });
 
         return true;
     }
