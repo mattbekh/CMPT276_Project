@@ -206,7 +206,7 @@ public class MapsActivity extends AppCompatActivity
             case R.id.ToolbarMenu_search:
                 FragmentManager manager = getSupportFragmentManager();
                 SearchAndFilterActivity dialog = new SearchAndFilterActivity();
-                dialog.show(manager, "FilterActivity");
+                dialog.show(manager, "SearchAndFilterActivity");
                 return true;
             case R.id.ToolbarMenu_back:
                 Intent intent = new Intent(Intent.ACTION_MAIN);
