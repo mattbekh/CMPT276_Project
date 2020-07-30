@@ -81,6 +81,8 @@ public class MapsActivity extends AppCompatActivity
     private final LatLng surrey = new LatLng(49.187500, -122.849000);
     private final int DEFAULT_ZOOM = 10;
 
+    private final String TAG = "MapsActivity";
+
     // Declare a variable for the cluster manager.
     private ClusterManager<AllRestaurant> mClusterManager;
 
@@ -201,6 +203,11 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
+            case R.id.ToolbarMenu_search:
+                FragmentManager manager = getSupportFragmentManager();
+                SearchAndFilterActivity dialog = new SearchAndFilterActivity();
+                dialog.show(manager, "FilterActivity");
+                return true;
             case R.id.ToolbarMenu_back:
                 Intent intent = new Intent(Intent.ACTION_MAIN);
                 intent.addCategory(Intent.CATEGORY_HOME);
@@ -214,6 +221,8 @@ public class MapsActivity extends AppCompatActivity
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 
     /**
      * Manipulates the map once available.

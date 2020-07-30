@@ -7,8 +7,7 @@
         android:id="@+id/ToolbarMenu_search"
         android:title="Search"
         android:icon="@drawable/ic_search"
-        app:showAsAction="always|collapseActionView"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"/>
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/ToolbarMenu_switch_context"
