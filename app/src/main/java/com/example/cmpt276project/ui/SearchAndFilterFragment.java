@@ -76,7 +76,7 @@ public class SearchAndFilterFragment extends AppCompatDialogFragment {
                 } catch (Exception e) {
                     maxCritical = null;
                 }
-                RestaurantFilter.setFilter(name,null,minCritical,maxCritical,isFavourites);
+                RestaurantFilter.setFilter(name,null, minCritical, maxCritical, isFavourites);
                 Activity parentActivity = getActivity();
                 ((UpdateFilterListener) parentActivity).updateFilter();
             }

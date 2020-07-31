@@ -3,6 +3,7 @@ package com.example.cmpt276project.ui;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
@@ -70,6 +71,11 @@ public class RestaurantListActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
+            case R.id.ToolbarMenu_search:
+                FragmentManager manager = getSupportFragmentManager();
+                SearchAndFilterFragment dialog = new SearchAndFilterFragment();
+                dialog.show(manager, "SearchAndFilterActivity");
+                return true;
             case R.id.ToolbarMenu_back:
                 Intent intent = new Intent(Intent.ACTION_MAIN);
                 intent.addCategory(Intent.CATEGORY_HOME);
