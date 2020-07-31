@@ -20,9 +20,11 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.airbnb.lottie.parser.IntegerParser;
 import com.example.cmpt276project.R;
+import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.RestaurantManager;
 import com.example.cmpt276project.model.database.RestaurantFilter;
 
+import java.util.HashSet;
 import java.util.logging.Level;
 
 public class SearchAndFilterFragment extends AppCompatDialogFragment {
@@ -76,7 +78,19 @@ public class SearchAndFilterFragment extends AppCompatDialogFragment {
                 } catch (Exception e) {
                     maxCritical = null;
                 }
-                RestaurantFilter.setFilter(name,null, minCritical, maxCritical, isFavourites);
+
+                HashSet<Inspection.HazardRating> hazardRatings = new HashSet<>();
+                if (lowLevel.isChecked()) {
+                    hazardRatings.add(Inspection.HazardRating.LOW);
+                }
+                if (midLevel.isChecked()) {
+                    hazardRatings.add(Inspection.HazardRating.MODERATE);
+                }
+                if (highLevel.isChecked()) {
+                    hazardRatings.add(Inspection.HazardRating.HIGH);
+                }
+
+                RestaurantFilter.setFilter(name, hazardRatings, minCritical, maxCritical, isFavourites);
                 Activity parentActivity = getActivity();
                 ((UpdateFilterListener) parentActivity).updateFilter();
             }
