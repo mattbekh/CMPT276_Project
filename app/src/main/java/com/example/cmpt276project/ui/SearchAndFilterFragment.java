@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -21,6 +22,8 @@ import com.airbnb.lottie.parser.IntegerParser;
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.RestaurantManager;
 import com.example.cmpt276project.model.database.RestaurantFilter;
+
+import java.util.logging.Level;
 
 public class SearchAndFilterFragment extends AppCompatDialogFragment {
     private RestaurantManager manager;
@@ -40,11 +43,17 @@ public class SearchAndFilterFragment extends AppCompatDialogFragment {
         EditText issueMin = (EditText) view.findViewById(R.id.SF_issueMin);
         EditText issueMax = (EditText) view.findViewById(R.id.SF_issueMax);
         Switch favourites = (Switch) view.findViewById(R.id.SF_favouritesSwitch);
+        CheckBox lowLevel = (CheckBox) view.findViewById(R.id.SF_Low_checkBox);
+        CheckBox midLevel = (CheckBox) view.findViewById(R.id.SF_Moderate_checkBox);
+        CheckBox highLevel = (CheckBox) view.findViewById(R.id.SF_High_checkBox);
 
         // set hint
         nameInput.setHint("ex: pizza");
         issueMin.setHint("Min");
         issueMax.setHint("Max");
+        lowLevel.setChecked(true);
+        midLevel.setChecked(true);
+        highLevel.setChecked(true);
 
         favouritesSwitch(favourites);
 
@@ -52,28 +61,6 @@ public class SearchAndFilterFragment extends AppCompatDialogFragment {
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
-                //TODO: how to know if editText is null
-                // get data from edit text view
-//                if(nameInput.getText() == null) {
-//                    String name = null;
-//                    Toast.makeText(getContext(), "name is null", Toast.LENGTH_SHORT).show();
-//                } else if(issueMin.getText() == null) {
-//                    int minCritical = Integer.parseInt(null);
-//                    Toast.makeText(getContext(), "Min Critical is null", Toast.LENGTH_SHORT).show();
-//                } else if(issueMax.getText() == null) {
-//                    int maxCritical = Integer.parseInt(null);
-//                    Toast.makeText(getContext(), "Max Critical is null", Toast.LENGTH_SHORT).show();
-//                } else {
-//                    String name = nameInput.getText().toString();
-//                    int minCritical = Integer.parseInt(issueMin.getText().toString());
-//                    int maxCritical = Integer.parseInt(issueMax.getText().toString());
-//                    if(minCritical > maxCritical) {
-//                        Toast.makeText(getContext(), "Min Critical > Max Critical", Toast.LENGTH_SHORT).show();
-//                    } else {
-//                        Toast.makeText(getContext(), "pass", Toast.LENGTH_SHORT).show();
-//                    }
-//                }
                 String name = nameInput.getText().toString();
                 String minCriticalString = issueMin.getText().toString();
                 String maxCriticalString = issueMax.getText().toString();
@@ -92,8 +79,6 @@ public class SearchAndFilterFragment extends AppCompatDialogFragment {
                 RestaurantFilter.setFilter(name,null,minCritical,maxCritical,isFavourites);
                 Activity parentActivity = getActivity();
                 ((UpdateFilterListener) parentActivity).updateFilter();
-                // TODO: how to use applyFilter
-//                manager.applyFilter();
             }
         };
 
