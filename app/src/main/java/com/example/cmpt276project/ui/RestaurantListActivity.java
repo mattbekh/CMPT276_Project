@@ -22,7 +22,7 @@ import java.util.Objects;
 /**
     This class creates and populates a RecyclerView which holds all restaurants with their details
  */
-public class RestaurantListActivity extends AppCompatActivity {
+public class RestaurantListActivity extends AppCompatActivity implements SearchAndFilterFragment.UpdateFilterListener {
 
     private RecyclerView restaurantList;
     RestaurantManager manager;
@@ -114,5 +114,10 @@ public class RestaurantListActivity extends AppCompatActivity {
         RestaurantListAdapter adapter = new RestaurantListAdapter(this, manager);
         restaurantList.setAdapter(adapter);
         restaurantList.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    @Override
+    public void updateFilter() {
+        // TODO: update recycler view
     }
 }

@@ -64,6 +64,10 @@ public class SearchAndFilterFragment extends AppCompatDialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String name = nameInput.getText().toString();
+                if (name.equals("")) {
+                    name = null;
+                }
+
                 String minCriticalString = issueMin.getText().toString();
                 String maxCriticalString = issueMax.getText().toString();
                 Integer minCritical;

@@ -63,7 +63,7 @@ public class RestaurantFilter {
 
         StringBuilder ratings = new StringBuilder("(");
         for (HazardRating rating : hazardRatings) {
-            ratings.append(getHazardRating(rating)).append(",");
+            ratings.append("'").append(getHazardRating(rating)).append("',");
         }
 
         // Replace trailing ',' with ')'
