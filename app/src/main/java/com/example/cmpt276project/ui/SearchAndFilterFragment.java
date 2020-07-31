@@ -1,5 +1,6 @@
 package com.example.cmpt276project.ui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -21,7 +22,7 @@ import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.RestaurantManager;
 import com.example.cmpt276project.model.database.RestaurantFilter;
 
-public class SearchAndFilterActivity extends AppCompatDialogFragment {
+public class SearchAndFilterFragment extends AppCompatDialogFragment {
     private RestaurantManager manager;
     private RestaurantFilter filter;
     private boolean isFavourites;
@@ -74,9 +75,23 @@ public class SearchAndFilterActivity extends AppCompatDialogFragment {
 //                    }
 //                }
                 String name = nameInput.getText().toString();
-                int minCritical = Integer.parseInt(issueMin.getText().toString());
-                int maxCritical = Integer.parseInt(issueMax.getText().toString());
+                String minCriticalString = issueMin.getText().toString();
+                String maxCriticalString = issueMax.getText().toString();
+                Integer minCritical;
+                Integer maxCritical;
+                try {
+                    minCritical = Integer.parseInt(minCriticalString);
+                } catch (Exception e){
+                    minCritical = null;
+                }
+                try {
+                    maxCritical = Integer.parseInt(maxCriticalString);
+                } catch (Exception e) {
+                    maxCritical = null;
+                }
                 RestaurantFilter.setFilter(name,null,minCritical,maxCritical,isFavourites);
+                Activity parentActivity = getActivity();
+                ((UpdateFilterListener) parentActivity).updateFilter();
                 // TODO: how to use applyFilter
 //                manager.applyFilter();
             }
@@ -95,12 +110,16 @@ public class SearchAndFilterActivity extends AppCompatDialogFragment {
         s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
+                if (isChecked) {
                     isFavourites = true;
                 } else {
                     isFavourites = false;
                 }
             }
         });
+    }
+
+    public interface UpdateFilterListener {
+        void updateFilter();
     }
 }

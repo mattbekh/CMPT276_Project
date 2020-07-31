@@ -61,7 +61,7 @@ import java.util.concurrent.Future;
  */
 
 public class MapsActivity extends AppCompatActivity
-        implements OnMapReadyCallback, UpdateDialog.UpdateDialogListener, LoadDataDialog.OnDismissListener
+        implements OnMapReadyCallback, UpdateDialog.UpdateDialogListener, LoadDataDialog.OnDismissListener, SearchAndFilterFragment.UpdateFilterListener
 {
 
     private RestaurantManager manager;
@@ -205,7 +205,7 @@ public class MapsActivity extends AppCompatActivity
         switch (item.getItemId()){
             case R.id.ToolbarMenu_search:
                 FragmentManager manager = getSupportFragmentManager();
-                SearchAndFilterActivity dialog = new SearchAndFilterActivity();
+                SearchAndFilterFragment dialog = new SearchAndFilterFragment();
                 dialog.show(manager, "SearchAndFilterActivity");
                 return true;
             case R.id.ToolbarMenu_back:
@@ -442,6 +442,11 @@ public class MapsActivity extends AppCompatActivity
             AllRestaurant offsetItem = new AllRestaurant(lat, lng, title, snippet, hazard, restaurantId);
             mClusterManager.addItem(offsetItem);
         }
+    }
+
+    @Override
+    public void updateFilter() {
+        setUpCluster();
     }
 
     private class MyClusterRenderer extends DefaultClusterRenderer<AllRestaurant> {
