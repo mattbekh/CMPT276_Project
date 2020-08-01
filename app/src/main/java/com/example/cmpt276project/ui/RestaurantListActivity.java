@@ -13,7 +13,9 @@ import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.cmpt276project.R;
+import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
+import com.example.cmpt276project.model.database.DatabaseManager;
 
 import java.util.Objects;
 
@@ -27,6 +29,24 @@ public class RestaurantListActivity extends AppCompatActivity {
     public static Intent makeIntent(Context context) {
         return new Intent(context, RestaurantListActivity.class);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
+        if(intent.hasExtra("restaurantId")){
+
+            assert extras != null;
+            String restaurantId = extras.getString("restaurantId");
+            DatabaseManager dbManager = DatabaseManager.getInstance();
+            Restaurant restaurant = dbManager.getRestaurant(restaurantId);
+            restaurant.isFavourite();
+        }
+    }
+
 
     // Setup toolbar
     @Override

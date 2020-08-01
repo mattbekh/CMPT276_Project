@@ -13,8 +13,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.Inspection;
@@ -55,6 +58,7 @@ public class RestaurantActivity extends AppCompatActivity {
         inflater.inflate(R.menu.toolbar_menu,menu);
         return true;
     }
+
 
     //Takes user back to RestaurantList
     @Override
@@ -115,6 +119,13 @@ public class RestaurantActivity extends AppCompatActivity {
         restaurantAddress.setText(fullAddress);
         restaurantGPS.setText(coordinates);
 
+        Switch sb = (Switch)findViewById(R.id.favSwitch);
+        sb.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                restaurant.setFavourite();
+            }
+
+        });
 
 
         restaurantGPS.setOnClickListener(new View.OnClickListener() {
