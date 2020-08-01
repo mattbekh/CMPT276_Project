@@ -81,6 +81,19 @@ public class DatabaseManager {
         return db.insert(RestaurantTable.NAME, null, values);
     }
 
+    public boolean updateRestaurantFav (String id, int favourite) {
+
+        ContentValues values = new ContentValues();
+        values.put(RestaurantTable.FIELD_IS_FAVOURITE, favourite);
+
+        int result =  db.update(RestaurantTable.NAME,
+                values,
+                RestaurantTable.FIELD_ID + " = " + id,
+                null);
+
+        return result != 0;
+    }
+
     public long insertToInspections(
             int inspectionId,
             String restaurantId,
