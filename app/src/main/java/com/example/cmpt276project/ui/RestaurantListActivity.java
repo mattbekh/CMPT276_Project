@@ -68,6 +68,8 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
         System.exit(0);
     }
 
+
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
@@ -118,6 +120,6 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
 
     @Override
     public void updateFilter() {
-        // TODO: update recycler view
+        populateRecyclerView();
     }
 }
