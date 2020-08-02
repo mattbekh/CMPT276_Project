@@ -446,6 +446,11 @@ public class MapsActivity extends AppCompatActivity
 
     @Override
     public void updateFilter() {
+        /** TODO:
+         *      1. remove all markers
+         *      2. the qualified restaurants are put into the ArrayList
+         *      3. use addRestaurant to add new markers
+         * */
         setUpCluster();
     }
 

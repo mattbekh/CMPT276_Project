@@ -29,7 +29,6 @@ import java.util.logging.Level;
 
 public class SearchAndFilterFragment extends AppCompatDialogFragment {
     private RestaurantManager manager;
-    private RestaurantFilter filter;
     private boolean isFavourites;
 
     @NonNull
