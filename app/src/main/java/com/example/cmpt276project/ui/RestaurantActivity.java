@@ -13,7 +13,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +44,8 @@ public class RestaurantActivity extends AppCompatActivity {
     private TextView restaurantAddress;
     private TextView restaurantGPS;
 
+    private boolean favouriteToggled;
+
     private ListView inspectionList;
 
 
@@ -57,6 +61,7 @@ public class RestaurantActivity extends AppCompatActivity {
         return true;
     }
 
+
     //Takes user back to RestaurantList
     @Override
     public void onBackPressed(){
@@ -68,6 +73,9 @@ public class RestaurantActivity extends AppCompatActivity {
         // Switch to allow for future functionality
         switch (item.getItemId()) {
             case R.id.ToolbarMenu_back:
+                if(favouriteToggled){
+
+                }
                 finish();
                 return true;
         }
@@ -116,6 +124,23 @@ public class RestaurantActivity extends AppCompatActivity {
         restaurantAddress.setText(fullAddress);
         restaurantGPS.setText(coordinates);
 
+        Switch sb = (Switch)findViewById(R.id.favSwitch);
+        sb.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                restaurant.setFavourite(1);
+                favouriteToggled = true;
+                DatabaseManager dbManager = DatabaseManager.getInstance();
+                dbManager.updateRestaurantFav(restaurant.getId(), 1);
+            }
+
+            else{
+                restaurant.setFavourite(0);
+                favouriteToggled = false;
+                DatabaseManager dbManager = DatabaseManager.getInstance();
+                dbManager.updateRestaurantFav(restaurant.getId(), 0);
+            }
+
+        });
 
 
         restaurantGPS.setOnClickListener(new View.OnClickListener() {
@@ -124,9 +149,12 @@ public class RestaurantActivity extends AppCompatActivity {
 
 
                 Intent intent = MapsActivity.makeIntent(RestaurantActivity.this,false);
+
                 intent.putExtra("restaurantId", restaurant.getId());
                 startActivity(intent);
                 finish();
+
+
 
             }
         });

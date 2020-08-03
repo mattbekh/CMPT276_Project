@@ -9,13 +9,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.cmpt276project.R;
+import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
+import com.example.cmpt276project.model.database.DatabaseManager;
 
 import java.util.Objects;
 
@@ -29,6 +32,32 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
     public static Intent makeIntent(Context context) {
         return new Intent(context, RestaurantListActivity.class);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        manager = RestaurantManager.getInstance();
+        manager.sortByRestaurantName();
+
+        populateRecyclerView();
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
+       // if(intent.hasExtra("favourited")){
+
+         //   Log.v("RestaurantListActivity", "onResume called");
+          //  assert extras != null;
+           // String restaurantId = extras.getString("restaurantId");
+          //  DatabaseManager dbManager = DatabaseManager.getInstance();
+           // Restaurant restaurant = dbManager.getRestaurant(restaurantId);
+           // dbManager.updateRestaurantFav(restaurantId, 1);
+
+
+
+    }
+
 
     // Setup toolbar
     @Override
