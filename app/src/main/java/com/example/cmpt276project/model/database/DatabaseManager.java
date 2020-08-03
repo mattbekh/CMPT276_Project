@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -83,14 +84,17 @@ public class DatabaseManager {
 
     public boolean updateRestaurantFav (String id, int favourite) {
 
+        open();
+
         ContentValues values = new ContentValues();
         values.put(RestaurantTable.FIELD_IS_FAVOURITE, favourite);
 
-        int result =  db.update(RestaurantTable.NAME,
+        int result = db.update(RestaurantTable.NAME,
                 values,
-                RestaurantTable.FIELD_ID + " = " + id,
+                RestaurantTable.FIELD_ID + "='" + id +"'",
                 null);
 
+        close();
         return result != 0;
     }
 
