@@ -108,6 +108,7 @@ public class SearchAndFilterFragment extends AppCompatDialogFragment {
         return alertDialog;
     }
 
+
     private void favouritesSwitch(Switch s) {
         s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

@@ -58,6 +58,18 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
         return true;
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        doUpdate();
+    }
+    public void doUpdate() {
+        if (manager.doesListNeedUpdate()) {
+            populateRecyclerView();
+            manager.setListNeedUpdate();
+        }
+    }
+
     //Exit Application when back Button pressed
     @Override
     public void onBackPressed(){
@@ -120,6 +132,7 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
 
     @Override
     public void updateFilter() {
-        populateRecyclerView();
+//        populateRecyclerView();
+        onResume();
     }
 }

@@ -109,6 +109,7 @@ public class MapsActivity extends AppCompatActivity
         setupToolbar();
     }
 
+
     private void setPermissions() {
         int locationPermission = checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
         int downloadPermission = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -145,6 +146,15 @@ public class MapsActivity extends AppCompatActivity
             assert extras != null;
             String restaurantId = extras.getString("restaurantId");
             getNewLocation(restaurantId);
+        }
+        doUpdate();
+    }
+
+    public void doUpdate() {
+        if (manager.doesMapNeedUpdate()) {
+            mMap.clear();
+            setUpCluster();
+            manager.setMapNeedUpdate();
         }
     }
 
@@ -446,8 +456,9 @@ public class MapsActivity extends AppCompatActivity
 
     @Override
     public void updateFilter() {
-
-        setUpCluster();
+//        mMap.clear();
+//        setUpCluster();
+        onResume();
     }
 
     private class MyClusterRenderer extends DefaultClusterRenderer<AllRestaurant> {

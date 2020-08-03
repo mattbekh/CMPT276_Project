@@ -14,6 +14,8 @@ import java.util.Iterator;
 public class RestaurantManager implements Iterable<Restaurant> {
 
     private ArrayList<Restaurant> restaurantList;
+    private boolean doesMapNeedUpdate;
+    private boolean doesListNeedUpdate;
 
     // Singleton Support
     private static RestaurantManager instance;
@@ -38,6 +40,7 @@ public class RestaurantManager implements Iterable<Restaurant> {
     public void sortByRestaurantName() {
         restaurantList.sort(new SortAscendingByName());
     }
+
 
     // Override comparator function to sort restaurants by name
     static class SortAscendingByName implements Comparator<Restaurant> {
@@ -76,7 +79,27 @@ public class RestaurantManager implements Iterable<Restaurant> {
         DatabaseManager dbManager = DatabaseManager.getInstance();
         instance.restaurantList = dbManager.getRestaurants();
         instance.sortByRestaurantName();
+        requireUpdate();
     }
+    public boolean doesMapNeedUpdate() {
+        return doesMapNeedUpdate;
+    }
+
+    public boolean doesListNeedUpdate() {
+        return doesListNeedUpdate;
+    }
+
+    public void requireUpdate() {
+        doesListNeedUpdate = true;
+        doesMapNeedUpdate = true;
+    }
+    public void setListNeedUpdate() {
+        doesListNeedUpdate = false;
+    }
+    public void setMapNeedUpdate() {
+        doesMapNeedUpdate = false;
+    }
+
 
     @NonNull
     @Override
