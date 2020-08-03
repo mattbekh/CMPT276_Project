@@ -48,7 +48,6 @@ public class RestaurantActivity extends AppCompatActivity {
 
     private ListView inspectionList;
 
-
     public static Intent makeIntent(Context context) {
         return new Intent(context, RestaurantActivity.class);
     }
@@ -75,6 +74,14 @@ public class RestaurantActivity extends AppCompatActivity {
             case R.id.ToolbarMenu_back:
                 if(favouriteToggled){
 
+                    if(favouriteToggled){
+                        DatabaseManager dbManager = DatabaseManager.getInstance();
+                        dbManager.updateRestaurantFav(restaurant.getId(), 1);
+                    }
+                    else{
+                        DatabaseManager dbManager = DatabaseManager.getInstance();
+                        dbManager.updateRestaurantFav(restaurant.getId(), 0);
+                    }
                 }
                 finish();
                 return true;
@@ -129,15 +136,15 @@ public class RestaurantActivity extends AppCompatActivity {
             if(isChecked){
                 restaurant.setFavourite(1);
                 favouriteToggled = true;
-                DatabaseManager dbManager = DatabaseManager.getInstance();
-                dbManager.updateRestaurantFav(restaurant.getId(), 1);
+//                DatabaseManager dbManager = DatabaseManager.getInstance();
+//                dbManager.updateRestaurantFav(restaurant.getId(), 1);
             }
 
             else{
                 restaurant.setFavourite(0);
                 favouriteToggled = false;
-                DatabaseManager dbManager = DatabaseManager.getInstance();
-                dbManager.updateRestaurantFav(restaurant.getId(), 0);
+//                DatabaseManager dbManager = DatabaseManager.getInstance();
+//                dbManager.updateRestaurantFav(restaurant.getId(), 0);
             }
 
         });
@@ -147,15 +154,10 @@ public class RestaurantActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-
                 Intent intent = MapsActivity.makeIntent(RestaurantActivity.this,false);
-
                 intent.putExtra("restaurantId", restaurant.getId());
                 startActivity(intent);
                 finish();
-
-
-
             }
         });
     }

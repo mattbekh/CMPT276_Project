@@ -33,33 +33,45 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
         return new Intent(context, RestaurantListActivity.class);
     }
 
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//
+//        manager = RestaurantManager.getInstance();
+//        manager.sortByRestaurantName();
+//        populateRecyclerView();
+//        Intent intent = getIntent();
+//        Bundle extras = intent.getExtras();
+//
+//       // if(intent.hasExtra("favourited")){
+//
+//         //   Log.v("RestaurantListActivity", "onResume called");
+//          //  assert extras != null;
+//           // String restaurantId = extras.getString("restaurantId");
+//          //  DatabaseManager dbManager = DatabaseManager.getInstance();
+//           // Restaurant restaurant = dbManager.getRestaurant(restaurantId);
+//           // dbManager.updateRestaurantFav(restaurantId, 1);
+//    }
+
     @Override
-    protected void onResume() {
+    public void onResume(){
         super.onResume();
+        doUpdate();
 
-        manager = RestaurantManager.getInstance();
-        manager.sortByRestaurantName();
-
-        populateRecyclerView();
-
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-
-       // if(intent.hasExtra("favourited")){
-
-         //   Log.v("RestaurantListActivity", "onResume called");
-          //  assert extras != null;
-           // String restaurantId = extras.getString("restaurantId");
-          //  DatabaseManager dbManager = DatabaseManager.getInstance();
-           // Restaurant restaurant = dbManager.getRestaurant(restaurantId);
-           // dbManager.updateRestaurantFav(restaurantId, 1);
-
-
-
+//        DatabaseManager dbManager = DatabaseManager.getInstance();
+//        dbManager.updateRestaurantFav("NDAA-8RNNVR", 1);
     }
 
+    public void doUpdate() {
+        populateRecyclerView();
+//        if (manager.doesListNeedUpdate()) {
+//            populateRecyclerView();
+//            manager.setListNeedUpdate();
+//        }
+    }
 
     // Setup toolbar
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -87,17 +99,6 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
         return true;
     }
 
-    @Override
-    public void onResume(){
-        super.onResume();
-        doUpdate();
-    }
-    public void doUpdate() {
-        if (manager.doesListNeedUpdate()) {
-            populateRecyclerView();
-            manager.setListNeedUpdate();
-        }
-    }
 
     //Exit Application when back Button pressed
     @Override
