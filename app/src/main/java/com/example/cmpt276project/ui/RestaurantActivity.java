@@ -44,6 +44,8 @@ public class RestaurantActivity extends AppCompatActivity {
     private TextView restaurantAddress;
     private TextView restaurantGPS;
 
+    private boolean favouriteToggled;
+
     private ListView inspectionList;
 
 
@@ -71,6 +73,9 @@ public class RestaurantActivity extends AppCompatActivity {
         // Switch to allow for future functionality
         switch (item.getItemId()) {
             case R.id.ToolbarMenu_back:
+                if(favouriteToggled){
+
+                }
                 finish();
                 return true;
         }
@@ -122,7 +127,17 @@ public class RestaurantActivity extends AppCompatActivity {
         Switch sb = (Switch)findViewById(R.id.favSwitch);
         sb.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked){
-                restaurant.setFavourite();
+                restaurant.setFavourite(1);
+                favouriteToggled = true;
+                DatabaseManager dbManager = DatabaseManager.getInstance();
+                dbManager.updateRestaurantFav(restaurant.getId(), 1);
+            }
+
+            else{
+                restaurant.setFavourite(0);
+                favouriteToggled = false;
+                DatabaseManager dbManager = DatabaseManager.getInstance();
+                dbManager.updateRestaurantFav(restaurant.getId(), 0);
             }
 
         });
@@ -134,8 +149,11 @@ public class RestaurantActivity extends AppCompatActivity {
 
 
                 Intent intent = MapsActivity.makeIntent(RestaurantActivity.this,false);
+
                 intent.putExtra("restaurantId", restaurant.getId());
                 startActivity(intent);
+
+
 
             }
         });

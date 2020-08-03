@@ -77,8 +77,13 @@ public class Restaurant {
         throw new IllegalArgumentException(errorMessage);
     }
 
-    public void setFavourite() {
-        this.isFavourite = true;
+    public void setFavourite(int value) {
+        if(value == 1) {
+            this.isFavourite = true;
+        }
+        else{
+            this.isFavourite = false;
+        }
     }
 
     private static String getKeywordPattern(RestaurantName restaurantName){

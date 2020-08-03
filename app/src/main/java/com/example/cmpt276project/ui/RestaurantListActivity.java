@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -34,17 +35,25 @@ public class RestaurantListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        manager = RestaurantManager.getInstance();
+        manager.sortByRestaurantName();
+
+        populateRecyclerView();
+
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
-        if(intent.hasExtra("restaurantId")){
+       // if(intent.hasExtra("favourited")){
 
-            assert extras != null;
-            String restaurantId = extras.getString("restaurantId");
-            DatabaseManager dbManager = DatabaseManager.getInstance();
-            Restaurant restaurant = dbManager.getRestaurant(restaurantId);
-            restaurant.isFavourite();
-        }
+         //   Log.v("RestaurantListActivity", "onResume called");
+          //  assert extras != null;
+           // String restaurantId = extras.getString("restaurantId");
+          //  DatabaseManager dbManager = DatabaseManager.getInstance();
+           // Restaurant restaurant = dbManager.getRestaurant(restaurantId);
+           // dbManager.updateRestaurantFav(restaurantId, 1);
+
+
+
     }
 
 
