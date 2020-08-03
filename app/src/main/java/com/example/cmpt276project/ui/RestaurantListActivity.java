@@ -2,6 +2,8 @@ package com.example.cmpt276project.ui;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
@@ -20,7 +22,7 @@ import java.util.Objects;
 /**
     This class creates and populates a RecyclerView which holds all restaurants with their details
  */
-public class RestaurantListActivity extends AppCompatActivity {
+public class RestaurantListActivity extends AppCompatActivity implements SearchAndFilterFragment.UpdateFilterListener {
 
     private RecyclerView restaurantList;
     RestaurantManager manager;
@@ -35,10 +37,37 @@ public class RestaurantListActivity extends AppCompatActivity {
         inflater.inflate(R.menu.toolbar_menu,menu);
 
         MenuItem viewMapItem = menu.findItem(R.id.ToolbarMenu_switch_context);
+//        MenuItem searchMapItem = menu.findItem(R.id.ToolbarMenu_search);
+
         viewMapItem.setVisible(true);
         viewMapItem.setTitle(R.string.RestaurantListActivity_toolbar_map_btn_text);
 
+//        SearchView searchView = (SearchView) searchMapItem.getActionView();
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                return false;
+//            }
+//        });
+
         return true;
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        doUpdate();
+    }
+    public void doUpdate() {
+        if (manager.doesListNeedUpdate()) {
+            populateRecyclerView();
+            manager.setListNeedUpdate();
+        }
     }
 
     //Exit Application when back Button pressed
@@ -51,9 +80,16 @@ public class RestaurantListActivity extends AppCompatActivity {
         System.exit(0);
     }
 
+
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
+            case R.id.ToolbarMenu_search:
+                FragmentManager manager = getSupportFragmentManager();
+                SearchAndFilterFragment dialog = new SearchAndFilterFragment();
+                dialog.show(manager, "SearchAndFilterActivity");
+                return true;
             case R.id.ToolbarMenu_back:
                 Intent intent = new Intent(Intent.ACTION_MAIN);
                 intent.addCategory(Intent.CATEGORY_HOME);
@@ -92,5 +128,11 @@ public class RestaurantListActivity extends AppCompatActivity {
         RestaurantListAdapter adapter = new RestaurantListAdapter(this, manager);
         restaurantList.setAdapter(adapter);
         restaurantList.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    @Override
+    public void updateFilter() {
+//        populateRecyclerView();
+        onResume();
     }
 }

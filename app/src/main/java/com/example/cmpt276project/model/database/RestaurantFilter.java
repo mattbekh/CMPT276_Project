@@ -4,13 +4,16 @@ import com.example.cmpt276project.model.DateHelper;
 import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.RestaurantManager;
 
+import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+
+import static com.example.cmpt276project.model.Inspection.HazardRating;
 
 public class RestaurantFilter {
 
     private String name;
-    private Inspection.HazardRating hazardRating;
+    private HashSet<HazardRating> hazardRatings;
     private Integer minCritical;
     private Integer maxCritical;
     private Integer onlyFavourites;
@@ -19,7 +22,7 @@ public class RestaurantFilter {
 
     private RestaurantFilter() {
         this.name = null;
-        this.hazardRating = null;
+        this.hazardRatings = null;
         this.minCritical = null;
         this.maxCritical = null;
         this.onlyFavourites = null;
@@ -36,7 +39,7 @@ public class RestaurantFilter {
         return name;
     }
 
-    public String getHazardRating() {
+    private static String getHazardRating(HazardRating hazardRating) {
         if (hazardRating != null) {
             switch (hazardRating) {
                 case LOW:
@@ -48,6 +51,26 @@ public class RestaurantFilter {
             }
         }
         return null;
+    }
+
+    private String getHazardRatings() {
+        if (hazardRatings == null) {
+            return null;
+        }
+        if (hazardRatings.size() == 0) {
+            return ("()");
+        }
+
+        StringBuilder ratings = new StringBuilder("(");
+        for (HazardRating rating : hazardRatings) {
+            ratings.append("'").append(getHazardRating(rating)).append("',");
+        }
+
+        // Replace trailing ',' with ')'
+        // ex: "(Low,Moderate," -> "(Low,Moderate)"
+        ratings.setCharAt(ratings.length() - 1, ')');
+
+        return ratings.toString();
     }
 
     public Integer getMinCritical() {
@@ -64,7 +87,7 @@ public class RestaurantFilter {
 
     public static void setFilter(
             String name,
-            Inspection.HazardRating hazardRating,
+            HashSet<HazardRating> hazardRatings,
             Integer minCritical,
             Integer maxCritical,
             Boolean isFavouritesOnly
@@ -81,15 +104,20 @@ public class RestaurantFilter {
         } else {
             onlyFavourites = 0;
         }
+        if (hazardRatings == null){
+
+        } else if (hazardRatings.size() == 3) {
+            hazardRatings = null;
+        }
 
         if (name != instance.name
-            || hazardRating != instance.hazardRating
+            || hazardRatings != instance.hazardRatings
             || minCritical != instance.minCritical
             || maxCritical != instance.maxCritical
             || onlyFavourites != instance.onlyFavourites)
         {
             instance.name = name;
-            instance.hazardRating = hazardRating;
+            instance.hazardRatings = hazardRatings;
             instance.minCritical = minCritical;
             instance.maxCritical = maxCritical;
             instance.onlyFavourites = onlyFavourites;
@@ -111,13 +139,13 @@ public class RestaurantFilter {
         if (instance.isFavouritesOnly() != null) {
             selectionCriteria.add(RestaurantTable.FIELD_IS_FAVOURITE + " = " + instance.isFavouritesOnly());
         }
-        if (instance.getHazardRating() != null) {
-            selectionCriteria.add(getHazardRatingCriterium());
+        if (instance.getHazardRatings() != null) {
+            selectionCriteria.add(getHazardRatingCriteria());
         }
 
-        String numCriticalCriterium = getNumCriticalCriterium();
-        if (numCriticalCriterium != null) {
-            selectionCriteria.add(numCriticalCriterium);
+        String numCriticalCriteria = getNumCriticalCriteria();
+        if (numCriticalCriteria != null) {
+            selectionCriteria.add(numCriticalCriteria);
         }
 
         if (selectionCriteria.size() == 0) {
@@ -134,9 +162,17 @@ public class RestaurantFilter {
         return selection.toString();
     }
 
-    private static String getHazardRatingCriterium() {
-        String hazardRating = RestaurantFilter.getInstance().getHazardRating();
-        String criteria =
+    private static String getHazardRatingCriteria() {
+        String hazardRatings = RestaurantFilter.getInstance().getHazardRatings();
+        String criteria;
+        if (hazardRatings.equals("()")) {
+            criteria =
+                RestaurantTable.FIELD_ID + " NOT IN (" +
+                    "SELECT DISTINCT " + InspectionTable.FIELD_RESTAURANT_ID + " " +
+                    "FROM " + InspectionTable.NAME +
+                ")";
+        } else {
+            criteria =
                 RestaurantTable.FIELD_ID + " IN (" +
                     "SELECT " + InspectionTable.FIELD_RESTAURANT_ID + " " +
                     "FROM (" +
@@ -149,12 +185,13 @@ public class RestaurantFilter {
                         "GROUP BY " + InspectionTable.FIELD_RESTAURANT_ID + " " +
                         "HAVING " + InspectionTable.FIELD_DATE + " = MAX (" + InspectionTable.FIELD_DATE + ") " +
                     ") " +
-                    "WHERE " + InspectionTable.FIELD_HAZARD_RATING + " = '" + hazardRating + "'" +
+                    "WHERE " + InspectionTable.FIELD_HAZARD_RATING + " IN " + hazardRatings +
                 ")";
+        }
         return criteria;
     }
 
-    private static String getNumCriticalCriterium() {
+    private static String getNumCriticalCriteria() {
         String selectionCriteria = null;
         Integer minCritical = instance.getMinCritical();
         Integer maxCritical = instance.getMaxCritical();

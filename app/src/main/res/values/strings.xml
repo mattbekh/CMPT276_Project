@@ -54,5 +54,14 @@
     <string name="DataDownloader_download_file">Downloading File</string>
 
     <string name="RestaurantListActivity_toolbar_map_btn_text">Map</string>
+    <string name="search_filter_restaurant_name">Restaurant Name</string>
+    <string name="search_filter_number_of_critical_issues_in_last_year">Number of Critical Issues in Last Year</string>
+    <string name="saerch_filter_favourites">Favourites</string>
+    <string name="search_filter_favourites">Favourites</string>
+    <string name="SF_high">High</string>
+    <string name="SF_mid">Moderate</string>
+    <string name="SF_low">Low</string>
+    <string name="SF_hazard_level">Hazard Level</string>
+    <string name="SF_cancel">Cancel</string>
 
 </resources>

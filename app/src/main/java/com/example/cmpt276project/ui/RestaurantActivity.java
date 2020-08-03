@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.Inspection;
@@ -125,6 +126,7 @@ public class RestaurantActivity extends AppCompatActivity {
                 Intent intent = MapsActivity.makeIntent(RestaurantActivity.this,false);
                 intent.putExtra("restaurantId", restaurant.getId());
                 startActivity(intent);
+                finish();
 
             }
         });
@@ -163,4 +165,5 @@ public class RestaurantActivity extends AppCompatActivity {
             }
         });
     }
+
 }

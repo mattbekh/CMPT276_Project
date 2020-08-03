@@ -61,7 +61,7 @@ import java.util.concurrent.Future;
  */
 
 public class MapsActivity extends AppCompatActivity
-        implements OnMapReadyCallback, UpdateDialog.UpdateDialogListener, LoadDataDialog.OnDismissListener
+        implements OnMapReadyCallback, UpdateDialog.UpdateDialogListener, LoadDataDialog.OnDismissListener, SearchAndFilterFragment.UpdateFilterListener
 {
 
     private RestaurantManager manager;
@@ -80,6 +80,8 @@ public class MapsActivity extends AppCompatActivity
     private Location mLastKnownLocation;
     private final LatLng surrey = new LatLng(49.187500, -122.849000);
     private final int DEFAULT_ZOOM = 10;
+
+    private final String TAG = "MapsActivity";
 
     // Declare a variable for the cluster manager.
     private ClusterManager<AllRestaurant> mClusterManager;
@@ -106,6 +108,7 @@ public class MapsActivity extends AppCompatActivity
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         setupToolbar();
     }
+
 
     private void setPermissions() {
         int locationPermission = checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
@@ -141,6 +144,15 @@ public class MapsActivity extends AppCompatActivity
             assert extras != null;
             String restaurantId = extras.getString("restaurantId");
             getNewLocation(restaurantId);
+        }
+        doUpdate();
+    }
+
+    public void doUpdate() {
+        if (manager.doesMapNeedUpdate()) {
+            mMap.clear();
+            setUpCluster();
+            manager.setMapNeedUpdate();
         }
     }
 
@@ -199,6 +211,11 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
+            case R.id.ToolbarMenu_search:
+                FragmentManager manager = getSupportFragmentManager();
+                SearchAndFilterFragment dialog = new SearchAndFilterFragment();
+                dialog.show(manager, "SearchAndFilterActivity");
+                return true;
             case R.id.ToolbarMenu_back:
                 Intent intent = new Intent(Intent.ACTION_MAIN);
                 intent.addCategory(Intent.CATEGORY_HOME);
@@ -212,6 +229,8 @@ public class MapsActivity extends AppCompatActivity
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 
     /**
      * Manipulates the map once available.
@@ -429,6 +448,13 @@ public class MapsActivity extends AppCompatActivity
             AllRestaurant offsetItem = new AllRestaurant(lat, lng, title, snippet, hazard, restaurantId);
             mClusterManager.addItem(offsetItem);
         }
+    }
+
+    @Override
+    public void updateFilter() {
+//        mMap.clear();
+//        setUpCluster();
+        onResume();
     }
 
     private class MyClusterRenderer extends DefaultClusterRenderer<AllRestaurant> {
