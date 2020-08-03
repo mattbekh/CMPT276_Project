@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -59,7 +60,7 @@ public class SearchAndFilterFragment extends AppCompatDialogFragment {
         favouritesSwitch(favourites);
 
         // button listener
-        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+        DialogInterface.OnClickListener searchListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String name = nameInput.getText().toString();
@@ -99,9 +100,19 @@ public class SearchAndFilterFragment extends AppCompatDialogFragment {
             }
         };
 
+         DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener() {
+             @Override
+             public void onClick(DialogInterface dialog, int which) {
+                 RestaurantFilter.setFilter(null, null, null, null, null);
+                 Activity parentActivity = getActivity();
+                 ((UpdateFilterListener) parentActivity).updateFilter();
+             }
+         };
+
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                 .setView(view)
-                .setPositiveButton(android.R.string.ok, listener)
+                .setPositiveButton(android.R.string.search_go, searchListener)
+                .setNegativeButton(android.R.string.cancel, cancelListener)
                 .create();
 
         // Build Dialog

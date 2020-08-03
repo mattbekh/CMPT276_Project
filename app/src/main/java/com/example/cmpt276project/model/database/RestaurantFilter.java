@@ -104,8 +104,9 @@ public class RestaurantFilter {
         } else {
             onlyFavourites = 0;
         }
-        
-        if (hazardRatings.size() == 3) {
+        if (hazardRatings == null){
+
+        } else if (hazardRatings.size() == 3) {
             hazardRatings = null;
         }
 
