@@ -83,8 +83,6 @@ public class MapsActivity extends AppCompatActivity
     private final LatLng surrey = new LatLng(49.187500, -122.849000);
     private final int DEFAULT_ZOOM = 10;
 
-//    private ArrayList<AllRestaurant> allRestaurant = new ArrayList<>();
-
     private final String TAG = "MapsActivity";
 
     // Declare a variable for the cluster manager.
@@ -367,6 +365,32 @@ public class MapsActivity extends AppCompatActivity
         clusterInfoWindow();
     }
 
+    private String getHazardLevelByRestaurantId (String restaurantId) {
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+        Inspection inspection = dbManager.getMostRecentInspection(restaurantId);
+        String hazard;
+
+        if (inspection == null) {
+            hazard = "Hazard Level: UNKNOWN";
+        } else {
+            switch (inspection.getHazardRating()) {
+                case LOW:
+                    hazard = "Hazard Level: LOW";
+                    break;
+                case MODERATE:
+                    hazard = "Hazard Level: MODERATE";
+                    break;
+                case HIGH:
+                    hazard = "Hazard Level: HIGH";
+                    break;
+                default:
+                    hazard = "Hazard Level: UNKNOWN";
+                    break;
+            }
+        }
+        return hazard;
+    }
+
     private void clusterInfoWindow() {
         mClusterManager.getMarkerCollection().setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override
@@ -382,38 +406,11 @@ public class MapsActivity extends AppCompatActivity
                 TextView detailsView = view.findViewById(R.id.text_address);
                 TextView hazardView = view.findViewById(R.id.text_hazard);
 
-//                String detailsText = getString(R.string.MapsActivity_zoom_in_deets);
-//                String name = (marker.getTitle() != null) ? marker.getTitle() : detailsText;
-//                String details = (marker.getSnippet() != null) ? marker.getSnippet() : detailsText;
-//                nameView.setText(name);
-//                detailsView.setText(details);
-
                 LatLng tmpLatLng = marker.getPosition();
                 Restaurant tmpRestaurant = manager.getRestaurantByLatLng(tmpLatLng.latitude,tmpLatLng.longitude);
                 String restaurantId = tmpRestaurant.getId();
-                String hazard;
+                String hazard = getHazardLevelByRestaurantId(restaurantId);
 
-                DatabaseManager dbManager = DatabaseManager.getInstance();
-                Inspection inspection = dbManager.getMostRecentInspection(restaurantId);
-
-                if (inspection == null) {
-                    hazard = "hazard_unknown";
-                } else {
-                    switch (inspection.getHazardRating()) {
-                        case LOW:
-                            hazard = "hazard_low";
-                            break;
-                        case MODERATE:
-                            hazard = "hazard_mid";
-                            break;
-                        case HIGH:
-                            hazard = "hazard_high";
-                            break;
-                        default:
-                            hazard = "hazard_unknown";
-                            break;
-                    }
-                }
                 nameView.setText(tmpRestaurant.getName());
                 detailsView.setText(tmpRestaurant.getAddress());
                 hazardView.setText(hazard);
@@ -483,7 +480,6 @@ public class MapsActivity extends AppCompatActivity
             }
 
             AllRestaurant offsetItem = new AllRestaurant(lat, lng, title, snippet, hazard, restaurantId);
-//            allRestaurant.add(offsetItem);
             mClusterManager.addItem(offsetItem);
         }
     }
