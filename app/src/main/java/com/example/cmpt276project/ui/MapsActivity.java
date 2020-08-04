@@ -83,7 +83,7 @@ public class MapsActivity extends AppCompatActivity
     private final LatLng surrey = new LatLng(49.187500, -122.849000);
     private final int DEFAULT_ZOOM = 10;
 
-    private ArrayList<AllRestaurant> allRestaurant = new ArrayList<>();
+//    private ArrayList<AllRestaurant> allRestaurant = new ArrayList<>();
 
     private final String TAG = "MapsActivity";
 
@@ -390,9 +390,33 @@ public class MapsActivity extends AppCompatActivity
 
                 LatLng tmpLatLng = marker.getPosition();
                 Restaurant tmpRestaurant = manager.getRestaurantByLatLng(tmpLatLng.latitude,tmpLatLng.longitude);
+                String restaurantId = tmpRestaurant.getId();
+                String hazard;
+
+                DatabaseManager dbManager = DatabaseManager.getInstance();
+                Inspection inspection = dbManager.getMostRecentInspection(restaurantId);
+
+                if (inspection == null) {
+                    hazard = "hazard_unknown";
+                } else {
+                    switch (inspection.getHazardRating()) {
+                        case LOW:
+                            hazard = "hazard_low";
+                            break;
+                        case MODERATE:
+                            hazard = "hazard_mid";
+                            break;
+                        case HIGH:
+                            hazard = "hazard_high";
+                            break;
+                        default:
+                            hazard = "hazard_unknown";
+                            break;
+                    }
+                }
                 nameView.setText(tmpRestaurant.getName());
                 detailsView.setText(tmpRestaurant.getAddress());
-                hazardView.setText("ssssss");
+                hazardView.setText(hazard);
 
                 return view;
             }
@@ -459,7 +483,7 @@ public class MapsActivity extends AppCompatActivity
             }
 
             AllRestaurant offsetItem = new AllRestaurant(lat, lng, title, snippet, hazard, restaurantId);
-            allRestaurant.add(offsetItem);
+//            allRestaurant.add(offsetItem);
             mClusterManager.addItem(offsetItem);
         }
     }
