@@ -23,6 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.AllRestaurant;
@@ -47,6 +48,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -363,6 +365,32 @@ public class MapsActivity extends AppCompatActivity
         clusterInfoWindow();
     }
 
+    private String getHazardLevelByRestaurantId (String restaurantId) {
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+        Inspection inspection = dbManager.getMostRecentInspection(restaurantId);
+        String hazard;
+
+        if (inspection == null) {
+            hazard = "Hazard Level: UNKNOWN";
+        } else {
+            switch (inspection.getHazardRating()) {
+                case LOW:
+                    hazard = "Hazard Level: LOW";
+                    break;
+                case MODERATE:
+                    hazard = "Hazard Level: MODERATE";
+                    break;
+                case HIGH:
+                    hazard = "Hazard Level: HIGH";
+                    break;
+                default:
+                    hazard = "Hazard Level: UNKNOWN";
+                    break;
+            }
+        }
+        return hazard;
+    }
+
     private void clusterInfoWindow() {
         mClusterManager.getMarkerCollection().setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override
@@ -373,13 +401,19 @@ public class MapsActivity extends AppCompatActivity
             @Override
             public View getInfoContents(Marker marker) {
                 final View view = getLayoutInflater().inflate(R.layout.info_window, null);
+
                 TextView nameView = view.findViewById(R.id.text_name);
-                TextView detailsView = view.findViewById(R.id.text_detail);
-                String detailsText = getString(R.string.MapsActivity_zoom_in_deets);
-                String name = (marker.getTitle() != null) ? marker.getTitle() : detailsText;
-                nameView.setText(name);
-                String details = (marker.getSnippet() != null) ? marker.getSnippet() : detailsText;
-                detailsView.setText(details);
+                TextView detailsView = view.findViewById(R.id.text_address);
+                TextView hazardView = view.findViewById(R.id.text_hazard);
+
+                LatLng tmpLatLng = marker.getPosition();
+                Restaurant tmpRestaurant = manager.getRestaurantByLatLng(tmpLatLng.latitude,tmpLatLng.longitude);
+                String restaurantId = tmpRestaurant.getId();
+                String hazard = getHazardLevelByRestaurantId(restaurantId);
+
+                nameView.setText(tmpRestaurant.getName());
+                detailsView.setText(tmpRestaurant.getAddress());
+                hazardView.setText(hazard);
 
                 return view;
             }
