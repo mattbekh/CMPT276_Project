@@ -29,6 +29,7 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
 
     private RecyclerView restaurantList;
     RestaurantManager manager;
+    RestaurantListAdapter restaurantListAdapter;
 
     public static Intent makeIntent(Context context) {
         return new Intent(context, RestaurantListActivity.class);
@@ -83,10 +84,10 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
     @Override
     public void onResume(){
         super.onResume();
-        doUpdate();
+    //    doUpdate();
+        updateRecyclerView();
+        Log.v("RestaurantListActivity", "onResume");
 
-    //    DatabaseManager dbManager = DatabaseManager.getInstance();
-     //   dbManager.updateRestaurantFav("NDAA-8RNNVR", 1);
     }
 
     public void doUpdate() {
@@ -189,9 +190,32 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
     private void populateRecyclerView() {
 
         restaurantList = findViewById(R.id.restaurantList);
-        RestaurantListAdapter adapter = new RestaurantListAdapter(this, manager);
-        restaurantList.setAdapter(adapter);
+
+
+        restaurantListAdapter = new RestaurantListAdapter(this, manager);
+        restaurantListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+            }
+        });
+        restaurantList.setAdapter(restaurantListAdapter);
         restaurantList.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void updateRecyclerView(){
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
+      //  if(intent.hasExtra("restaurantPos")){
+            Log.v("RestaurantListActivity", "position");
+            restaurantList = findViewById(R.id.restaurantList);
+            RestaurantListAdapter adapter = (RestaurantListAdapter) restaurantList.getAdapter();
+        //  int position = extras.getInt("restaurantPos");
+            adapter.notifyItemChanged(0);
+      //  }
+
     }
 
     @Override

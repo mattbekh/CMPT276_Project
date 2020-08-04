@@ -77,15 +77,8 @@ public class RestaurantActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.ToolbarMenu_back:
                   if(favouriteToggled){
-                      Intent intent = RestaurantListActivity.makeIntent(RestaurantActivity.this);
-                      intent.putExtra("fav", favouriteToggled);
-                      intent.putExtra("restaurantid", restaurant.getId());
-                      startActivity(intent);
-
                       finish();
                   }
-        //        Intent intent = RestaurantListAdapter.makeLaunchIntent(RestaurantActivity.this, favouriteToggled);
-        //        startActivity(intent);
                 else {
                       finish();
                   }
@@ -136,6 +129,7 @@ public class RestaurantActivity extends AppCompatActivity {
         restaurantAddress.setText(fullAddress);
         restaurantGPS.setText(coordinates);
 
+
         setUpFavButton();
 
 
@@ -153,6 +147,13 @@ public class RestaurantActivity extends AppCompatActivity {
 
     private void setUpFavButton(){
             Button fav = (Button)findViewById(R.id.buttonFav);
+
+            if(restaurant.isFavourite()){
+                favouriteToggled = true;
+            }
+            else{
+                favouriteToggled = false;
+            }
 
             if(favouriteToggled){
                 favouriteToggled = true;

@@ -37,7 +37,6 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         return new Intent(context, RestaurantListAdapter.class);
     }
 
-
     public RestaurantListAdapter(Context context, RestaurantManager manager){
 
         this.context = context;
@@ -63,8 +62,6 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         // Store Restaurant address
         holder.restaurantAddress.setText(restaurant.getAddress() + ", " + restaurant.getCity());
 
-       //restaurant.setFavourite(1);
-
 
         if(restaurant.isFavourite()){
                 int iconResource = getResourceID(restaurant.getRestaurantName());
@@ -75,7 +72,6 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         else {
             int iconResource = getResourceID(restaurant.getRestaurantName());
             holder.restaurantIcon.setImageResource(iconResource);
-            //holder.favouritesIcon.setImageResource(R.drawable.star_icon);
         }
 
         // Store most recent inspections # of issues
@@ -117,9 +113,12 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
             public void onClick(View v) {
                 Intent intent = RestaurantActivity.makeIntent(context);
                 intent.putExtra("restaurantId", restaurant.getId());
+                intent.putExtra("restaurantPos", holder.getAdapterPosition());
                 context.startActivity(intent);
+
             }
         });
+
     }
 
     @DrawableRes
