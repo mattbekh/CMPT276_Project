@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -18,6 +19,7 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.Inspection;
@@ -131,23 +133,40 @@ public class RestaurantActivity extends AppCompatActivity {
         restaurantAddress.setText(fullAddress);
         restaurantGPS.setText(coordinates);
 
-        Switch sb = (Switch)findViewById(R.id.favSwitch);
-        sb.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if(isChecked){
-                restaurant.setFavourite(1);
-                favouriteToggled = true;
-//                DatabaseManager dbManager = DatabaseManager.getInstance();
-//                dbManager.updateRestaurantFav(restaurant.getId(), 1);
-            }
 
-            else{
-                restaurant.setFavourite(0);
-                favouriteToggled = false;
-//                DatabaseManager dbManager = DatabaseManager.getInstance();
-//                dbManager.updateRestaurantFav(restaurant.getId(), 0);
-            }
 
+        ToggleButton tg = (ToggleButton)findViewById(R.id.favToggle);
+
+        if(favouriteToggled) {
+            tg.setBackgroundColor(Color.GREEN);
+            Toast.makeText(this, "Fav", Toast.LENGTH_LONG).show();
+
+        }
+        else {
+            tg.setBackgroundColor(Color.RED);
+        }
+
+        tg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(favouriteToggled) {
+                    Log.v("RestaurantActivity", "setFav");
+                    restaurant.setFavourite(0);
+                    favouriteToggled = false;
+                    DatabaseManager dbManager = DatabaseManager.getInstance();
+                    dbManager.updateRestaurantFav(restaurant.getId(), 0);
+                }
+
+                else if(!favouriteToggled){
+                    Log.v("RestaurantActivity", "setUnfav");
+                    restaurant.setFavourite(1);
+                    favouriteToggled = true;
+                    DatabaseManager dbManager = DatabaseManager.getInstance();
+                    dbManager.updateRestaurantFav(restaurant.getId(), 1);
+                }
+            }
         });
+
 
 
         restaurantGPS.setOnClickListener(new View.OnClickListener() {

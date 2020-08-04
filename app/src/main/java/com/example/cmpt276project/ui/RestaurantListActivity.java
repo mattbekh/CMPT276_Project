@@ -53,17 +53,29 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
 //           // dbManager.updateRestaurantFav(restaurantId, 1);
 //    }
 
+
     @Override
     public void onResume(){
         super.onResume();
         doUpdate();
 
-//        DatabaseManager dbManager = DatabaseManager.getInstance();
-//        dbManager.updateRestaurantFav("NDAA-8RNNVR", 1);
+    //    DatabaseManager dbManager = DatabaseManager.getInstance();
+     //   dbManager.updateRestaurantFav("NDAA-8RNNVR", 1);
     }
 
     public void doUpdate() {
+
+        manager = RestaurantManager.getInstance();
+        manager.sortByRestaurantName();
         populateRecyclerView();
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
+
+        Log.v("RestaurantListActivity", "onResume called");
+
+
 //        if (manager.doesListNeedUpdate()) {
 //            populateRecyclerView();
 //            manager.setListNeedUpdate();

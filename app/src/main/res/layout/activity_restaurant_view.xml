@@ -50,14 +50,14 @@
             android:clickable="true"
             android:layout_below="@id/restaurantAddress"/>
 
-        <Switch
-            android:id="@+id/favSwitch"
+        <ToggleButton
+            android:id="@+id/favToggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Favourite"
-            android:checked="false"
-            android:textOff="OFF"
-            android:textOn="ON"/>
+            android:text="ToggleButton"
+            android:textOn="Fav"
+            android:textOff="Fav"
+            android:backgroundTint="@android:color/background_light"/>
 
     </RelativeLayout>
 
