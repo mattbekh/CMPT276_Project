@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -133,40 +134,7 @@ public class RestaurantActivity extends AppCompatActivity {
         restaurantAddress.setText(fullAddress);
         restaurantGPS.setText(coordinates);
 
-
-
-        ToggleButton tg = (ToggleButton)findViewById(R.id.favToggle);
-
-        if(favouriteToggled) {
-            tg.setBackgroundColor(Color.GREEN);
-            Toast.makeText(this, "Fav", Toast.LENGTH_LONG).show();
-
-        }
-        else {
-            tg.setBackgroundColor(Color.RED);
-        }
-
-        tg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(favouriteToggled) {
-                    Log.v("RestaurantActivity", "setFav");
-                    restaurant.setFavourite(0);
-                    favouriteToggled = false;
-                    DatabaseManager dbManager = DatabaseManager.getInstance();
-                    dbManager.updateRestaurantFav(restaurant.getId(), 0);
-                }
-
-                else if(!favouriteToggled){
-                    Log.v("RestaurantActivity", "setUnfav");
-                    restaurant.setFavourite(1);
-                    favouriteToggled = true;
-                    DatabaseManager dbManager = DatabaseManager.getInstance();
-                    dbManager.updateRestaurantFav(restaurant.getId(), 1);
-                }
-            }
-        });
-
+        setUpFavButton();
 
 
         restaurantGPS.setOnClickListener(new View.OnClickListener() {
@@ -179,6 +147,49 @@ public class RestaurantActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private void setUpFavButton(){
+            Button fav = (Button)findViewById(R.id.buttonFav);
+
+            if(favouriteToggled){
+                favouriteToggled = true;
+                Toast.makeText(this, "Fav", Toast.LENGTH_LONG).show();
+                fav.setBackgroundResource(R.drawable.star_icon);
+            }
+            else{
+                favouriteToggled = false;
+                Toast.makeText(this, "UnFav", Toast.LENGTH_LONG).show();
+                fav.setBackgroundResource(R.drawable.star_outline);
+            }
+
+            fav.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if(favouriteToggled){
+
+                        fav.setBackgroundResource(R.drawable.star_outline);
+
+                        Log.v("RestaurantActivity", "setFav");
+                        restaurant.setFavourite(0);
+                        favouriteToggled = false;
+                        DatabaseManager dbManager = DatabaseManager.getInstance();
+                        dbManager.updateRestaurantFav(restaurant.getId(), 0);
+                    }
+
+                    else if(!favouriteToggled){
+                        fav.setBackgroundResource(R.drawable.star_icon);
+
+                        Log.v("RestaurantActivity", "UnsetFav");
+                        restaurant.setFavourite(1);
+                        favouriteToggled = true;
+                        DatabaseManager dbManager = DatabaseManager.getInstance();
+                        dbManager.updateRestaurantFav(restaurant.getId(), 1);
+                    }
+
+                }
+            });
     }
 
     private void populateListView() {

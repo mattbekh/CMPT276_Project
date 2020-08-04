@@ -50,14 +50,11 @@
             android:clickable="true"
             android:layout_below="@id/restaurantAddress"/>
 
-        <ToggleButton
-            android:id="@+id/favToggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ToggleButton"
-            android:textOn="Fav"
-            android:textOff="Fav"
-            android:backgroundTint="@android:color/background_light"/>
+        <Button
+            android:id="@+id/buttonFav"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:text="FAVORITE" />
 
     </RelativeLayout>
 
