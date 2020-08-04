@@ -1,5 +1,7 @@
 package com.example.cmpt276project.model;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.example.cmpt276project.model.database.DatabaseManager;
@@ -65,6 +67,16 @@ public class RestaurantManager implements Iterable<Restaurant> {
             }
         }
         String errorMessage = String.format("Tracking number [%s] not found.", trackingNumber);
+        throw new IllegalArgumentException(errorMessage);
+    }
+
+    public Restaurant getRestaurantByLatLng (double Lat, double Lng) {
+        for (Restaurant restaurant : restaurantList) {
+            if (restaurant.getLatitude() == Lat && restaurant.getLongitude() == Lng) {
+                return restaurant;
+            }
+        }
+        String errorMessage = String.format("Tracking number [%s] not found.", Lat, Lng);
         throw new IllegalArgumentException(errorMessage);
     }
 

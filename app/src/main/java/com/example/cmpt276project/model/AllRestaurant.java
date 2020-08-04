@@ -14,9 +14,10 @@ public class AllRestaurant implements ClusterItem {
     private final String mHazard;
     private final String mId;
 
-    public AllRestaurant(double lat, double lng) {
+
+    public AllRestaurant() {
         mId = "";
-        mPosition = new LatLng(lat, lng);
+        mPosition = null;
         mTitle = "";
         mSnippet = "";
         mHazard = "";

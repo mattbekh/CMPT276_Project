@@ -16,12 +16,21 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/text_detail"
+        android:id="@+id/text_address"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center"
         android:text="TextView"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/text_hazard"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="TextView"
+        android:gravity="center"
         android:textSize="12sp" />
 
 

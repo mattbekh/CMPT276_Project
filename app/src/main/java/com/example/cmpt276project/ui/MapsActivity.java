@@ -23,6 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.AllRestaurant;
@@ -47,6 +48,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -80,6 +82,8 @@ public class MapsActivity extends AppCompatActivity
     private Location mLastKnownLocation;
     private final LatLng surrey = new LatLng(49.187500, -122.849000);
     private final int DEFAULT_ZOOM = 10;
+
+    private ArrayList<AllRestaurant> allRestaurant = new ArrayList<>();
 
     private final String TAG = "MapsActivity";
 
@@ -373,13 +377,22 @@ public class MapsActivity extends AppCompatActivity
             @Override
             public View getInfoContents(Marker marker) {
                 final View view = getLayoutInflater().inflate(R.layout.info_window, null);
+
                 TextView nameView = view.findViewById(R.id.text_name);
-                TextView detailsView = view.findViewById(R.id.text_detail);
-                String detailsText = getString(R.string.MapsActivity_zoom_in_deets);
-                String name = (marker.getTitle() != null) ? marker.getTitle() : detailsText;
-                nameView.setText(name);
-                String details = (marker.getSnippet() != null) ? marker.getSnippet() : detailsText;
-                detailsView.setText(details);
+                TextView detailsView = view.findViewById(R.id.text_address);
+                TextView hazardView = view.findViewById(R.id.text_hazard);
+
+//                String detailsText = getString(R.string.MapsActivity_zoom_in_deets);
+//                String name = (marker.getTitle() != null) ? marker.getTitle() : detailsText;
+//                String details = (marker.getSnippet() != null) ? marker.getSnippet() : detailsText;
+//                nameView.setText(name);
+//                detailsView.setText(details);
+
+                LatLng tmpLatLng = marker.getPosition();
+                Restaurant tmpRestaurant = manager.getRestaurantByLatLng(tmpLatLng.latitude,tmpLatLng.longitude);
+                nameView.setText(tmpRestaurant.getName());
+                detailsView.setText(tmpRestaurant.getAddress());
+                hazardView.setText("ssssss");
 
                 return view;
             }
@@ -446,6 +459,7 @@ public class MapsActivity extends AppCompatActivity
             }
 
             AllRestaurant offsetItem = new AllRestaurant(lat, lng, title, snippet, hazard, restaurantId);
+            allRestaurant.add(offsetItem);
             mClusterManager.addItem(offsetItem);
         }
     }
