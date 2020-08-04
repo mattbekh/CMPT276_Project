@@ -27,7 +27,8 @@ public class Restaurant {
                       String address,
                       String city,
                       double latitude,
-                      double longitude)
+                      double longitude,
+                      int favourite)
     {
         this.id = id;
         this.name = name;
@@ -35,7 +36,7 @@ public class Restaurant {
         this.city = city;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.isFavourite = false;
+        this.isFavourite = favourite == 1;
     }
 
     public String getId() {

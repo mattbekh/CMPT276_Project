@@ -177,7 +177,8 @@ public class DatabaseManager {
                     cursor.getString(RestaurantTable.COL_ADDRESS),
                     cursor.getString(RestaurantTable.COL_CITY),
                     cursor.getDouble(RestaurantTable.COL_LATITUDE),
-                    cursor.getDouble(RestaurantTable.COL_LONGITUDE)
+                    cursor.getDouble(RestaurantTable.COL_LONGITUDE),
+                    cursor.getInt(RestaurantTable.COL_IS_FAVOURITE)
             ));
         } while (cursor.moveToNext());
 
