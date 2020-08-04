@@ -55,6 +55,7 @@ public class RestaurantActivity extends AppCompatActivity {
         return new Intent(context, RestaurantActivity.class);
     }
 
+
     // Setup toolbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -75,18 +76,19 @@ public class RestaurantActivity extends AppCompatActivity {
         // Switch to allow for future functionality
         switch (item.getItemId()) {
             case R.id.ToolbarMenu_back:
-                if(favouriteToggled){
+                  if(favouriteToggled){
+                      Intent intent = RestaurantListActivity.makeIntent(RestaurantActivity.this);
+                      intent.putExtra("fav", favouriteToggled);
+                      intent.putExtra("restaurantid", restaurant.getId());
+                      startActivity(intent);
 
-                    if(favouriteToggled){
-                        DatabaseManager dbManager = DatabaseManager.getInstance();
-                        dbManager.updateRestaurantFav(restaurant.getId(), 1);
-                    }
-                    else{
-                        DatabaseManager dbManager = DatabaseManager.getInstance();
-                        dbManager.updateRestaurantFav(restaurant.getId(), 0);
-                    }
-                }
-                finish();
+                      finish();
+                  }
+        //        Intent intent = RestaurantListAdapter.makeLaunchIntent(RestaurantActivity.this, favouriteToggled);
+        //        startActivity(intent);
+                else {
+                      finish();
+                  }
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -178,7 +180,7 @@ public class RestaurantActivity extends AppCompatActivity {
                         dbManager.updateRestaurantFav(restaurant.getId(), 0);
                     }
 
-                    else if(!favouriteToggled){
+                    else {
                         fav.setBackgroundResource(R.drawable.star_icon);
 
                         Log.v("RestaurantActivity", "UnsetFav");

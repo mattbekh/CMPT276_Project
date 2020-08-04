@@ -29,9 +29,11 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
 
     private RecyclerView restaurantList;
     RestaurantManager manager;
+
     public static Intent makeIntent(Context context) {
         return new Intent(context, RestaurantListActivity.class);
     }
+
 
 //    @Override
 //    protected void onResume() {
@@ -53,6 +55,30 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
 //           // dbManager.updateRestaurantFav(restaurantId, 1);
 //    }
 
+    public void updateFav(){
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
+   //     if(intent.hasExtra("restaurantId")) {
+
+   //         Log.v("RestaurantListActivity", "update fav");
+   //         assert extras != null;
+    //        Boolean favourite = extras.getBoolean("fav", true);
+    //        String restaurantId = extras.getString("restaurantId");
+    //        DatabaseManager dbManager = DatabaseManager.getInstance();
+     //       Restaurant restaurant = dbManager.getRestaurant(restaurantId);
+
+     //        if(favourite) {
+     //            restaurant.setFavourite(1);
+     //            dbManager.updateRestaurantFav(restaurantId, 1);
+                 Log.v("RestaurantListActivity", "isFav");
+       //      }
+      //       else{
+      //           restaurant.setFavourite(0);
+       //          dbManager.updateRestaurantFav(restaurantId, 0);
+       //      }
+      //  }
+    }
 
     @Override
     public void onResume(){
@@ -69,17 +95,13 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
         manager.sortByRestaurantName();
         populateRecyclerView();
 
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
+        Log.v("RestaurantListActivity", "onResume");
 
 
-        Log.v("RestaurantListActivity", "onResume called");
-
-
-//        if (manager.doesListNeedUpdate()) {
-//            populateRecyclerView();
-//            manager.setListNeedUpdate();
-//        }
+        if (manager.doesListNeedUpdate()) {
+            populateRecyclerView();
+            manager.setListNeedUpdate();
+        }
     }
 
     // Setup toolbar
