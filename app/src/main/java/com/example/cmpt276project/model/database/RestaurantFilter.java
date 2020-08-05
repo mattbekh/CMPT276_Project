@@ -1,7 +1,6 @@
 package com.example.cmpt276project.model.database;
 
 import com.example.cmpt276project.model.DateHelper;
-import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.RestaurantManager;
 
 import java.util.HashSet;
@@ -215,9 +214,9 @@ public class RestaurantFilter {
                     "SELECT " + InspectionTable.FIELD_RESTAURANT_ID + " " +
                     "FROM (" +
                         "SELECT " +
-                        InspectionTable.FIELD_RESTAURANT_ID + ", " +
-                        InspectionTable.FIELD_CRITICAL_ISSUES + ", " +
-                        "SUM (" + InspectionTable.FIELD_CRITICAL_ISSUES + ") " +
+                            InspectionTable.FIELD_RESTAURANT_ID + ", " +
+                            InspectionTable.FIELD_CRITICAL_ISSUES + ", " +
+                            "SUM (" + InspectionTable.FIELD_CRITICAL_ISSUES + ") " +
                         "FROM (" +
                             "SELECT " +
                             InspectionTable.FIELD_RESTAURANT_ID + ", " +
@@ -236,6 +235,22 @@ public class RestaurantFilter {
                     ") " +
                 ")";
 
+        return criteria;
+    }
+
+    public static String getUpdatedFavouritesSelection(String previousModifyDate) {
+        String criteria =
+                RestaurantTable.FIELD_ID + " IN (" +
+                    "SELECT " + InspectionTable.FIELD_RESTAURANT_ID + " " +
+                    "FROM (" +
+                        "SELECT " +
+                            InspectionTable.FIELD_RESTAURANT_ID + ", " +
+                            "MAX(" + InspectionTable.FIELD_DATE + ") " +
+                        "FROM " + InspectionTable.NAME + " " +
+                        "GROUP BY " + InspectionTable.FIELD_RESTAURANT_ID + " " +
+                        "HAVING MAX(" + InspectionTable.FIELD_DATE + ") > " + previousModifyDate +
+                    ") " +
+                ") ";
         return criteria;
     }
 }
