@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Done"
+        android:text="@string/UpdateFavourites_done_text"
         app:layout_constraintBottom_toTopOf="@+id/list_Favourites"
         app:layout_constraintStart_toEndOf="@+id/text_updatedFavs"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,7 +24,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Favourites with New Inspections"
+        android:text="@string/UpdateFavourites_new_inspections"
         android:textSize="15sp"/>
 
     <androidx.recyclerview.widget.RecyclerView

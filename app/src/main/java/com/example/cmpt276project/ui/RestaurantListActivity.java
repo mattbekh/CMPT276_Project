@@ -145,9 +145,9 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        finishAndRemoveTask();
         System.exit(0);
     }
-
 
 
     @Override
@@ -163,6 +163,7 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
                 intent.addCategory(Intent.CATEGORY_HOME);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+                finishAndRemoveTask();
                 System.exit(0);
                 return true;
             case R.id.ToolbarMenu_switch_context:

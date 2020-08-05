@@ -140,6 +140,7 @@ public class RestaurantActivity extends AppCompatActivity {
 
                 Intent intent = MapsActivity.makeIntent(RestaurantActivity.this,false);
                 intent.putExtra("restaurantId", restaurant.getId());
+                intent.putExtra("restaurantPos", manager.getRestIndex(restaurant));
                 startActivity(intent);
                 finish();
             }

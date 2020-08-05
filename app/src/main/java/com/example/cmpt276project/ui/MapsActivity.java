@@ -180,6 +180,7 @@ public class MapsActivity extends AppCompatActivity
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        finishAndRemoveTask();
         System.exit(0);
     }
 
@@ -221,6 +222,7 @@ public class MapsActivity extends AppCompatActivity
                 intent.addCategory(Intent.CATEGORY_HOME);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+                finishAndRemoveTask();
                 System.exit(0);
                 return true;
             case R.id.ToolbarMenu_switch_context:

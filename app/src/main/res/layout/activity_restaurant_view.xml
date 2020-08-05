@@ -54,7 +54,7 @@
             android:id="@+id/buttonFav"
             android:layout_width="90dp"
             android:layout_height="90dp"
-            android:text="FAVORITE" />
+            android:text="@string/RestaurantDetail_favorite_text" />
 
     </RelativeLayout>
 
