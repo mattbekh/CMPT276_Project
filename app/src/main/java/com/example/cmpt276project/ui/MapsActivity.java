@@ -12,6 +12,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,10 +24,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.AllRestaurant;
+import com.example.cmpt276project.model.DateHelper;
 import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
@@ -71,7 +72,7 @@ public class MapsActivity extends AppCompatActivity
     private ProgressDialog progressBarDialog;
     private LoadDataDialog loadDataDialog;
     private Future<Boolean> downloadDataResult;
-    private Future<Boolean> loadDataResult;
+    private Future<ArrayList<Restaurant>> loadDataResult;
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -513,11 +514,16 @@ public class MapsActivity extends AppCompatActivity
         loadDataDialog = new LoadDataDialog();
         loadDataDialog.show(fragmentManager, "LoadDataDialog");
         ExecutorService executor = Executors.newFixedThreadPool(2);
-        Callable<Boolean> dataLoader = new Callable<Boolean>() {
+        Callable<ArrayList<Restaurant>> dataLoader = new Callable<ArrayList<Restaurant>>() {
             @Override
-            public Boolean call() {
+            public ArrayList<Restaurant> call() {
+                ArrayList<Restaurant> updatedFavourites = null;
                 try {
                     manager.updateData();
+                    DatabaseManager dbManager = DatabaseManager.getInstance();
+                    SharedPreferences prefs = getSharedPreferences("CSVData", Context.MODE_PRIVATE);
+                    String previousModifyTime = prefs.getString("previousModifyTime", DateHelper.DEFAULT_TIME);
+                    updatedFavourites = dbManager.getUpdatedFavourites(previousModifyTime);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -525,9 +531,9 @@ public class MapsActivity extends AppCompatActivity
                         }
                     });
                 } catch (Exception e) {
-                    return false;
+                    return null;
                 }
-                return true;
+                return updatedFavourites;
             }
         };
         loadDataResult = executor.submit(dataLoader);
@@ -579,12 +585,14 @@ public class MapsActivity extends AppCompatActivity
                 }
             }
 
+            ArrayList<Restaurant> updatedFavourites = null;
             try {
-                loadDataResult.get();
+                updatedFavourites = loadDataResult.get();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 loadDataDialog.dismiss();
+                // TODO: launch a fragment displaying the updated favourite restaurants
             }
         }
     }

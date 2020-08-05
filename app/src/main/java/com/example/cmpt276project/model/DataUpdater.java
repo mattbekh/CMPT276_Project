@@ -109,8 +109,10 @@ public class DataUpdater implements Callable<Boolean> {
             modifyTime = modifyTime.replaceAll("[^0-9]", "");
             modifyTime = modifyTime.substring(0, 14);
 
+            String previousModifyTime = csvDataPrefs.getString("localModifyTime", DateHelper.DEFAULT_TIME);
             storeModDateSharedPrefs("updatedOn", currentTime);
             storeModDateSharedPrefs("localModifyTime", modifyTime);
+            storeModDateSharedPrefs("previousModifyTime", previousModifyTime.substring(0, 8));
         } catch (Exception e) {
             // Do nothing
         }

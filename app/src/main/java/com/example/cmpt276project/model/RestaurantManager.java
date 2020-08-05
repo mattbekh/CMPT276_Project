@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.cmpt276project.model.database.DatabaseManager;
+import com.example.cmpt276project.model.database.RestaurantFilter;
 
 import java.util.ArrayList;
 import java.util.Comparator;
