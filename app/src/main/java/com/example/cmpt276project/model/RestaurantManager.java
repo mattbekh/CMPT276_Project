@@ -14,8 +14,11 @@ import java.util.Iterator;
 public class RestaurantManager implements Iterable<Restaurant> {
 
     private ArrayList<Restaurant> restaurantList;
+    private ArrayList<Restaurant> favouritesList;
     private boolean doesMapNeedUpdate;
     private boolean doesListNeedUpdate;
+
+    private boolean faved;
 
     // Singleton Support
     private static RestaurantManager instance;
@@ -73,6 +76,32 @@ public class RestaurantManager implements Iterable<Restaurant> {
         dbManager.update();
         instance.restaurantList = dbManager.getRestaurants();
         instance.sortByRestaurantName();
+    }
+
+
+    public int getRestIndex(Restaurant restaurant){
+        return restaurantList.indexOf(restaurant);
+    }
+
+    public void clear(){
+        restaurantList.clear();
+    }
+
+    public void setFaved(){
+        faved = true;
+    }
+
+    public void setUnFaved(){
+        faved = false;
+    }
+
+    public boolean isFaved(){
+        if(faved == true){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     public void applyFilter() {

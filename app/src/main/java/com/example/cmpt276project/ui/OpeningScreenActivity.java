@@ -42,9 +42,19 @@ public class OpeningScreenActivity extends FragmentActivity {
 
     }
 
+    private void checkFavouritesUpdate(){
+        //if
+    }
+
     private void launchMainActivity(boolean isUpdateNeeded) {
-        Intent intent = MapsActivity.makeIntent(this, isUpdateNeeded);
-        startActivity(intent);
+       // if(favsUpdateNeeded) { //if favsupdate needed
+       //     Intent intent1 = UpdatedFavouritesActivity.makeIntent(this);
+        //    startActivity(intent1);
+      //  }
+     //   else{
+            Intent intent = MapsActivity.makeIntent(this, isUpdateNeeded);
+            startActivity(intent);
+      //  }
         finish();
     }
 

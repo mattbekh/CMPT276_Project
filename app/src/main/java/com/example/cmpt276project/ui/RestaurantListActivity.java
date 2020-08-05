@@ -6,6 +6,8 @@ import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,6 +32,7 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
     private RecyclerView restaurantList;
     RestaurantManager manager;
     RestaurantListAdapter restaurantListAdapter;
+    public static Activity activity;
 
     public static Intent makeIntent(Context context) {
         return new Intent(context, RestaurantListActivity.class);
@@ -84,10 +87,10 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
     @Override
     public void onResume(){
         super.onResume();
-    //    doUpdate();
+
+        doUpdate();
         updateRecyclerView();
         Log.v("RestaurantListActivity", "onResume");
-
     }
 
     public void doUpdate() {
@@ -178,6 +181,8 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
         manager = RestaurantManager.getInstance();
         manager.sortByRestaurantName();
 
+        activity = this;
+
         populateRecyclerView();
     }
 
@@ -192,29 +197,41 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
         restaurantList = findViewById(R.id.restaurantList);
 
 
-        restaurantListAdapter = new RestaurantListAdapter(this, manager);
-        restaurantListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onChanged() {
-                super.onChanged();
-            }
-        });
-        restaurantList.setAdapter(restaurantListAdapter);
+   //     restaurantListAdapter = new RestaurantListAdapter(this, manager);
+        RestaurantListAdapter adapter = new RestaurantListAdapter(this, manager);
+   //     restaurantListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+    //        @Override
+    //        public void onChanged() {
+    //            super.onChanged();
+   //         }
+    //    });
+
+        restaurantList.setAdapter(adapter);
         restaurantList.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void updateRecyclerView(){
 
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
+    //    Intent intent = getIntent();
+    //    Bundle extras = intent.getExtras();
 
       //  if(intent.hasExtra("restaurantPos")){
             Log.v("RestaurantListActivity", "position");
-            restaurantList = findViewById(R.id.restaurantList);
-            RestaurantListAdapter adapter = (RestaurantListAdapter) restaurantList.getAdapter();
+      //  manager.clear();
+        manager = RestaurantManager.getInstance();
+        manager.sortByRestaurantName();
+        restaurantList = findViewById(R.id.restaurantList);
+        RestaurantListAdapter adapter = new RestaurantListAdapter(this, manager);
+        restaurantList.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+           // restaurantList.setLayoutManager(new LinearLayoutManager(this));
+
+
         //  int position = extras.getInt("restaurantPos");
-            adapter.notifyItemChanged(0);
+
+       //     adapter.notifyItemChanged(0);
       //  }
+
 
     }
 

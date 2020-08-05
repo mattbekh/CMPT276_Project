@@ -76,12 +76,13 @@ public class RestaurantActivity extends AppCompatActivity {
         // Switch to allow for future functionality
         switch (item.getItemId()) {
             case R.id.ToolbarMenu_back:
-                  if(favouriteToggled){
-                      finish();
-                  }
-                else {
-                      finish();
-                  }
+                  //  manager.clear();
+                  //  manager.updateData();
+                    Intent intent = RestaurantListActivity.makeIntent(this);
+                    int pos = manager.getRestIndex(restaurant);
+                    intent.putExtra("restaurantPos", pos);
+                    finish();
+
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -173,8 +174,6 @@ public class RestaurantActivity extends AppCompatActivity {
                     if(favouriteToggled){
 
                         fav.setBackgroundResource(R.drawable.star_outline);
-
-                        Log.v("RestaurantActivity", "setFav");
                         restaurant.setFavourite(0);
                         favouriteToggled = false;
                         DatabaseManager dbManager = DatabaseManager.getInstance();
