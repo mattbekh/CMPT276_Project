@@ -23,6 +23,7 @@ public class DatabaseManager {
 
     private static final String DATABASE_NAME = "RestaurantDB";
     private static final int DATABASE_VERSION = 2;
+    private static final int IS_FAVOURITE = 1;
 
     private static final String DROP_TABLE = "DROP TABLE IF EXISTS ";
 
@@ -96,6 +97,23 @@ public class DatabaseManager {
 
         close();
         return result != 0;
+    }
+
+    private void updateAllFavRestaurants(ArrayList<Restaurant> favourites) {
+        if (favourites == null || favourites.size() == 0) {
+            return;
+        }
+        StringBuilder builder = new StringBuilder();
+        for (Restaurant fav : favourites) {
+            builder.append(fav.getId()).append(", ");
+        }
+        String favIds = builder.substring(0, builder.length() - 2);
+        ContentValues values = new ContentValues();
+        values.put(RestaurantTable.FIELD_IS_FAVOURITE, IS_FAVOURITE);
+        String where = RestaurantTable.FIELD_ID + "IN'" + favIds + "'";
+        open();
+        db.update(RestaurantTable.NAME, values, where, null);
+        close();
     }
 
     public long insertToInspections(
@@ -313,10 +331,21 @@ public class DatabaseManager {
     }
 
     public void update() {
+        RestaurantFilter.setFilter(null, null, null, null, true);
+        ArrayList<Restaurant> favourites = instance.getRestaurants();
+
         open();
         dbHelper.onUpgrade(db, 0, 0);
         close();
+
         CsvDataParser.readUpdatedRestaurantData();
+        updateAllFavRestaurants(favourites);
+        RestaurantFilter.setFilter(null, null, null, null, null);
+    }
+
+    public ArrayList<Restaurant> getUpdatedFavourites(String previousModifyTime) {
+        String selection = RestaurantFilter.getUpdatedFavouritesSelection(previousModifyTime);
+        return getRestaurants(selection, null);
     }
 
     // Private class for DatabaseHelper

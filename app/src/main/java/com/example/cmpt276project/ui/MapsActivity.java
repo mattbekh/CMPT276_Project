@@ -12,6 +12,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.AllRestaurant;
+import com.example.cmpt276project.model.DateHelper;
 import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
@@ -47,6 +49,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -69,7 +72,7 @@ public class MapsActivity extends AppCompatActivity
     private ProgressDialog progressBarDialog;
     private LoadDataDialog loadDataDialog;
     private Future<Boolean> downloadDataResult;
-    private Future<Boolean> loadDataResult;
+    private Future<ArrayList<Restaurant>> loadDataResult;
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -365,6 +368,32 @@ public class MapsActivity extends AppCompatActivity
         clusterInfoWindow();
     }
 
+    private String getHazardLevelByRestaurantId (String restaurantId) {
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+        Inspection inspection = dbManager.getMostRecentInspection(restaurantId);
+        String hazard;
+
+        if (inspection == null) {
+            hazard = "Hazard Level: UNKNOWN";
+        } else {
+            switch (inspection.getHazardRating()) {
+                case LOW:
+                    hazard = "Hazard Level: LOW";
+                    break;
+                case MODERATE:
+                    hazard = "Hazard Level: MODERATE";
+                    break;
+                case HIGH:
+                    hazard = "Hazard Level: HIGH";
+                    break;
+                default:
+                    hazard = "Hazard Level: UNKNOWN";
+                    break;
+            }
+        }
+        return hazard;
+    }
+
     private void clusterInfoWindow() {
         mClusterManager.getMarkerCollection().setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override
@@ -375,13 +404,19 @@ public class MapsActivity extends AppCompatActivity
             @Override
             public View getInfoContents(Marker marker) {
                 final View view = getLayoutInflater().inflate(R.layout.info_window, null);
+
                 TextView nameView = view.findViewById(R.id.text_name);
-                TextView detailsView = view.findViewById(R.id.text_detail);
-                String detailsText = getString(R.string.MapsActivity_zoom_in_deets);
-                String name = (marker.getTitle() != null) ? marker.getTitle() : detailsText;
-                nameView.setText(name);
-                String details = (marker.getSnippet() != null) ? marker.getSnippet() : detailsText;
-                detailsView.setText(details);
+                TextView detailsView = view.findViewById(R.id.text_address);
+                TextView hazardView = view.findViewById(R.id.text_hazard);
+
+                LatLng tmpLatLng = marker.getPosition();
+                Restaurant tmpRestaurant = manager.getRestaurantByLatLng(tmpLatLng.latitude,tmpLatLng.longitude);
+                String restaurantId = tmpRestaurant.getId();
+                String hazard = getHazardLevelByRestaurantId(restaurantId);
+
+                nameView.setText(tmpRestaurant.getName());
+                detailsView.setText(tmpRestaurant.getAddress());
+                hazardView.setText(hazard);
 
                 return view;
             }
@@ -481,11 +516,16 @@ public class MapsActivity extends AppCompatActivity
         loadDataDialog = new LoadDataDialog();
         loadDataDialog.show(fragmentManager, "LoadDataDialog");
         ExecutorService executor = Executors.newFixedThreadPool(2);
-        Callable<Boolean> dataLoader = new Callable<Boolean>() {
+        Callable<ArrayList<Restaurant>> dataLoader = new Callable<ArrayList<Restaurant>>() {
             @Override
-            public Boolean call() {
+            public ArrayList<Restaurant> call() {
+                ArrayList<Restaurant> updatedFavourites = null;
                 try {
                     manager.updateData();
+                    DatabaseManager dbManager = DatabaseManager.getInstance();
+                    SharedPreferences prefs = getSharedPreferences("CSVData", Context.MODE_PRIVATE);
+                    String previousModifyTime = prefs.getString("previousModifyTime", DateHelper.DEFAULT_TIME);
+                    updatedFavourites = dbManager.getUpdatedFavourites(previousModifyTime);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -493,9 +533,9 @@ public class MapsActivity extends AppCompatActivity
                         }
                     });
                 } catch (Exception e) {
-                    return false;
+                    return null;
                 }
-                return true;
+                return updatedFavourites;
             }
         };
         loadDataResult = executor.submit(dataLoader);
@@ -547,12 +587,14 @@ public class MapsActivity extends AppCompatActivity
                 }
             }
 
+            ArrayList<Restaurant> updatedFavourites = null;
             try {
-                loadDataResult.get();
+                updatedFavourites = loadDataResult.get();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 loadDataDialog.dismiss();
+                // TODO: launch a fragment displaying the updated favourite restaurants
             }
         }
     }
