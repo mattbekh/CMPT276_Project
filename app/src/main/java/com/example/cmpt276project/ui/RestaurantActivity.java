@@ -161,7 +161,6 @@ public class RestaurantActivity extends AppCompatActivity {
                     fav.setBackgroundResource(R.drawable.star_outline);
                     DatabaseManager dbManager = DatabaseManager.getInstance();
                     dbManager.updateRestaurantFav(restaurant.getId(), 0);
-                    dbManager.setUpdateNeeded(true);
                     favouriteToggled = false;
                 }
 
@@ -169,7 +168,6 @@ public class RestaurantActivity extends AppCompatActivity {
                     fav.setBackgroundResource(R.drawable.star_icon);
                     DatabaseManager dbManager = DatabaseManager.getInstance();
                     dbManager.updateRestaurantFav(restaurant.getId(), 1);
-                    dbManager.setUpdateNeeded(true);
                     favouriteToggled = true;
                 }
 

@@ -1,7 +1,10 @@
 
 package com.example.cmpt276project.model.database;
 
-    public class InspectionTable {
+/**
+ * This class contains information relation to the inspections table in the database
+ */
+public class InspectionTable {
 
         public static final String NAME = "Inspections";
 

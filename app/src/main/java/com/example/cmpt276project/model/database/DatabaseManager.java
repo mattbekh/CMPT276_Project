@@ -19,6 +19,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
+/**
+ * This class manages interaction with the SQL database
+ */
 public class DatabaseManager {
 
     private static final String DATABASE_NAME = "RestaurantDB";
@@ -374,13 +377,5 @@ public class DatabaseManager {
             db.execSQL(DROP_TABLE + RestaurantTable.NAME);
             onCreate(db);
         }
-    }
-
-    public void setUpdateNeeded(boolean update){
-        updateNeeded = update;
-    }
-
-    public boolean getUpdateNeeded(){
-        return updateNeeded;
     }
 }

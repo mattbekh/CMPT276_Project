@@ -1,5 +1,8 @@
 package com.example.cmpt276project.model.database;
 
+/**
+ * This class contains information relation to the restaurants table in the database
+ */
 public class RestaurantTable {
 
     public static final String NAME = "Restaurants";
