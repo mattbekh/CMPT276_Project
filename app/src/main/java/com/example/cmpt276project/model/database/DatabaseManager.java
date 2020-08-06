@@ -31,6 +31,8 @@ public class DatabaseManager {
 
     private static DatabaseManager instance;
 
+    private boolean updateNeeded = false;
+
     public static DatabaseManager getInstance() {
         if (instance == null) {
             throw new IllegalStateException("Cannot get DatabaseManager instance before initialization");
@@ -341,5 +343,13 @@ public class DatabaseManager {
             db.execSQL(DROP_TABLE + RestaurantTable.NAME);
             onCreate(db);
         }
+    }
+
+    public void setUpdateNeeded(boolean update){
+        updateNeeded = update;
+    }
+
+    public boolean getUpdateNeeded(){
+        return updateNeeded;
     }
 }

@@ -63,8 +63,6 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         // Store Restaurant address
         holder.restaurantAddress.setText(restaurant.getAddress() + ", " + restaurant.getCity());
 
-       //restaurant.setFavourite(1);
-
 
         if(restaurant.isFavourite()){
                 int iconResource = getResourceID(restaurant.getRestaurantName());
@@ -75,7 +73,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         else {
             int iconResource = getResourceID(restaurant.getRestaurantName());
             holder.restaurantIcon.setImageResource(iconResource);
-            //holder.favouritesIcon.setImageResource(R.drawable.star_icon);
+            holder.favouritesIcon.setImageResource(0);
         }
 
         // Store most recent inspections # of issues

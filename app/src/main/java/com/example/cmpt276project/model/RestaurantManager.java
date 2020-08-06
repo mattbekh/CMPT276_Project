@@ -75,6 +75,12 @@ public class RestaurantManager implements Iterable<Restaurant> {
         instance.sortByRestaurantName();
     }
 
+    public void updateList(){
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+        instance.restaurantList = dbManager.getRestaurants();
+        instance.sortByRestaurantName();
+    }
+
     public void applyFilter() {
         DatabaseManager dbManager = DatabaseManager.getInstance();
         instance.restaurantList = dbManager.getRestaurants();
