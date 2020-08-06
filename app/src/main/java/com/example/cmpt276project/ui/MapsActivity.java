@@ -572,9 +572,11 @@ public class MapsActivity extends AppCompatActivity
                 e.printStackTrace();
             } finally {
                 loadDataDialog.dismiss();
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                UpdatedFavouritesFragment dialog = new UpdatedFavouritesFragment();
-                dialog.show(fragmentManager, "UpdateDialog");
+                if (updatedFavourites != null && updatedFavourites.size() > 0) {
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    UpdatedFavouritesFragment dialog = new UpdatedFavouritesFragment();
+                    dialog.show(fragmentManager, "UpdateDialog");
+                }
             }
         }
     }

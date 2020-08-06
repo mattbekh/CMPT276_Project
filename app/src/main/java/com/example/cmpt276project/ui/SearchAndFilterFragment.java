@@ -29,6 +29,11 @@ import com.example.cmpt276project.model.database.RestaurantFilter;
 import java.util.HashSet;
 import java.util.logging.Level;
 
+/**
+ * Filter the restaurant based on the user's options: name, number of issues,
+ * hazard level, favourites
+ */
+
 public class SearchAndFilterFragment extends AppCompatDialogFragment {
     private RestaurantManager manager;
     private boolean isFavourites;
