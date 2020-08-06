@@ -64,4 +64,8 @@
     <string name="SF_hazard_level">Hazard Level</string>
     <string name="SF_cancel">Cancel</string>
 
+    <string name="UpdateFavourites_new_inspections">Favourites with New Inspections</string>
+    <string name="UpdateFavourites_done_text">Done</string>
+    <string name="RestaurantDetail_favorite_text">FAVORITE</string>
+
 </resources>
