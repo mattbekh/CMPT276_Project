@@ -37,11 +37,13 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
         inflater.inflate(R.menu.toolbar_menu,menu);
 
         MenuItem viewMapItem = menu.findItem(R.id.ToolbarMenu_switch_context);
+        MenuItem searchItem = menu.findItem(R.id.ToolbarMenu_search);
 //        MenuItem searchMapItem = menu.findItem(R.id.ToolbarMenu_search);
 
         viewMapItem.setVisible(true);
         viewMapItem.setTitle(R.string.RestaurantListActivity_toolbar_map_btn_text);
 
+        searchItem.setVisible(true);
 //        SearchView searchView = (SearchView) searchMapItem.getActionView();
 //        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 //            @Override

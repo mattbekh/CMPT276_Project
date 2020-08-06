@@ -204,6 +204,9 @@ public class MapsActivity extends AppCompatActivity
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.toolbar_menu, menu);
 
+        MenuItem searchItem = menu.findItem(R.id.ToolbarMenu_search);
+        searchItem.setVisible(true);
+
         MenuItem viewRestaurantListItem = menu.findItem(R.id.ToolbarMenu_switch_context);
         viewRestaurantListItem.setVisible(true);
         viewRestaurantListItem.setTitle(R.string.MapsActivity_toolbar_list_btn_text);
