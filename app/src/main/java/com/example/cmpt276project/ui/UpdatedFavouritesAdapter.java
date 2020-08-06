@@ -2,6 +2,7 @@ package com.example.cmpt276project.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +16,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cmpt276project.R;
+import com.example.cmpt276project.model.DateHelper;
 import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
 import com.example.cmpt276project.model.database.DatabaseManager;
 import com.example.cmpt276project.model.database.RestaurantFilter;
+
+import java.util.ArrayList;
 
 public class UpdatedFavouritesAdapter extends RecyclerView.Adapter<UpdatedFavouritesAdapter.MyViewHolder>{
 
@@ -47,6 +51,7 @@ public class UpdatedFavouritesAdapter extends RecyclerView.Adapter<UpdatedFavour
     @Override
     public void onBindViewHolder(@NonNull UpdatedFavouritesAdapter.MyViewHolder holder, int position) {
         final Restaurant restaurant = manager.getRestaurantList().get(position);
+        DatabaseManager dbManager = DatabaseManager.getInstance();
 
         //Fix: filter restaurants by ones with new inspections
         if(restaurant.isFavourite()) {
@@ -57,7 +62,6 @@ public class UpdatedFavouritesAdapter extends RecyclerView.Adapter<UpdatedFavour
             holder.restaurantIcon.setImageResource(iconResource);
             holder.favouritesIcon.setImageResource(R.drawable.star_icon);
 
-            DatabaseManager dbManager = DatabaseManager.getInstance();
             Inspection topInspection = dbManager.getMostRecentInspection(restaurant.getId());
             if (topInspection == null) {
                 holder.inspectionDate.setText(R.string.Inspection_no_inspections_found);
@@ -155,8 +159,5 @@ public class UpdatedFavouritesAdapter extends RecyclerView.Adapter<UpdatedFavour
 
             restaurantListLayout = itemView.findViewById(R.id.rowLayout);
         }
-    }
-    public interface UpdateFilterListener {
-        void updateFilter();
     }
 }

@@ -20,7 +20,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.UpdatedFavouritesActivity"></activity>
+        <activity android:name=".ui.UpdatedFavouritesFragment"></activity>
+        <activity android:name=".ui.UpdatedFavouritesActivity" />
         <!--
             The API key for Google Maps-based APIs is defined as a string resource.
             (See the file "res/values/google_maps_api.xml").
