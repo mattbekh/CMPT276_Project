@@ -49,9 +49,5 @@ public class UpdatedFavouritesActivity extends AppCompatActivity {
 
     private void populateRecyclerView() {
 
-        restaurantList = findViewById(R.id.list_Favourites);
-        UpdatedFavouritesAdapter adapter = new UpdatedFavouritesAdapter(this, manager);
-        restaurantList.setAdapter(adapter);
-        restaurantList.setLayoutManager(new LinearLayoutManager(this));
     }
 }

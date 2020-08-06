@@ -37,15 +37,16 @@ public class UpdatedFavouritesFragment extends AppCompatDialogFragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.activity_updated_favourites_fragment, null);
 
         // Find resource IDs
-        TextView nameView = (TextView) view.findViewById(R.id.text_updatedFavs);
         ListView restaurantList = (ListView) view.findViewById(R.id.list_Favourites);
 
-        DatabaseManager dbManager = DatabaseManager.getInstance();
         ArrayList<Restaurant> favourites = ((MapsActivity)getActivity()).getUpdatedFavourites();
-        if(favourites != null) {
-            ArrayAdapter<Restaurant> adapter = new ArrayAdapter<>(getActivity(), R.layout.restaurant_row, favourites);
-            restaurantList.setAdapter(adapter);
-        }
+        UpdatedFavouritesAdapter adapter1 = new UpdatedFavouritesAdapter(
+                getActivity(),
+                R.layout.updatedfavourites_row,
+                favourites
+        );
+        restaurantList.setAdapter(adapter1);
+
 
         // button listener
         DialogInterface.OnClickListener InfoListener = new DialogInterface.OnClickListener() {
