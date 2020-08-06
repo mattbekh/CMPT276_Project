@@ -9,7 +9,10 @@ import java.util.concurrent.Callable;
 import static com.example.cmpt276project.model.DateHelper.isMoreRecentThan;
 import static com.example.cmpt276project.model.DateHelper.isTwentyHoursSince;
 
-
+/**
+ * This class checks how long it has been since the last update as well as check if the data has
+ * changed since the last update
+ */
 public class DataUpdateChecker implements Callable<Boolean> {
 
     private SharedPreferences csvDataPrefs;
