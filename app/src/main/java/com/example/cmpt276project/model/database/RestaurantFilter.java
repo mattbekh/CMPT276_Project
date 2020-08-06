@@ -38,6 +38,10 @@ public class RestaurantFilter {
         return name;
     }
 
+    public HashSet<HazardRating> getHazardRatings() {
+        return hazardRatings;
+    }
+
     private static String getHazardRating(HazardRating hazardRating) {
         if (hazardRating != null) {
             switch (hazardRating) {
@@ -52,7 +56,7 @@ public class RestaurantFilter {
         return null;
     }
 
-    private String getHazardRatings() {
+    private String getHazardRatingsString() {
         if (hazardRatings == null) {
             return null;
         }
@@ -138,7 +142,7 @@ public class RestaurantFilter {
         if (instance.isFavouritesOnly() != null) {
             selectionCriteria.add(RestaurantTable.FIELD_IS_FAVOURITE + " = " + instance.isFavouritesOnly());
         }
-        if (instance.getHazardRatings() != null) {
+        if (instance.getHazardRatingsString() != null) {
             selectionCriteria.add(getHazardRatingCriteria());
         }
 
@@ -162,7 +166,7 @@ public class RestaurantFilter {
     }
 
     private static String getHazardRatingCriteria() {
-        String hazardRatings = RestaurantFilter.getInstance().getHazardRatings();
+        String hazardRatings = RestaurantFilter.getInstance().getHazardRatingsString();
         String criteria;
         if (hazardRatings.equals("()")) {
             criteria =

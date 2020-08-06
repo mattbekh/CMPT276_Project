@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 import com.airbnb.lottie.parser.IntegerParser;
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.Inspection;
+import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
 import com.example.cmpt276project.model.database.RestaurantFilter;
 
@@ -31,6 +32,15 @@ import java.util.logging.Level;
 public class SearchAndFilterFragment extends AppCompatDialogFragment {
     private RestaurantManager manager;
     private boolean isFavourites;
+    private TextView nameView;
+    private TextView issueView;
+    private EditText nameInput;
+    private EditText issueMin;
+    private EditText issueMax;
+    private Switch favourites;
+    private CheckBox lowLevel;
+    private CheckBox midLevel;
+    private CheckBox highLevel;
 
     @NonNull
     @Override
@@ -39,24 +49,22 @@ public class SearchAndFilterFragment extends AppCompatDialogFragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.search_filter_fragment, null);
 
         // Find resource IDs
-        TextView nameView = (TextView) view.findViewById(R.id.SF_nameTextView);
-        TextView issueView = (TextView) view.findViewById(R.id.SF_issueTextView);
-        EditText nameInput = (EditText) view.findViewById(R.id.SF_nameInput);
-        EditText issueMin = (EditText) view.findViewById(R.id.SF_issueMin);
-        EditText issueMax = (EditText) view.findViewById(R.id.SF_issueMax);
-        Switch favourites = (Switch) view.findViewById(R.id.SF_favouritesSwitch);
-        CheckBox lowLevel = (CheckBox) view.findViewById(R.id.SF_Low_checkBox);
-        CheckBox midLevel = (CheckBox) view.findViewById(R.id.SF_Moderate_checkBox);
-        CheckBox highLevel = (CheckBox) view.findViewById(R.id.SF_High_checkBox);
+        nameView = (TextView) view.findViewById(R.id.SF_nameTextView);
+        issueView = (TextView) view.findViewById(R.id.SF_issueTextView);
+        nameInput = (EditText) view.findViewById(R.id.SF_nameInput);
+        issueMin = (EditText) view.findViewById(R.id.SF_issueMin);
+        issueMax = (EditText) view.findViewById(R.id.SF_issueMax);
+        favourites = (Switch) view.findViewById(R.id.SF_favouritesSwitch);
+        lowLevel = (CheckBox) view.findViewById(R.id.SF_Low_checkBox);
+        midLevel = (CheckBox) view.findViewById(R.id.SF_Moderate_checkBox);
+        highLevel = (CheckBox) view.findViewById(R.id.SF_High_checkBox);
 
         // set hint
         nameInput.setHint("ex: pizza");
         issueMin.setHint("Min");
         issueMax.setHint("Max");
-        lowLevel.setChecked(true);
-        midLevel.setChecked(true);
-        highLevel.setChecked(true);
 
+        setFilterValues();
         favouritesSwitch(favourites);
 
         // button listener
@@ -103,22 +111,70 @@ public class SearchAndFilterFragment extends AppCompatDialogFragment {
          DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener() {
              @Override
              public void onClick(DialogInterface dialog, int which) {
-                 RestaurantFilter.setFilter(null, null, null, null, null);
-                 Activity parentActivity = getActivity();
-                 ((UpdateFilterListener) parentActivity).updateFilter();
+                 dismiss();
              }
          };
 
+        DialogInterface.OnClickListener clearListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                RestaurantFilter.setFilter(null, null, null, null, null);
+                Activity parentActivity = getActivity();
+                dismiss();
+                ((UpdateFilterListener) parentActivity).updateFilter();
+            }
+        };
+
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                 .setView(view)
-                .setPositiveButton(android.R.string.search_go, searchListener)
-                .setNegativeButton(android.R.string.cancel, cancelListener)
+                .setPositiveButton(R.string.SF_ok, searchListener)
+                .setNegativeButton(R.string.SF_clear, clearListener)
+                .setNeutralButton(R.string.SF_cancel, cancelListener)
                 .create();
 
         // Build Dialog
         return alertDialog;
     }
 
+    private void setFilterValues() {
+        RestaurantFilter filter = RestaurantFilter.getInstance();
+
+        HashSet<Inspection.HazardRating> hazardRatings = filter.getHazardRatings();
+        if (hazardRatings == null) {
+            lowLevel.setChecked(true);
+            midLevel.setChecked(true);
+            highLevel.setChecked(true);
+        } else {
+            if (hazardRatings.contains(Inspection.HazardRating.LOW)) {
+                lowLevel.setChecked(true);
+            }
+            if (hazardRatings.contains(Inspection.HazardRating.MODERATE)) {
+                midLevel.setChecked(true);
+            }
+            if (hazardRatings.contains(Inspection.HazardRating.HIGH)) {
+                highLevel.setChecked(true);
+            }
+        }
+
+        String name = filter.getName();
+        nameInput.setText(name);
+
+        Integer minCritical = filter.getMinCritical();
+        Integer maxCritical = filter.getMaxCritical();
+        if (minCritical != null) {
+            issueMin.setText(String.format("%d", minCritical));
+        }
+        if (maxCritical != null) {
+            issueMax.setText(String.format("%d", maxCritical));
+        }
+
+        Integer onlyFavourites = filter.isFavouritesOnly();
+        if (onlyFavourites != null && onlyFavourites == 1) {
+            favourites.setChecked(true);
+        }
+
+
+    }
 
     private void favouritesSwitch(Switch s) {
         s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
