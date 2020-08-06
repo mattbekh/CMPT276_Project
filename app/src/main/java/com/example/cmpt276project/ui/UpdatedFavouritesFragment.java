@@ -14,6 +14,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
@@ -38,12 +40,12 @@ public class UpdatedFavouritesFragment extends AppCompatDialogFragment {
         TextView nameView = (TextView) view.findViewById(R.id.text_updatedFavs);
         ListView restaurantList = (ListView) view.findViewById(R.id.list_Favourites);
 
-
         DatabaseManager dbManager = DatabaseManager.getInstance();
-        ArrayList<Restaurant> favourites = dbManager.getRestaurants();
-        ArrayAdapter<Restaurant> adapter = new ArrayAdapter<>(getActivity(), R.layout.restaurant_row, favourites);
-        restaurantList.setAdapter(adapter);
-
+        ArrayList<Restaurant> favourites = ((MapsActivity)getActivity()).getUpdatedFavourites();
+        if(favourites != null) {
+            ArrayAdapter<Restaurant> adapter = new ArrayAdapter<>(getActivity(), R.layout.restaurant_row, favourites);
+            restaurantList.setAdapter(adapter);
+        }
 
         // button listener
         DialogInterface.OnClickListener InfoListener = new DialogInterface.OnClickListener() {

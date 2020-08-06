@@ -73,6 +73,7 @@ public class MapsActivity extends AppCompatActivity
     private LoadDataDialog loadDataDialog;
     private Future<Boolean> downloadDataResult;
     private Future<ArrayList<Restaurant>> loadDataResult;
+    private ArrayList<Restaurant> updatedFavourites = null;
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -105,6 +106,7 @@ public class MapsActivity extends AppCompatActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        DatabaseManager.initialize(this);
         manager = RestaurantManager.getInstance();
 
         // Construct a FusedLocationProviderClient.
@@ -574,6 +576,10 @@ public class MapsActivity extends AppCompatActivity
         progressBarDialog.show();
     }
 
+    public ArrayList<Restaurant> getUpdatedFavourites(){
+        return updatedFavourites;
+    }
+
     private class LoadDataWaiter implements Runnable {
 
         @Override
@@ -587,7 +593,7 @@ public class MapsActivity extends AppCompatActivity
                 }
             }
 
-            ArrayList<Restaurant> updatedFavourites = null;
+
             try {
                 updatedFavourites = loadDataResult.get();
             } catch (Exception e) {
