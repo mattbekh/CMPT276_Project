@@ -41,7 +41,6 @@ public class RestaurantActivity extends AppCompatActivity {
     private RestaurantManager manager;
     private Restaurant restaurant;
     private ArrayList<Inspection> inspections;
-    private int restaurantPos;
 
     private TextView restaurantName;
     private TextView restaurantAddress;
@@ -76,12 +75,7 @@ public class RestaurantActivity extends AppCompatActivity {
         // Switch to allow for future functionality
         switch (item.getItemId()) {
             case R.id.ToolbarMenu_back:
-                  //  manager.clear();
-                  //  manager.updateData();
-                    Intent intent = RestaurantListActivity.makeIntent(this);
-                    int pos = manager.getRestIndex(restaurant);
-                    intent.putExtra("restaurantPos", pos);
-                    finish();
+                finish();
 
                 return true;
         }
@@ -130,7 +124,6 @@ public class RestaurantActivity extends AppCompatActivity {
         restaurantAddress.setText(fullAddress);
         restaurantGPS.setText(coordinates);
 
-
         setUpFavButton();
 
 
@@ -140,7 +133,6 @@ public class RestaurantActivity extends AppCompatActivity {
 
                 Intent intent = MapsActivity.makeIntent(RestaurantActivity.this,false);
                 intent.putExtra("restaurantId", restaurant.getId());
-                intent.putExtra("restaurantPos", manager.getRestIndex(restaurant));
                 startActivity(intent);
                 finish();
             }
@@ -148,51 +140,42 @@ public class RestaurantActivity extends AppCompatActivity {
     }
 
     private void setUpFavButton(){
-            Button fav = (Button)findViewById(R.id.buttonFav);
+        Button fav = (Button)findViewById(R.id.buttonFav);
 
-            if(restaurant.isFavourite()){
-                favouriteToggled = true;
-            }
-            else{
-                favouriteToggled = false;
-            }
+        if(restaurant.isFavourite()){
 
-            if(favouriteToggled){
-                favouriteToggled = true;
-                Toast.makeText(this, "Fav", Toast.LENGTH_LONG).show();
-                fav.setBackgroundResource(R.drawable.star_icon);
-            }
-            else{
-                favouriteToggled = false;
-                Toast.makeText(this, "UnFav", Toast.LENGTH_LONG).show();
-                fav.setBackgroundResource(R.drawable.star_outline);
-            }
+            fav.setBackgroundResource(R.drawable.star_icon);
+            favouriteToggled = true;
+        }
+        else{
 
-            fav.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            fav.setBackgroundResource(R.drawable.star_outline);
+            favouriteToggled = false;
+        }
 
-                    if(favouriteToggled){
+        fav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-                        fav.setBackgroundResource(R.drawable.star_outline);
-                        restaurant.setFavourite(0);
-                        favouriteToggled = false;
-                        DatabaseManager dbManager = DatabaseManager.getInstance();
-                        dbManager.updateRestaurantFav(restaurant.getId(), 0);
-                    }
+                if(favouriteToggled){
 
-                    else {
-                        fav.setBackgroundResource(R.drawable.star_icon);
-
-                        Log.v("RestaurantActivity", "UnsetFav");
-                        restaurant.setFavourite(1);
-                        favouriteToggled = true;
-                        DatabaseManager dbManager = DatabaseManager.getInstance();
-                        dbManager.updateRestaurantFav(restaurant.getId(), 1);
-                    }
-
+                    fav.setBackgroundResource(R.drawable.star_outline);
+                    DatabaseManager dbManager = DatabaseManager.getInstance();
+                    dbManager.updateRestaurantFav(restaurant.getId(), 0);
+                    dbManager.setUpdateNeeded(true);
+                    favouriteToggled = false;
                 }
-            });
+
+                else {
+                    fav.setBackgroundResource(R.drawable.star_icon);
+                    DatabaseManager dbManager = DatabaseManager.getInstance();
+                    dbManager.updateRestaurantFav(restaurant.getId(), 1);
+                    dbManager.setUpdateNeeded(true);
+                    favouriteToggled = true;
+                }
+
+            }
+        });
     }
 
     private void populateListView() {

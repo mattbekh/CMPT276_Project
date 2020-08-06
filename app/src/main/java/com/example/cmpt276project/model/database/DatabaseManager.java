@@ -32,6 +32,8 @@ public class DatabaseManager {
 
     private static DatabaseManager instance;
 
+    private boolean updateNeeded = false;
+
     public static DatabaseManager getInstance() {
         if (instance == null) {
             throw new IllegalStateException("Cannot get DatabaseManager instance before initialization");
@@ -105,12 +107,12 @@ public class DatabaseManager {
         }
         StringBuilder builder = new StringBuilder();
         for (Restaurant fav : favourites) {
-            builder.append(fav.getId()).append(", ");
+            builder.append("'").append(fav.getId()).append("', ");
         }
         String favIds = builder.substring(0, builder.length() - 2);
         ContentValues values = new ContentValues();
         values.put(RestaurantTable.FIELD_IS_FAVOURITE, IS_FAVOURITE);
-        String where = RestaurantTable.FIELD_ID + "IN'" + favIds + "'";
+        String where = RestaurantTable.FIELD_ID + "IN " + favIds;
         open();
         db.update(RestaurantTable.NAME, values, where, null);
         close();
@@ -370,5 +372,13 @@ public class DatabaseManager {
             db.execSQL(DROP_TABLE + RestaurantTable.NAME);
             onCreate(db);
         }
+    }
+
+    public void setUpdateNeeded(boolean update){
+        updateNeeded = update;
+    }
+
+    public boolean getUpdateNeeded(){
+        return updateNeeded;
     }
 }

@@ -31,10 +31,12 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
     // Stores an array of restaurant names (Should be pre-ordered)
     private Context context;
     private RestaurantManager manager;
+    public static  final String Faved = "faved";
 
     public static Intent makeIntent(Context context) {
         return new Intent(context, RestaurantListAdapter.class);
     }
+
 
     public RestaurantListAdapter(Context context, RestaurantManager manager){
 
@@ -61,16 +63,17 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         // Store Restaurant address
         holder.restaurantAddress.setText(restaurant.getAddress() + ", " + restaurant.getCity());
 
+
         if(restaurant.isFavourite()){
-       // if(manager.isFaved() == true){
-            int iconResource = getResourceID(restaurant.getRestaurantName());
-            holder.restaurantIcon.setImageResource(iconResource);
-            holder.favouritesIcon.setImageResource(R.drawable.star_icon);
+                int iconResource = getResourceID(restaurant.getRestaurantName());
+                holder.restaurantIcon.setImageResource(iconResource);
+                holder.favouritesIcon.setImageResource(R.drawable.star_icon);
         }
 
         else {
             int iconResource = getResourceID(restaurant.getRestaurantName());
             holder.restaurantIcon.setImageResource(iconResource);
+            holder.favouritesIcon.setImageResource(0);
         }
 
         // Store most recent inspections # of issues
@@ -107,19 +110,14 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         }
 
 
-        int pos = manager.getRestIndex(restaurant);
         holder.restaurantListLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = RestaurantActivity.makeIntent(context);
                 intent.putExtra("restaurantId", restaurant.getId());
-
-               // intent.putExtra("restaurantPos", manager.getRestIndex(manager));
                 context.startActivity(intent);
-
             }
         });
-
     }
 
     @DrawableRes

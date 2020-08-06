@@ -20,7 +20,7 @@ public class Restaurant {
     private String city;
     private double latitude;
     private double longitude;
-    private boolean isFavourite;
+    private boolean isFavourite = false;
 
     public Restaurant(String id,
                       String name,
@@ -78,14 +78,6 @@ public class Restaurant {
         throw new IllegalArgumentException(errorMessage);
     }
 
-    public void setFavourite(int value) {
-        if(value == 1) {
-            this.isFavourite = true;
-        }
-        else{
-            this.isFavourite = false;
-        }
-    }
 
     private static String getKeywordPattern(RestaurantName restaurantName){
         switch(restaurantName){
