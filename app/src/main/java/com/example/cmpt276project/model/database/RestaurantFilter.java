@@ -9,6 +9,10 @@ import java.util.GregorianCalendar;
 
 import static com.example.cmpt276project.model.Inspection.HazardRating;
 
+/**
+ * This class allows for filtering of data from the database as well as building required queries
+ * for the purposes of filtering
+ */
 public class RestaurantFilter {
 
     private String name;

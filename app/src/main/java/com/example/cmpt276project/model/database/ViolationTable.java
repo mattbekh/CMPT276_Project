@@ -1,5 +1,8 @@
 package com.example.cmpt276project.model.database;
 
+/**
+ * This class contains information relation to the violations table in the database
+ */
 public class ViolationTable {
     public static final String NAME = "Violations";
 

@@ -19,6 +19,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
+/**
+ * This class manages interaction with the SQL database
+ */
 public class DatabaseManager {
 
     private static final String DATABASE_NAME = "RestaurantDB";
