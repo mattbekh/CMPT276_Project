@@ -73,6 +73,7 @@ public class MapsActivity extends AppCompatActivity
     private LoadDataDialog loadDataDialog;
     private Future<Boolean> downloadDataResult;
     private Future<ArrayList<Restaurant>> loadDataResult;
+    private ArrayList<Restaurant> updatedFavourites = null;
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -105,6 +106,7 @@ public class MapsActivity extends AppCompatActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        DatabaseManager.initialize(this);
         manager = RestaurantManager.getInstance();
 
         // Construct a FusedLocationProviderClient.
@@ -183,6 +185,7 @@ public class MapsActivity extends AppCompatActivity
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        finishAndRemoveTask();
         System.exit(0);
     }
 
@@ -227,6 +230,7 @@ public class MapsActivity extends AppCompatActivity
                 intent.addCategory(Intent.CATEGORY_HOME);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+                finishAndRemoveTask();
                 System.exit(0);
                 return true;
             case R.id.ToolbarMenu_switch_context:
@@ -575,6 +579,10 @@ public class MapsActivity extends AppCompatActivity
         progressBarDialog.show();
     }
 
+    public ArrayList<Restaurant> getUpdatedFavourites(){
+        return updatedFavourites;
+    }
+
     private class LoadDataWaiter implements Runnable {
 
         @Override
@@ -588,13 +596,16 @@ public class MapsActivity extends AppCompatActivity
                 }
             }
 
-            ArrayList<Restaurant> updatedFavourites = null;
+
             try {
                 updatedFavourites = loadDataResult.get();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 loadDataDialog.dismiss();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                UpdatedFavouritesFragment dialog = new UpdatedFavouritesFragment();
+                dialog.show(fragmentManager, "UpdateDialog");
                 // TODO: launch a fragment displaying the updated favourite restaurants
             }
         }

@@ -2,6 +2,7 @@ package com.example.cmpt276project.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +40,6 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
 
         this.context = context;
         this.manager = manager;
-
     }
 
     @NonNull
@@ -54,14 +54,24 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         // Get Restaurant
-        Restaurant restaurant = manager.getRestaurantList().get(position);
+        final Restaurant restaurant = manager.getRestaurantList().get(position);
         // Store Restaurant name
         holder.restaurantName.setText(restaurant.getName());
         // Store Restaurant address
         holder.restaurantAddress.setText(restaurant.getAddress() + ", " + restaurant.getCity());
 
-        int iconResource = getResourceID(restaurant.getRestaurantName());
-        holder.restaurantIcon.setImageResource(iconResource);
+        if(restaurant.isFavourite()){
+            int iconResource = getResourceID(restaurant.getRestaurantName());
+            holder.restaurantIcon.setImageResource(iconResource);
+            holder.favouritesIcon.setImageResource(R.drawable.star_icon);
+        }
+
+        else {
+            int iconResource = getResourceID(restaurant.getRestaurantName());
+            holder.restaurantIcon.setImageResource(iconResource);
+            holder.favouritesIcon.setImageResource(0);
+        }
+
         // Store most recent inspections # of issues
         DatabaseManager dbManager = DatabaseManager.getInstance();
         Inspection topInspection = dbManager.getMostRecentInspection(restaurant.getId());
@@ -151,6 +161,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         TextView inspectionDate;
         ImageView hazardLevel;
         ImageView restaurantIcon;
+        ImageView favouritesIcon;
 
         ConstraintLayout restaurantListLayout;
 
@@ -162,6 +173,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
             this.inspectionDate = itemView.findViewById(R.id.inspectionDate);
             this.hazardLevel = itemView.findViewById(R.id.hazardIcon);
             this.restaurantIcon = itemView.findViewById(R.id.restaurantIcon);
+            this.favouritesIcon = itemView.findViewById(R.id.favIcon);
 
             restaurantListLayout = itemView.findViewById(R.id.rowLayout);
         }

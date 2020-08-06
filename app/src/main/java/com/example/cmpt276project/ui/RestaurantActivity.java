@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -13,9 +14,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.example.cmpt276project.R;
 import com.example.cmpt276project.model.Inspection;
@@ -36,14 +41,14 @@ public class RestaurantActivity extends AppCompatActivity {
     private RestaurantManager manager;
     private Restaurant restaurant;
     private ArrayList<Inspection> inspections;
-    private int restaurantPos;
 
     private TextView restaurantName;
     private TextView restaurantAddress;
     private TextView restaurantGPS;
 
-    private ListView inspectionList;
+    private boolean favouriteToggled;
 
+    private ListView inspectionList;
 
     public static Intent makeIntent(Context context) {
         return new Intent(context, RestaurantActivity.class);
@@ -56,6 +61,7 @@ public class RestaurantActivity extends AppCompatActivity {
         inflater.inflate(R.menu.toolbar_menu,menu);
         return true;
     }
+
 
     //Takes user back to RestaurantList
     @Override
@@ -116,17 +122,56 @@ public class RestaurantActivity extends AppCompatActivity {
         restaurantAddress.setText(fullAddress);
         restaurantGPS.setText(coordinates);
 
+        setUpFavButton();
 
 
         restaurantGPS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-
                 Intent intent = MapsActivity.makeIntent(RestaurantActivity.this,false);
                 intent.putExtra("restaurantId", restaurant.getId());
                 startActivity(intent);
                 finish();
+            }
+        });
+    }
+
+    //Setup FavouriteButton for toggling RestaurantFavs
+    private void setUpFavButton(){
+        Button fav = (Button)findViewById(R.id.buttonFav);
+
+        //Check current State
+        if(restaurant.isFavourite()){
+
+            fav.setBackgroundResource(R.drawable.star_icon);
+            favouriteToggled = true;
+        }
+        else{
+
+            fav.setBackgroundResource(R.drawable.star_outline);
+            favouriteToggled = false;
+        }
+
+        fav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(favouriteToggled){
+                    fav.setBackgroundResource(R.drawable.star_outline);
+                    DatabaseManager dbManager = DatabaseManager.getInstance();
+                    dbManager.updateRestaurantFav(restaurant.getId(), 0);
+                    dbManager.setUpdateNeeded(true);
+                    favouriteToggled = false;
+                }
+
+                else {
+                    fav.setBackgroundResource(R.drawable.star_icon);
+                    DatabaseManager dbManager = DatabaseManager.getInstance();
+                    dbManager.updateRestaurantFav(restaurant.getId(), 1);
+                    dbManager.setUpdateNeeded(true);
+                    favouriteToggled = true;
+                }
 
             }
         });

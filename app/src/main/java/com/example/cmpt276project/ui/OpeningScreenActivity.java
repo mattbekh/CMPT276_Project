@@ -42,10 +42,11 @@ public class OpeningScreenActivity extends FragmentActivity {
 
     }
 
+
     private void launchMainActivity(boolean isUpdateNeeded) {
-        Intent intent = MapsActivity.makeIntent(this, isUpdateNeeded);
-        startActivity(intent);
-        finish();
+            Intent intent = MapsActivity.makeIntent(this, isUpdateNeeded);
+            startActivity(intent);
+            finish();
     }
 
     private class DataLoader implements Callable<Boolean> {

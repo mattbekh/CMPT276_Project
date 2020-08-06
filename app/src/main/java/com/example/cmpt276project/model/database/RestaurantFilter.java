@@ -246,14 +246,16 @@ public class RestaurantFilter {
         String criteria =
                 RestaurantTable.FIELD_ID + " IN (" +
                     "SELECT " + InspectionTable.FIELD_RESTAURANT_ID + " " +
-                    "FROM (" +
+                    "FROM " + RestaurantTable.NAME + " " +
+                    "WHERE " + RestaurantTable.FIELD_IS_FAVOURITE + " = 1 " +
+                    "AND " + RestaurantTable.FIELD_ID + " IN (" +
                         "SELECT " +
-                            InspectionTable.FIELD_RESTAURANT_ID + ", " +
-                            "MAX(" + InspectionTable.FIELD_DATE + ") " +
+                        InspectionTable.FIELD_RESTAURANT_ID + " " +
                         "FROM " + InspectionTable.NAME + " " +
                         "GROUP BY " + InspectionTable.FIELD_RESTAURANT_ID + " " +
                         "HAVING MAX(" + InspectionTable.FIELD_DATE + ") > " + previousModifyDate +
                     ") " +
+                    "ORDER BY " + RestaurantTable.FIELD_NAME +
                 ") ";
         return criteria;
     }

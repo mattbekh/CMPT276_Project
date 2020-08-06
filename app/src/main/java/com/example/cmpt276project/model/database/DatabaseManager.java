@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -30,6 +31,8 @@ public class DatabaseManager {
     private SQLiteDatabase db;
 
     private static DatabaseManager instance;
+
+    private boolean updateNeeded = false;
 
     public static DatabaseManager getInstance() {
         if (instance == null) {
@@ -104,12 +107,14 @@ public class DatabaseManager {
         }
         StringBuilder builder = new StringBuilder();
         for (Restaurant fav : favourites) {
-            builder.append(fav.getId()).append(", ");
+            builder.append("'").append(fav.getId()).append("', ");
         }
         String favIds = builder.substring(0, builder.length() - 2);
         ContentValues values = new ContentValues();
         values.put(RestaurantTable.FIELD_IS_FAVOURITE, IS_FAVOURITE);
-        String where = RestaurantTable.FIELD_ID + "IN'" + favIds + "'";
+        String where = RestaurantTable.FIELD_ID + " IN (" + favIds + ")";
+        Log.v("UpdateFav", where);
+
         open();
         db.update(RestaurantTable.NAME, values, where, null);
         close();
@@ -194,7 +199,8 @@ public class DatabaseManager {
                     cursor.getString(RestaurantTable.COL_ADDRESS),
                     cursor.getString(RestaurantTable.COL_CITY),
                     cursor.getDouble(RestaurantTable.COL_LATITUDE),
-                    cursor.getDouble(RestaurantTable.COL_LONGITUDE)
+                    cursor.getDouble(RestaurantTable.COL_LONGITUDE),
+                    cursor.getInt(RestaurantTable.COL_IS_FAVOURITE)
             ));
         } while (cursor.moveToNext());
 
@@ -368,5 +374,13 @@ public class DatabaseManager {
             db.execSQL(DROP_TABLE + RestaurantTable.NAME);
             onCreate(db);
         }
+    }
+
+    public void setUpdateNeeded(boolean update){
+        updateNeeded = update;
+    }
+
+    public boolean getUpdateNeeded(){
+        return updateNeeded;
     }
 }
