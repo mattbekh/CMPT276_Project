@@ -107,7 +107,7 @@ public class DatabaseManager {
         }
         StringBuilder builder = new StringBuilder();
         for (Restaurant fav : favourites) {
-            builder.append(fav.getId()).append(", ");
+            builder.append("'").append(fav.getId()).append("', ");
         }
         String favIds = builder.substring(0, builder.length() - 2);
         ContentValues values = new ContentValues();
