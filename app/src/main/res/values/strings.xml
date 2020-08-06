@@ -63,6 +63,9 @@
     <string name="SF_low">Low</string>
     <string name="SF_hazard_level">Hazard Level</string>
     <string name="SF_cancel">Cancel</string>
+    <string name="InfoWindow_textview1">TextView</string>
+    <string name="InfoWindow_address">TextView</string>
+    <string name="InfoWindow_hazard">TextView</string>
 
     <string name="UpdateFavourites_new_inspections">Favourites with New Inspections</string>
     <string name="UpdateFavourites_done_text">Done</string>
