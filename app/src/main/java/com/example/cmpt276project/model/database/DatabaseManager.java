@@ -112,7 +112,9 @@ public class DatabaseManager {
         String favIds = builder.substring(0, builder.length() - 2);
         ContentValues values = new ContentValues();
         values.put(RestaurantTable.FIELD_IS_FAVOURITE, IS_FAVOURITE);
-        String where = RestaurantTable.FIELD_ID + "IN " + favIds;
+        String where = RestaurantTable.FIELD_ID + " IN (" + favIds + ")";
+        Log.v("UpdateFav", where);
+
         open();
         db.update(RestaurantTable.NAME, values, where, null);
         close();
