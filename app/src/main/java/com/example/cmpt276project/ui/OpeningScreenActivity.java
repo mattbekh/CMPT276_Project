@@ -47,13 +47,9 @@ public class OpeningScreenActivity extends FragmentActivity {
     }
 
     private void launchMainActivity(boolean isUpdateNeeded) {
-       // if(favsUpdateNeeded) { //if favsupdate needed
-            Intent intent = UpdatedFavouritesActivity.makeIntent(this);
-      //  }
-     //   else{
-       //     Intent intent = MapsActivity.makeIntent(this, isUpdateNeeded);
+            Intent intent = MapsActivity.makeIntent(this, isUpdateNeeded);
             startActivity(intent);
-      //  }
+
         finish();
     }
 

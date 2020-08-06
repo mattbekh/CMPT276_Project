@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,11 +15,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import com.example.cmpt276project.R;
+import com.example.cmpt276project.model.Restaurant;
 import com.example.cmpt276project.model.RestaurantManager;
+import com.example.cmpt276project.model.Violation;
+import com.example.cmpt276project.model.database.DatabaseManager;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.logging.Level;
 
 public class UpdatedFavouritesFragment extends AppCompatDialogFragment {
+
+    private RestaurantManager manager;
 
     @NonNull
     @Override
@@ -31,12 +39,17 @@ public class UpdatedFavouritesFragment extends AppCompatDialogFragment {
         ListView restaurantList = (ListView) view.findViewById(R.id.list_Favourites);
 
 
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+        ArrayList<Restaurant> favourites = dbManager.getRestaurants();
+        ArrayAdapter<Restaurant> adapter = new ArrayAdapter<>(getActivity(), R.layout.restaurant_row, favourites);
+        restaurantList.setAdapter(adapter);
+
 
         // button listener
         DialogInterface.OnClickListener InfoListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                dialog.dismiss();
             }
         };
 

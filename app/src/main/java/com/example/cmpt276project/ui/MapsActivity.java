@@ -594,6 +594,9 @@ public class MapsActivity extends AppCompatActivity
                 e.printStackTrace();
             } finally {
                 loadDataDialog.dismiss();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                UpdatedFavouritesFragment dialog = new UpdatedFavouritesFragment();
+                dialog.show(fragmentManager, "UpdateDialog");
                 // TODO: launch a fragment displaying the updated favourite restaurants
             }
         }
