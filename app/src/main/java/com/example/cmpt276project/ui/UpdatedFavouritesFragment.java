@@ -26,9 +26,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.logging.Level;
 
+/**
+ * Class to create Fragment that launched after a favourited restaurant has a new Inspection
+ */
 public class UpdatedFavouritesFragment extends AppCompatDialogFragment {
-
-    private RestaurantManager manager;
 
     @NonNull
     @Override
@@ -55,7 +56,6 @@ public class UpdatedFavouritesFragment extends AppCompatDialogFragment {
                 dialog.dismiss();
             }
         };
-
 
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                 .setView(view)

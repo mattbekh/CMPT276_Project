@@ -28,6 +28,9 @@ import com.example.cmpt276project.model.database.RestaurantFilter;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * Class to create Adapter for the FavouritesFragment
+ */
 public class UpdatedFavouritesAdapter extends ArrayAdapter<Restaurant> {
 
     LayoutInflater layout;
@@ -46,29 +49,25 @@ public class UpdatedFavouritesAdapter extends ArrayAdapter<Restaurant> {
         View itemView = layout.inflate(R.layout.updatedfavourites_row, null);
 
         TextView restaurantName = itemView.findViewById(R.id.restaurantName);
-        TextView restaurantAddress = itemView.findViewById(R.id.restaurantAdrs);
-        TextView numIssues = itemView.findViewById(R.id.numIssues);
+        TextView hazardRating = itemView.findViewById(R.id.hazardRating);
         TextView inspectionDate = itemView.findViewById(R.id.inspectionDate);
 
         restaurantName.setText(restaurant.getName());
-        restaurantAddress.setText(restaurant.getAddress());
 
         DatabaseManager dbManager = DatabaseManager.getInstance();
         Inspection topInspection = dbManager.getMostRecentInspection(restaurant.getId());
         if (topInspection == null) {
             inspectionDate.setText(R.string.Inspection_no_inspections_found);
-            numIssues.setText("");
 
         } else {
             int numCriticalIssues = topInspection.getNumCriticalIssues();
             int numNonCriticalIssues = topInspection.getNumNonCriticalIssues();
             int numOfIssues = numCriticalIssues + numNonCriticalIssues;
-            numIssues.setText(context.getString(R.string.Inspection_num_of_issues) + numOfIssues);
-
 
             // Store most recent inspections date
             inspectionDate.setText(context.getString(R.string.restaurantList_most_recent_inspect) + topInspection.getSmartDate());
         }
+        hazardRating.setText(context.getString(R.string.Inspection_hazard_level) + topInspection.getHazardRatingString());
 
         return itemView;
     }

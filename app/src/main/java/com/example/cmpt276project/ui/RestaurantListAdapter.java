@@ -31,18 +31,15 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
     // Stores an array of restaurant names (Should be pre-ordered)
     private Context context;
     private RestaurantManager manager;
-    public static  final String Faved = "faved";
 
     public static Intent makeIntent(Context context) {
         return new Intent(context, RestaurantListAdapter.class);
     }
 
-
     public RestaurantListAdapter(Context context, RestaurantManager manager){
 
         this.context = context;
         this.manager = manager;
-
     }
 
     @NonNull
@@ -63,11 +60,10 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         // Store Restaurant address
         holder.restaurantAddress.setText(restaurant.getAddress() + ", " + restaurant.getCity());
 
-
         if(restaurant.isFavourite()){
-                int iconResource = getResourceID(restaurant.getRestaurantName());
-                holder.restaurantIcon.setImageResource(iconResource);
-                holder.favouritesIcon.setImageResource(R.drawable.star_icon);
+            int iconResource = getResourceID(restaurant.getRestaurantName());
+            holder.restaurantIcon.setImageResource(iconResource);
+            holder.favouritesIcon.setImageResource(R.drawable.star_icon);
         }
 
         else {

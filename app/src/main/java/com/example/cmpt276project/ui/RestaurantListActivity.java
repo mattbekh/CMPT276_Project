@@ -36,7 +36,6 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
         return new Intent(context, RestaurantListActivity.class);
     }
 
-
     @Override
     public void onResume(){
         super.onResume();
@@ -59,17 +58,9 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
         RestaurantListAdapter adapter = new RestaurantListAdapter(this, manager);
         restaurantList.setAdapter(adapter);
         restaurantList.setLayoutManager(new LinearLayoutManager(this));
-
-        Log.v("RestaurantListActivity", "doUpdate called");
-
-//        if (manager.doesListNeedUpdate()) {
-//            populateRecyclerView();
-//            manager.setListNeedUpdate();
-//        }
     }
 
     // Setup toolbar
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();

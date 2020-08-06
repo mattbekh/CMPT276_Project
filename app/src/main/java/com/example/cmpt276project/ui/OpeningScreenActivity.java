@@ -42,15 +42,11 @@ public class OpeningScreenActivity extends FragmentActivity {
 
     }
 
-    private void checkFavouritesUpdate(){
-        //if
-    }
 
     private void launchMainActivity(boolean isUpdateNeeded) {
             Intent intent = MapsActivity.makeIntent(this, isUpdateNeeded);
             startActivity(intent);
-
-        finish();
+            finish();
     }
 
     private class DataLoader implements Callable<Boolean> {

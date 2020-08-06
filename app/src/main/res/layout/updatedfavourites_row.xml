@@ -20,34 +20,24 @@
         android:textStyle="bold"/>
 
     <TextView
-        android:id="@+id/restaurantAdrs"
+        android:id="@+id/hazardRating"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
         android:autoSizeTextType="uniform"
         android:autoSizeMinTextSize="10sp"
         android:autoSizeMaxTextSize="20sp"
         android:text=""
-        android:layout_below="@+id/restaurantName"/>
-
-    <TextView
-        android:id="@+id/numIssues"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text=""
-        android:textSize="18sp"
-        android:layout_below="@id/restaurantAdrs"/>
+        android:layout_below="@+id/inspectionDate"/>
 
     <TextView
         android:id="@+id/inspectionDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="1dp"
-
         android:text=""
         android:textSize="14sp"
         android:textStyle="italic"
-        android:layout_below="@id/numIssues" />
+        android:layout_below="@id/restaurantName" />
 
 
 </RelativeLayout>

@@ -54,7 +54,6 @@ public class RestaurantActivity extends AppCompatActivity {
         return new Intent(context, RestaurantActivity.class);
     }
 
-
     // Setup toolbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -76,7 +75,6 @@ public class RestaurantActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.ToolbarMenu_back:
                 finish();
-
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -139,9 +137,11 @@ public class RestaurantActivity extends AppCompatActivity {
         });
     }
 
+    //Setup FavouriteButton for toggling RestaurantFavs
     private void setUpFavButton(){
         Button fav = (Button)findViewById(R.id.buttonFav);
 
+        //Check current State
         if(restaurant.isFavourite()){
 
             fav.setBackgroundResource(R.drawable.star_icon);
@@ -158,7 +158,6 @@ public class RestaurantActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 if(favouriteToggled){
-
                     fav.setBackgroundResource(R.drawable.star_outline);
                     DatabaseManager dbManager = DatabaseManager.getInstance();
                     dbManager.updateRestaurantFav(restaurant.getId(), 0);
