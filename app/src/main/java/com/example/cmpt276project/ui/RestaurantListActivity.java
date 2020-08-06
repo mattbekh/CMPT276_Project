@@ -39,22 +39,9 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
     @Override
     public void onResume(){
         super.onResume();
-        Log.v("RestaurantListActivity", "onResume called");
-
-        DatabaseManager dbManager = DatabaseManager.getInstance();
-        if(dbManager.getUpdateNeeded()){
-            Log.v("RestaurantListActivity", "onResume doUpdate called");
-            doUpdate();
-        }
-    }
-
-    public void doUpdate() {
-
         manager = RestaurantManager.getInstance();
         manager.updateList();
-
         restaurantList = findViewById(R.id.restaurantList);
-
         RestaurantListAdapter adapter = new RestaurantListAdapter(this, manager);
         restaurantList.setAdapter(adapter);
         restaurantList.setLayoutManager(new LinearLayoutManager(this));
@@ -68,24 +55,11 @@ public class RestaurantListActivity extends AppCompatActivity implements SearchA
 
         MenuItem viewMapItem = menu.findItem(R.id.ToolbarMenu_switch_context);
         MenuItem searchItem = menu.findItem(R.id.ToolbarMenu_search);
-//        MenuItem searchMapItem = menu.findItem(R.id.ToolbarMenu_search);
 
         viewMapItem.setVisible(true);
         viewMapItem.setTitle(R.string.RestaurantListActivity_toolbar_map_btn_text);
 
         searchItem.setVisible(true);
-//        SearchView searchView = (SearchView) searchMapItem.getActionView();
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                return false;
-//            }
-//        });
 
         return true;
     }

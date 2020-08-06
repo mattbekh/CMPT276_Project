@@ -375,12 +375,4 @@ public class DatabaseManager {
             onCreate(db);
         }
     }
-
-    public void setUpdateNeeded(boolean update){
-        updateNeeded = update;
-    }
-
-    public boolean getUpdateNeeded(){
-        return updateNeeded;
-    }
 }
