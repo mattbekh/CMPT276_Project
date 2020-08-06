@@ -54,5 +54,18 @@
     <string name="DataDownloader_download_file">Скачивание Файла</string>
 
     <string name = "RestaurantListActivity_toolbar_map_btn_text"> Карта </string>
+    <string name="search_filter_restaurant_name">Название ресторана</string>
+    <string name="search_filter_number_of_critical_issues_in_last_year">Количество критических проблем в прошлом году</string>
+    <string name="search_filter_favourites">Избранные</string>
+    <string name="SF_high">Высокий</string>
+    <string name="SF_mid">Средний</string>
+    <string name="SF_low">Низкий</string>
+    <string name="SF_hazard_level">Уровень опасности</string>
+    <string name="SF_ok">ОК</string>
+    <string name="SF_cancel">ОТМЕНА</string>
+    <string name="SF_clear">Очистить</string>
+
+    <string name="UpdateFavourites_new_inspections">Избранное с новыми проверками</string>
+    <string name="RestaurantDetail_favorite_text">ЛЮБИМЫЙ</string>
 
 </resources>
