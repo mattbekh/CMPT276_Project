@@ -1,5 +1,4 @@
 Iteration 1
-
 Scrum Master: sevenas
 Product Owner: mbekhter
 Repo Manager: rad8
@@ -12,3 +11,11 @@ Scrum Master: yza363
 Product Owner: sevenas
 Repo Manager: mbekhter
 Team Member: rad8
+
+
+
+Iteration 3
+Scrum Master: mbekhter
+Product Owner: rad8
+Repo Manager: yza363
+Team Member: sevenas
