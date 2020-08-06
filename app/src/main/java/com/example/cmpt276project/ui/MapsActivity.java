@@ -26,7 +26,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.cmpt276project.R;
-import com.example.cmpt276project.model.AllRestaurant;
 import com.example.cmpt276project.model.DateHelper;
 import com.example.cmpt276project.model.Inspection;
 import com.example.cmpt276project.model.Restaurant;
@@ -50,6 +49,7 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -88,7 +88,7 @@ public class MapsActivity extends AppCompatActivity
     private final String TAG = "MapsActivity";
 
     // Declare a variable for the cluster manager.
-    private ClusterManager<AllRestaurant> mClusterManager;
+    private ClusterManager<Restaurant> mClusterManager;
 
     public static Intent makeIntent(Context context, boolean isUpdateNeeded) {
         Intent intent =  new Intent(context, MapsActivity.class);
@@ -140,17 +140,24 @@ public class MapsActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        doUpdate();
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-
         if(intent.hasExtra("restaurantId")){
-
             assert extras != null;
+            DatabaseManager dbManager = DatabaseManager.getInstance();
             String restaurantId = extras.getString("restaurantId");
+            Restaurant restaurant = dbManager.getRestaurant(restaurantId);
             getNewLocation(restaurantId);
+            Collection<Marker> markers = mClusterManager.getMarkerCollection().getMarkers();
+            for (Marker m : markers) {
+                Log.v("MarkerId", String.format("%s, %s, %s, %s", m.getId(), m.getSnippet(), m.getTitle(), restaurant.getName()));
+                if (m.getPosition().equals(restaurant.getPosition())) {
+                    m.showInfoWindow();
+                }
+            }
         }
-        doUpdate();
     }
 
     public void doUpdate() {
@@ -359,7 +366,7 @@ public class MapsActivity extends AppCompatActivity
     public void setUpCluster() {
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
-        mClusterManager = new ClusterManager<AllRestaurant>(this, mMap);
+        mClusterManager = new ClusterManager<Restaurant>(this, mMap);
 
         // Point the map's listeners at the listeners implemented by the cluster manager
         mMap.setOnCameraIdleListener(mClusterManager);
@@ -429,9 +436,9 @@ public class MapsActivity extends AppCompatActivity
 
         mClusterManager.setRenderer(new MyClusterRenderer(getApplicationContext()));
 
-        mClusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<AllRestaurant>() {
+        mClusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<Restaurant>() {
             @Override
-            public void onClusterItemInfoWindowClick(AllRestaurant item) {
+            public void onClusterItemInfoWindowClick(Restaurant item) {
                 Intent intent = RestaurantActivity.makeIntent(MapsActivity.this);
                 intent.putExtra("restaurantId",item.getId());
                 startActivity(intent);
@@ -451,61 +458,23 @@ public class MapsActivity extends AppCompatActivity
 
     // add restaurant markers
     private void addRestaurants() {
-        for (Restaurant tmp:manager.getRestaurantList()) {
-            double lat = tmp.getLatitude();
-            double lng = tmp.getLongitude();
-            String title = tmp.getName();
-            String address = tmp.getAddress();
-            String restaurantId = tmp.getId();
-            String snippet;
-            String hazard;
-
-            DatabaseManager dbManager = DatabaseManager.getInstance();
-            Inspection inspection = dbManager.getMostRecentInspection(restaurantId);
-
-            if (inspection == null) {
-                snippet = address + "\nHazard Level: No Inspection Yet";
-                hazard = "hazard_unknown";
-            } else {
-                switch (inspection.getHazardRating()) {
-                    case LOW:
-                        snippet = address + "\nHazard Level: LOW";
-                        hazard = "hazard_low";
-                        break;
-                    case MODERATE:
-                        snippet = address + "\nHazard Level: MODERATE";
-                        hazard = "hazard_mid";
-                        break;
-                    case HIGH:
-                        snippet = address + "\nHazard Level: HIGH";
-                        hazard = "hazard_high";
-                        break;
-                    default:
-                        snippet = "Hazard Level: No Inspection Yet";
-                        hazard = "hazard_unknown";
-                        break;
-                }
-            }
-
-            AllRestaurant offsetItem = new AllRestaurant(lat, lng, title, snippet, hazard, restaurantId);
-            mClusterManager.addItem(offsetItem);
+        for (Restaurant restaurant : manager.getRestaurantList()) {
+            mClusterManager.addItem(restaurant);
         }
     }
 
     @Override
     public void updateFilter() {
-//        mMap.clear();
-//        setUpCluster();
         onResume();
     }
 
-    private class MyClusterRenderer extends DefaultClusterRenderer<AllRestaurant> {
+    private class MyClusterRenderer extends DefaultClusterRenderer<Restaurant> {
         public MyClusterRenderer(Context context) {
             super(context, mMap, mClusterManager);
         }
         @Override
-        protected void onBeforeClusterItemRendered(@NonNull AllRestaurant item, @NonNull MarkerOptions markerOptions) {
-            Bitmap resized = resizeMapIcons(item.getHazard(), 100, 100);
+        protected void onBeforeClusterItemRendered(@NonNull Restaurant item, @NonNull MarkerOptions markerOptions) {
+            Bitmap resized = resizeMapIcons(item.getHazardResource(), 100, 100);
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resized));
         }
     }
@@ -606,7 +575,6 @@ public class MapsActivity extends AppCompatActivity
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 UpdatedFavouritesFragment dialog = new UpdatedFavouritesFragment();
                 dialog.show(fragmentManager, "UpdateDialog");
-                // TODO: launch a fragment displaying the updated favourite restaurants
             }
         }
     }
